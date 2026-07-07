@@ -1,0 +1,97 @@
+<div class="login-container">
+
+  <div class="left-panel">
+
+    <div class="branding">
+
+      <h1>
+        Vendor<br>
+        Reliability<br>
+        Intelligence<br>
+        <span>Platform</span>
+      </h1>
+
+      <div class="line"></div>
+
+      <p>Evaluate vendors.</p>
+      <p>Manage procurement.</p>
+      <p>Reduce risk.</p>
+      <p>Drive reliability.</p>
+
+    </div>
+
+  </div>
+
+  <div class="right-panel">
+
+    <div class="login-box">
+
+      <h2>Welcome Back</h2>
+
+      <p>Sign in to your account</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+
+          <input
+            matInput
+            type="email"
+            placeholder="Enter your email"
+            formControlName="email">
+
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+            Please enter a valid email
+          </mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+
+          <input
+            matInput
+            type="password"
+            placeholder="Enter your password"
+            formControlName="password">
+
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+
+        </mat-form-field>
+
+        <div class="options">
+          <mat-checkbox>Remember me</mat-checkbox>
+
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="login-btn"
+          type="submit"
+          [disabled]="loginForm.invalid">
+
+          Sign In
+
+        </button>
+
+      </form>
+
+      <div class="register-link">
+        Don't have an account?
+        <a routerLink="/register">Create Account</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
