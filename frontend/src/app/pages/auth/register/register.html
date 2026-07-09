@@ -30,75 +30,228 @@
 
       <p>Sign up to get started</p>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Full Name</mat-label>
-        <input matInput>
-      </mat-form-field>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput type="email">
-      </mat-form-field>
+        <!-- Full Name -->
 
         <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Role</mat-label>
 
-        <mat-select>
+          <mat-label>Full Name</mat-label>
 
-    <mat-option value="administrator">
-      Administrator
-    </mat-option>
+          <input
+            matInput
+            formControlName="fullName"
+            placeholder="Enter your full name">
 
-    <mat-option value="procurement-manager">
-      Procurement Manager
-    </mat-option>
+          <mat-error *ngIf="registerForm.get('fullName')?.hasError('required')">
+            Full Name is required
+          </mat-error>
 
-    <mat-option value="supply-chain-manager">
-      Supply Chain Manager
-    </mat-option>
+        </mat-form-field>
 
-    <mat-option value="vendor">
-      Vendor
-    </mat-option>
+        <!-- Employee ID -->
 
-    <mat-option value="finance-officer">
-      Finance Officer
-    </mat-option>
+        <mat-form-field appearance="outline" class="full-width">
 
-        <mat-option value="auditor">
-        Auditor
-        </mat-option>
+          <mat-label>Employee ID</mat-label>
 
-    </mat-select>
-    </mat-form-field>
+          <input
+            matInput
+            formControlName="employeeId"
+            placeholder="Enter Employee ID">
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
-        <input matInput type="password">
-      </mat-form-field>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Confirm Password</mat-label>
-        <input matInput type="password">
-      </mat-form-field>
+        <!-- Company Name -->
 
-      <mat-checkbox>
-        I agree to the Terms & Conditions
-      </mat-checkbox>
+        <mat-form-field appearance="outline" class="full-width">
 
-      <br><br>
+          <mat-label>Company Name</mat-label>
 
-      <button mat-flat-button color="primary" class="login-btn">
+          <input
+            matInput
+            formControlName="companyName"
+            placeholder="Enter Company Name">
 
-        Create Account
+        </mat-form-field>
 
-      </button>
+        <!-- Email -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Email</mat-label>
+
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email">
+
+          <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+
+          <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+            Please enter a valid email
+          </mat-error>
+
+        </mat-form-field>
+
+        <!-- Mobile -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Mobile Number</mat-label>
+
+          <input
+            matInput
+            formControlName="mobile"
+            placeholder="Enter mobile number">
+
+          <mat-error *ngIf="registerForm.get('mobile')?.hasError('required')">
+            Mobile Number is required
+          </mat-error>
+
+          <mat-error *ngIf="registerForm.get('mobile')?.hasError('pattern')">
+            Enter a valid 10 digit mobile number
+          </mat-error>
+
+        </mat-form-field>
+
+        <!-- Role -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Role</mat-label>
+
+          <mat-select formControlName="role">
+
+            <mat-option value="administrator">Administrator</mat-option>
+
+            <mat-option value="procurement-manager">
+              Procurement Manager
+            </mat-option>
+
+            <mat-option value="supply-chain-manager">
+              Supply Chain Manager
+            </mat-option>
+
+            <mat-option value="vendor">
+              Vendor
+            </mat-option>
+
+            <mat-option value="finance-officer">
+              Finance Officer
+            </mat-option>
+
+            <mat-option value="auditor">
+              Auditor
+            </mat-option>
+
+          </mat-select>
+
+          <mat-error *ngIf="registerForm.get('role')?.hasError('required')">
+            Please select a role
+          </mat-error>
+
+        </mat-form-field>
+
+        <!-- Password -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Password</mat-label>
+
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter Password">
+
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hidePassword=!hidePassword">
+
+            <mat-icon>
+              {{hidePassword ? 'visibility_off' : 'visibility'}}
+            </mat-icon>
+
+          </button>
+
+          <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+
+          <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+            Password must be at least 8 characters
+          </mat-error>
+
+        </mat-form-field>
+
+        <!-- Confirm Password -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Confirm Password</mat-label>
+
+          <input
+            matInput
+            [type]="hideConfirmPassword ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            placeholder="Confirm Password">
+
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideConfirmPassword=!hideConfirmPassword">
+
+            <mat-icon>
+              {{hideConfirmPassword ? 'visibility_off' : 'visibility'}}
+            </mat-icon>
+
+          </button>
+
+          <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+            Confirm Password is required
+          </mat-error>
+
+          <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')">
+            Passwords do not match
+          </mat-error>
+
+        </mat-form-field>
+
+        <!-- Terms -->
+
+        <mat-checkbox formControlName="terms">
+          I agree to the Terms & Conditions
+        </mat-checkbox>
+
+        <br><br>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="login-btn"
+          type="submit"
+          [disabled]="registerForm.invalid">
+
+          Create Account
+
+        </button>
+
+      </form>
 
       <div class="register-link">
 
         Already have an account?
 
-        <a routerLink="/">Sign In</a>
+        <a routerLink="/login">
+          Sign In
+        </a>
 
       </div>
 

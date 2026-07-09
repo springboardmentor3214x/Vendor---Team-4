@@ -1,0 +1,175 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.vendor-form-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 35px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+
+.page-header {
+  margin-bottom: 35px;
+
+  h1 {
+    font-size: 34px;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 16px;
+  }
+}
+
+/* Sections */
+
+.section {
+  margin-bottom: 35px;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fafbfc;
+
+  h2 {
+    font-size: 22px;
+    color: #1e293b;
+    margin-bottom: 25px;
+    font-weight: 600;
+  }
+}
+
+/* Grid */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap: 20px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Material Fields */
+
+mat-form-field {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  border-radius: 8px;
+}
+
+::ng-deep .mat-mdc-form-field-error {
+  font-size: 12px;
+}
+
+/* Upload */
+
+.upload-box {
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  background: white;
+  transition: .2s;
+
+  &:hover {
+    border-color: #2563eb;
+  }
+
+  input {
+    display: none;
+  }
+
+  label {
+    cursor: pointer;
+    color: #2563eb;
+    font-weight: 600;
+  }
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #2563eb;
+    margin-bottom: 10px;
+  }
+}
+
+/* Uploaded Files */
+
+.file-list {
+  margin-top: 20px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+
+  span {
+    color: #334155;
+    word-break: break-all;
+  }
+}
+
+/* Buttons */
+
+.button-group {
+  margin-top: 35px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+button {
+  min-width: 140px;
+  height: 46px;
+  font-size: 15px;
+  border-radius: 8px;
+}
+
+/* Responsive */
+
+@media(max-width:900px){
+
+  .vendor-form-container{
+    margin:20px;
+    padding:20px;
+  }
+
+  .button-group{
+    flex-direction:column;
+  }
+
+  button{
+    width:100%;
+  }
+
+}
+
+@media(max-width:600px){
+
+  .page-header h1{
+    font-size:28px;
+  }
+
+  .section{
+    padding:18px;
+  }
+
+}

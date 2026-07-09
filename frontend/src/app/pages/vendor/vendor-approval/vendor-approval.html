@@ -1,0 +1,89 @@
+<div class="approval-container">
+
+  <div class="page-header">
+
+    <h1>Vendor Approval</h1>
+
+    <p>Approve or reject newly registered vendors.</p>
+
+  </div>
+
+  <table>
+
+    <thead>
+
+      <tr>
+
+        <th>Vendor ID</th>
+
+        <th>Company</th>
+
+        <th>Category</th>
+
+        <th>Contact Person</th>
+
+        <th>Status</th>
+
+        <th>Action</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let vendor of vendors">
+
+        <td>{{ vendor.vendorId }}</td>
+
+        <td>{{ vendor.companyName }}</td>
+
+        <td>{{ vendor.category }}</td>
+
+        <td>{{ vendor.contactPerson }}</td>
+
+        <td>
+
+          <span
+            class="status"
+            [class.approved]="vendor.status==='Approved'"
+            [class.rejected]="vendor.status==='Rejected'"
+            [class.pending]="vendor.status==='Pending'">
+
+            {{ vendor.status }}
+
+          </span>
+
+        </td>
+
+        <td>
+
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="approveVendor(vendor)"
+            [disabled]="vendor.status==='Approved'">
+
+            Approve
+
+          </button>
+
+          <button
+            mat-flat-button
+            color="warn"
+            (click)="rejectVendor(vendor)"
+            [disabled]="vendor.status==='Rejected'">
+
+            Reject
+
+          </button>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>

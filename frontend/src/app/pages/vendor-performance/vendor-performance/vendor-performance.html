@@ -1,0 +1,165 @@
+<div class="performance-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Vendor Performance</h1>
+
+      <p>
+
+        Monitor vendor reliability and overall performance.
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Statistics -->
+
+  <div class="stats-container">
+
+    <mat-card class="stat-card">
+
+      <mat-icon>groups</mat-icon>
+
+      <h2>{{ totalVendors }}</h2>
+
+      <p>Total Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card">
+
+      <mat-icon>verified</mat-icon>
+
+      <h2>{{ activeVendors }}</h2>
+
+      <p>Active Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card">
+
+      <mat-icon>star</mat-icon>
+
+      <h2>{{ averageRating }}</h2>
+
+      <p>Average Rating</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card">
+
+      <mat-icon>local_shipping</mat-icon>
+
+      <h2>{{ onTimeDelivery }}</h2>
+
+      <p>On-Time Delivery</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Top Vendors -->
+
+  <mat-card class="table-card">
+
+    <h2>
+
+      Top Performing Vendors
+
+    </h2>
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>Company</th>
+
+          <th>Rating</th>
+
+          <th>On-Time Delivery</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let vendor of topVendors">
+
+          <td>
+
+            {{ vendor.company }}
+
+          </td>
+
+          <td>
+
+            ⭐ {{ vendor.rating }}
+
+          </td>
+
+          <td>
+
+            {{ vendor.delivery }}
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </mat-card>
+
+  <!-- Chart Placeholders -->
+
+  <div class="charts">
+
+    <mat-card class="chart-card">
+
+      <mat-icon>
+
+        bar_chart
+
+      </mat-icon>
+
+      <h3>Monthly Vendor Performance</h3>
+
+      <p>
+
+        Chart will be connected after backend integration.
+
+      </p>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <mat-icon>
+
+        pie_chart
+
+      </mat-icon>
+
+      <h3>Vendor Rating Distribution</h3>
+
+      <p>
+
+        Chart will be connected after backend integration.
+
+      </p>
+
+    </mat-card>
+
+  </div>
+
+</div>

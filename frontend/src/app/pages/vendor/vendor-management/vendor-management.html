@@ -1,0 +1,165 @@
+<div class="management-container">
+
+  <div class="header">
+
+    <h1>Vendor Management</h1>
+
+    <p>
+      Manage vendors, approvals and vendor information from one place.
+    </p>
+
+  </div>
+
+  <!-- Statistics -->
+
+  <div class="stats">
+
+    <mat-card class="stat-card">
+
+      <h2>{{ totalVendors }}</h2>
+
+      <p>Total Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card approved">
+
+      <h2>{{ approved }}</h2>
+
+      <p>Approved</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card pending">
+
+      <h2>{{ pending }}</h2>
+
+      <p>Pending</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card rejected">
+
+      <h2>{{ rejected }}</h2>
+
+      <p>Rejected</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Menu -->
+
+  <div class="cards">
+
+    <mat-card>
+
+      <mat-icon>
+
+        groups
+
+      </mat-icon>
+
+      <h3>Vendor List</h3>
+
+      <p>
+
+        View and manage all registered vendors.
+
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="openVendorList()">
+
+        Open
+
+      </button>
+
+    </mat-card>
+
+    <mat-card>
+
+      <mat-icon>
+
+        person_add
+
+      </mat-icon>
+
+      <h3>Add Vendor</h3>
+
+      <p>
+
+        Register a new vendor.
+
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="addVendor()">
+
+        Open
+
+      </button>
+
+    </mat-card>
+
+    <mat-card>
+
+      <mat-icon>
+
+        verified
+
+      </mat-icon>
+
+      <h3>Vendor Approval</h3>
+
+      <p>
+
+        Approve or reject vendors.
+
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="approval()">
+
+        Open
+
+      </button>
+
+    </mat-card>
+
+    <mat-card>
+
+      <mat-icon>
+
+        description
+
+      </mat-icon>
+
+      <h3>Vendor Documents</h3>
+
+      <p>
+
+        View uploaded vendor documents.
+
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="documents()">
+
+        Open
+
+      </button>
+
+    </mat-card>
+
+  </div>
+
+</div>

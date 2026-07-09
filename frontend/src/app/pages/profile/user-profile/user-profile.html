@@ -1,0 +1,223 @@
+<div class="profile-page">
+
+  <div class="profile-card">
+
+    <!-- Header -->
+
+    <div class="profile-header">
+
+      <div class="profile-avatar">
+
+        <mat-icon>account_circle</mat-icon>
+
+      </div>
+
+      <h2>User Profile</h2>
+
+      <p>
+        Manage your account information and security.
+      </p>
+
+      <button
+        mat-stroked-button
+        type="button">
+
+        <mat-icon>photo_camera</mat-icon>
+
+        Upload Picture
+
+      </button>
+
+    </div>
+
+    <form
+      [formGroup]="profileForm"
+      (ngSubmit)="onSubmit()">
+
+      <!-- Personal Information -->
+
+      <div class="section">
+
+        <h3>Personal Information</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Full Name</mat-label>
+
+          <input
+            matInput
+            formControlName="fullName">
+
+          <mat-error *ngIf="profileForm.get('fullName')?.hasError('required')">
+
+            Full Name is required
+
+          </mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Email Address</mat-label>
+
+          <input
+            matInput
+            formControlName="email"
+            readonly>
+
+          <mat-icon matSuffix>lock</mat-icon>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Mobile Number</mat-label>
+
+          <input
+            matInput
+            formControlName="mobile">
+
+          <mat-error *ngIf="profileForm.get('mobile')?.hasError('required')">
+
+            Mobile Number is required
+
+          </mat-error>
+
+          <mat-error *ngIf="profileForm.get('mobile')?.hasError('pattern')">
+
+            Enter a valid 10 digit mobile number
+
+          </mat-error>
+
+        </mat-form-field>
+
+        <div class="role-box">
+
+          <span class="role-title">
+
+            Role
+
+          </span>
+
+          <span class="role-badge">
+
+            {{ profileForm.get('role')?.value }}
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- Password Section -->
+
+      <div class="section">
+
+        <h3>Change Password</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Current Password</mat-label>
+
+          <input
+            matInput
+            [type]="hideCurrent ? 'password' : 'text'"
+            formControlName="currentPassword">
+
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideCurrent=!hideCurrent">
+
+            <mat-icon>
+
+              {{hideCurrent ? 'visibility_off' : 'visibility'}}
+
+            </mat-icon>
+
+          </button>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>New Password</mat-label>
+
+          <input
+            matInput
+            [type]="hideNew ? 'password' : 'text'"
+            formControlName="newPassword">
+
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideNew=!hideNew">
+
+            <mat-icon>
+
+              {{hideNew ? 'visibility_off' : 'visibility'}}
+
+            </mat-icon>
+
+          </button>
+
+          <mat-error
+            *ngIf="profileForm.get('newPassword')?.hasError('minlength')">
+
+            Password must be at least 8 characters
+
+          </mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Confirm Password</mat-label>
+
+          <input
+            matInput
+            [type]="hideConfirm ? 'password' : 'text'"
+            formControlName="confirmPassword">
+
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideConfirm=!hideConfirm">
+
+            <mat-icon>
+
+              {{hideConfirm ? 'visibility_off' : 'visibility'}}
+
+            </mat-icon>
+
+          </button>
+
+          <mat-error
+            *ngIf="profileForm.get('confirmPassword')?.hasError('passwordMismatch')">
+
+            Passwords do not match
+
+          </mat-error>
+
+        </mat-form-field>
+
+      </div>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="save-btn"
+        type="submit">
+
+        Save Changes
+
+      </button>
+
+    </form>
+
+  </div>
+
+</div>

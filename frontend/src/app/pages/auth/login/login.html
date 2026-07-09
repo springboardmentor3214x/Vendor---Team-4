@@ -30,9 +30,24 @@
 
       <p>Sign in to your account</p>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div
+        class="login-error"
+        *ngIf="loginError">
 
-        <mat-form-field appearance="outline" class="full-width">
+        {{ loginError }}
+
+      </div>
+
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()">
+
+        <!-- EMAIL -->
+
+        <mat-form-field
+          appearance="outline"
+          class="full-width">
+
           <mat-label>Email</mat-label>
 
           <input
@@ -41,36 +56,79 @@
             placeholder="Enter your email"
             formControlName="email">
 
-          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+          <mat-error
+            *ngIf="loginForm.get('email')?.hasError('required')">
+
             Email is required
+
           </mat-error>
 
-          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-            Please enter a valid email
+          <mat-error
+            *ngIf="loginForm.get('email')?.hasError('email')">
+
+            Enter a valid email address
+
           </mat-error>
 
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <!-- PASSWORD -->
+
+        <mat-form-field
+          appearance="outline"
+          class="full-width">
+
           <mat-label>Password</mat-label>
 
           <input
             matInput
-            type="password"
+            [type]="hidePassword ? 'password' : 'text'"
             placeholder="Enter your password"
             formControlName="password">
 
-          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hidePassword=!hidePassword">
+
+            <mat-icon>
+
+              {{ hidePassword ? 'visibility_off' : 'visibility' }}
+
+            </mat-icon>
+
+          </button>
+
+          <mat-error
+            *ngIf="loginForm.get('password')?.hasError('required')">
+
             Password is required
+
           </mat-error>
 
         </mat-form-field>
 
-        <div class="options">
-          <mat-checkbox>Remember me</mat-checkbox>
+        <!-- OPTIONS -->
 
-          <a href="#">Forgot password?</a>
+        <div class="options">
+
+          <mat-checkbox
+            formControlName="rememberMe">
+
+            Remember Me
+
+          </mat-checkbox>
+
+          <a routerLink="/forgot-password">
+
+            Forgot Password?
+
+          </a>
+
         </div>
+
+        <!-- LOGIN -->
 
         <button
           mat-flat-button
@@ -79,15 +137,22 @@
           type="submit"
           [disabled]="loginForm.invalid">
 
-          Sign In
+          Login
 
         </button>
 
       </form>
 
       <div class="register-link">
+
         Don't have an account?
-        <a routerLink="/register">Create Account</a>
+
+        <a routerLink="/register">
+
+          Create Account
+
+        </a>
+
       </div>
 
     </div>

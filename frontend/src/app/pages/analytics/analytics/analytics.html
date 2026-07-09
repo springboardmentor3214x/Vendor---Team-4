@@ -1,0 +1,157 @@
+<div class="analytics-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Analytics Dashboard</h1>
+
+      <p>
+
+        Monitor platform analytics and key business metrics.
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- KPI Cards -->
+
+  <div class="stats-container">
+
+    <mat-card class="stat-card">
+
+      <mat-icon>groups</mat-icon>
+
+      <h2>{{ totalVendors }}</h2>
+
+      <p>Total Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card">
+
+      <mat-icon>shopping_cart</mat-icon>
+
+      <h2>{{ totalProcurements }}</h2>
+
+      <p>Total Procurements</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card">
+
+      <mat-icon>inventory_2</mat-icon>
+
+      <h2>{{ purchaseOrders }}</h2>
+
+      <p>Purchase Orders</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card">
+
+      <mat-icon>verified</mat-icon>
+
+      <h2>{{ vendorReliability }}</h2>
+
+      <p>Vendor Reliability</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Chart Placeholders -->
+
+  <div class="chart-grid">
+
+    <mat-card class="chart-card">
+
+      <mat-icon>
+
+        bar_chart
+
+      </mat-icon>
+
+      <h3>Monthly Analytics</h3>
+
+      <p>
+
+        This chart will display monthly analytics after backend integration.
+
+      </p>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <mat-icon>
+
+        pie_chart
+
+      </mat-icon>
+
+      <h3>Vendor Distribution</h3>
+
+      <p>
+
+        Vendor category distribution will appear here.
+
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Recent Analytics -->
+
+  <mat-card class="summary-card">
+
+    <h2>
+
+      Recent Analytics
+
+    </h2>
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>Metric</th>
+
+          <th>Value</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let item of recentAnalytics">
+
+          <td>
+
+            {{ item.title }}
+
+          </td>
+
+          <td>
+
+            {{ item.value }}
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </mat-card>
+
+</div>
