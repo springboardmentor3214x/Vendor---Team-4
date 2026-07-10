@@ -8,7 +8,7 @@ import {
   ValidationErrors
 } from '@angular/forms';
 
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -27,6 +27,7 @@ function passwordMatchValidator(
   }
 
   return null;
+
 }
 
 @Component({
@@ -52,7 +53,10 @@ export class ResetPassword {
 
   resetPasswordForm;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
+  ) {
 
     this.resetPasswordForm = this.fb.group({
 
@@ -78,13 +82,95 @@ export class ResetPassword {
 
   onSubmit() {
 
+    // Stop if form validation fails
     if (this.resetPasswordForm.invalid) {
       return;
     }
 
-    console.log(this.resetPasswordForm.value);
+    // Form data
+    const resetPasswordData = this.resetPasswordForm.value;
 
-    // FastAPI API will be connected later
+    console.log('Reset Password Data:', resetPasswordData);
+
+    /*
+
+
+    Replace the temporary console.log() above with
+    the Reset Password API call.
+
+    
+    API Endpoint
+    
+
+    POST /reset-password
+
+    
+    Request Body
+    
+
+    {
+      "token": "<RESET_TOKEN>",
+      "password": "...",
+      "confirmPassword": "..."
+    }
+
+    Note:
+    The reset token will usually come from the
+    password reset email or URL.
+
+    Example:
+
+    /reset-password?token=...
+
+    
+    Expected Response
+    
+
+    {
+      "success": true,
+      "message": "Password updated successfully."
+    }
+
+    OR
+
+    {
+      "success": false,
+      "message": "Reset token is invalid or expired."
+    }
+
+    
+    Angular 
+    
+
+    Replace:
+
+        console.log('Reset Password Data:', resetPasswordData);
+
+    With something similar to:
+
+        this.authService.resetPassword(
+          resetPasswordData
+        ).subscribe({
+
+          next: (response) => {
+
+            // Show success message
+
+            // Redirect user to Login page
+
+            this.router.navigate(['/login']);
+
+          },
+
+          error: (error) => {
+
+            // Display backend validation message
+
+          }
+
+        });
+
+    */
 
   }
 

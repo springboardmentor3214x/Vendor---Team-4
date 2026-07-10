@@ -8,7 +8,7 @@ import {
   Validators
 } from '@angular/forms';
 
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -45,11 +45,13 @@ function passwordMatchValidator(
       confirmPassword.setErrors(
         Object.keys(errors).length ? errors : null
       );
+
     }
 
   }
 
   return null;
+
 }
 
 @Component({
@@ -77,7 +79,10 @@ export class Register {
 
   registerForm;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
+  ) {
 
     this.registerForm = this.fb.group(
       {
@@ -134,11 +139,83 @@ export class Register {
 
   onSubmit() {
 
+    // Stop if form validation fails
     if (this.registerForm.invalid) {
       return;
     }
 
-    console.log(this.registerForm.value);
+    this.registerForm.markAllAsTouched();
+
+    // Registration form data
+    const registerData = this.registerForm.value;
+
+    console.log('Register Data:', registerData);
+
+    /*
+ 
+    Replace the temporary console.log() above with
+    the Register API call.
+
+    
+    API Endpoint
+    
+
+    POST /register
+
+    
+    Request Body
+    
+
+    {
+      "fullName": "...",
+      "employeeId": "...",
+      "companyName": "...",
+      "email": "...",
+      "mobile": "...",
+      "role": "...",
+      "password": "..."
+    }
+
+    
+    Expected Response
+    
+
+    {
+      "success": true,
+      "message": "User registered successfully"
+    }
+
+    
+    Angular
+    
+
+    Replace:
+
+        console.log('Register Data:', registerData);
+
+    With something similar to:
+
+        this.authService.register(registerData).subscribe({
+
+          next: (response) => {
+
+            // Registration successful
+
+            this.router.navigate(['/login']);
+
+          },
+
+          error: (error) => {
+
+            // Display backend validation message
+
+            this.registerError = error.error.message;
+
+          }
+
+        });
+
+    */
 
   }
 

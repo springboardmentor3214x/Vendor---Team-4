@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-
 import { authGuard } from './guards/auth-guard';
+import { roleGuard } from './guards/role-guard';
 
 // Authentication
 import { Login } from './pages/auth/login/login';
@@ -83,12 +83,21 @@ export const routes: Routes = [
   },
 
   // Dashboards
-  
+
   {
   path: 'admin-dashboard',
   component: AdminDashboard,
+  canActivate: [authGuard, roleGuard],
+  data: {
+    roles: ['Administrator']
+  }
+},
+  
+ /* {
+  path: 'admin-dashboard',
+  component: AdminDashboard,
   canActivate: [authGuard]
-  },
+  },*/
 
   {
     path: 'admin-dashboard',

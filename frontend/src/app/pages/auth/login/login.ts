@@ -61,61 +61,110 @@ export class Login {
 
   onSubmit() {
 
+    // Stop if form validation fails
     if (this.loginForm.invalid) {
       return;
     }
 
     this.loginError = '';
 
+    // Form values
     const loginData = this.loginForm.value;
 
     console.log('Login Data:', loginData);
 
     /*
-      ==========================================
-      FastAPI Integration (Milestone 2)
-      ==========================================
+   
 
-      POST /login
+    Replace the temporary console.log() above with
+    the FastAPI Login API call.
 
-      Request:
-      {
-        email,
-        password
+    API Endpoint
+    POST /login
+
+    Request Body
+  
+
+    {
+      "email": "...",
+      "password": "..."
+    }
+
+    Expected Response
+  
+
+    {
+      "token": "JWT_TOKEN",
+      "role": "Administrator",
+      "user": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "admin@test.com"
       }
+    }
 
-      Response:
-      {
-        token: "...",
-        role: "Administrator",
-        user: {
-          id,
-          name,
-          email
-        }
-      }
 
-      Angular will then:
+    Replace:
 
-      1. Store JWT Token
+        console.log('Login Data:', loginData);
 
-         localStorage.setItem('token', response.token);
+    With something similar to:
 
-      2. Store User Role
+        this.authService.login(loginData).subscribe({
 
-         localStorage.setItem('role', response.role);
+          next: (response) => {
 
-      3. Redirect according to role
+            // Save JWT
+            localStorage.setItem('token', response.token);
 
-         Administrator        -> /admin
-         Procurement Manager  -> /procurement
-         Supply Chain Manager -> /supply-chain
-         Vendor               -> /vendor
-         Finance Officer      -> /finance
-         Auditor              -> /auditor
+            // Save User Role
+            localStorage.setItem('role', response.role);
 
-      4. Route Guards will protect
-         unauthorized pages.
+            // Redirect according to role
+
+            Administrator
+              -> /admin-dashboard
+
+            Procurement Manager
+              -> /procurement-dashboard
+
+            Supply Chain Manager
+              -> /supply-chain-dashboard
+
+            Vendor
+              -> /vendor-dashboard
+
+            Finance Officer
+              -> /finance-dashboard
+
+            Auditor
+              -> /auditor-dashboard
+
+          },
+
+          error: () => {
+
+            this.loginError = 'Invalid email or password';
+
+          }
+
+        });
+
+
+    1. Auth Guard checks whether a JWT token exists.
+
+    2. Role Guard checks the user's role.
+
+    3. Backend should return:
+
+       - JWT Token
+       - User Role
+       - User Information
+
+    4. No changes are required in the UI.
+       Only replace this section with the API call.
+
+
     */
 
   }
