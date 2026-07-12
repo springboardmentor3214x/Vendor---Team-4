@@ -1,0 +1,161 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.vendor-details-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 35px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  h1 {
+    font-size: 34px;
+    color: #0f172a;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 16px;
+  }
+}
+
+.header-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* Sections */
+
+.section {
+  background: #fafbfc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 25px;
+
+  h2 {
+    font-size: 22px;
+    color: #1e293b;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+}
+
+/* Grid */
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Labels */
+
+label {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+p {
+  color: #1e293b;
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+/* Documents */
+
+.document {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  mat-icon {
+    color: #2563eb;
+  }
+
+  span {
+    color: #334155;
+    font-size: 15px;
+  }
+}
+
+/* Buttons */
+
+button {
+  min-width: 140px;
+  height: 46px;
+  border-radius: 8px;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+  .vendor-details-container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-buttons {
+    width: 100%;
+
+    button {
+      flex: 1;
+    }
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .page-header h1 {
+    font-size: 28px;
+  }
+
+  .section {
+    padding: 18px;
+  }
+
+  .header-buttons {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+}

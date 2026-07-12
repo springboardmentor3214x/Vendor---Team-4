@@ -1,0 +1,254 @@
+<div class="dashboard-container">
+
+  <!-- Sidebar -->
+
+  <aside class="sidebar">
+
+    <div>
+
+      <div class="logo">
+
+        <mat-icon>verified_user</mat-icon>
+
+        <h2>Vendor Reliability</h2>
+
+      </div>
+
+      <nav>
+
+        <ul>
+
+          <li
+            *ngFor="let item of menuItems"
+            (click)="openModule(item.title)">
+
+            <mat-icon>
+
+              {{ item.icon }}
+
+            </mat-icon>
+
+            <span>
+
+              {{ item.title }}
+
+            </span>
+
+          </li>
+
+        </ul>
+
+      </nav>
+
+    </div>
+
+    <div class="sidebar-footer">
+
+      <button
+        mat-stroked-button
+        (click)="goToProfile()">
+
+        <mat-icon>person</mat-icon>
+
+        Profile
+
+      </button>
+
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="logout()">
+
+        <mat-icon>logout</mat-icon>
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </aside>
+
+  <!-- Main Content -->
+
+  <main class="main-content">
+
+    <!-- Header -->
+
+    <header class="topbar">
+
+      <div>
+
+        <h1>
+
+          {{ dashboardTitle }}
+
+        </h1>
+
+        <p>
+
+          {{ dashboardSubtitle }}
+
+        </p>
+
+      </div>
+
+      <div class="top-icons">
+
+        <!-- Notification -->
+
+        <div class="notification-wrapper">
+
+          <button
+            mat-icon-button
+            (click)="toggleNotifications()">
+
+            <mat-icon>
+
+              notifications
+
+            </mat-icon>
+
+          </button>
+
+          <div
+            class="notification-panel"
+            *ngIf="showNotifications">
+
+            <h4>
+
+              Notifications
+
+            </h4>
+
+            <div
+              class="notification-item"
+              *ngFor="let notification of notifications">
+
+              {{ notification }}
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Search -->
+
+        <div class="search-wrapper">
+
+          <button
+            mat-icon-button
+            (click)="toggleSearch()">
+
+            <mat-icon>
+
+              search
+
+            </mat-icon>
+
+          </button>
+
+          <input
+            *ngIf="showSearch"
+            type="text"
+            [(ngModel)]="searchText"
+            placeholder="Search modules..."
+            class="search-input">
+
+        </div>
+
+        <!-- Profile -->
+
+        <button
+          mat-icon-button
+          (click)="goToProfile()">
+
+          <mat-icon>
+
+            account_circle
+
+          </mat-icon>
+
+        </button>
+
+      </div>
+
+    </header>
+
+    <!-- Welcome Card -->
+
+    <section class="welcome-card">
+
+      <h2>
+
+        {{ welcomeTitle }}
+
+      </h2>
+
+      <p>
+
+        {{ welcomeMessage }}
+
+      </p>
+
+    </section>
+
+    <!-- Dashboard Cards -->
+
+    <section class="cards">
+
+      <div
+        class="card"
+        *ngFor="let item of filteredItems"
+        (click)="openModule(item.title)">
+
+        <mat-icon>
+
+          {{ item.icon }}
+
+        </mat-icon>
+
+        <h3>
+
+          {{ item.title }}
+
+        </h3>
+
+        <p>
+
+          Click to open {{ item.title }}
+
+        </p>
+
+      </div>
+
+      <div
+        class="no-results"
+        *ngIf="filteredItems.length === 0">
+
+        <mat-icon>
+
+          search_off
+
+        </mat-icon>
+
+        <h3>
+
+          No module found
+
+        </h3>
+
+        <p>
+
+          Try another keyword.
+
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

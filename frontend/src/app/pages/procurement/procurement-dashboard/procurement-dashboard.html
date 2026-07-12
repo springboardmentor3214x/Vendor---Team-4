@@ -1,0 +1,217 @@
+<div class="dashboard-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Procurement Dashboard</h1>
+
+      <p>
+
+        Manage procurement activities and monitor purchase requests.
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Statistics -->
+
+  <div class="stats-container">
+
+    <mat-card class="stat-card total">
+
+      <mat-icon>inventory_2</mat-icon>
+
+      <h2>{{ totalProcurements }}</h2>
+
+      <p>Total Procurements</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card pending">
+
+      <mat-icon>schedule</mat-icon>
+
+      <h2>{{ pending }}</h2>
+
+      <p>Pending Requests</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card approved">
+
+      <mat-icon>check_circle</mat-icon>
+
+      <h2>{{ approved }}</h2>
+
+      <p>Approved Requests</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card completed">
+
+      <mat-icon>task_alt</mat-icon>
+
+      <h2>{{ completed }}</h2>
+
+      <p>Completed Orders</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Quick Actions -->
+
+  <div class="action-grid">
+
+    <mat-card
+      class="action-card"
+      (click)="procurementList()">
+
+      <mat-icon>
+
+        list_alt
+
+      </mat-icon>
+
+      <h3>Procurement List</h3>
+
+      <p>
+
+        View and manage procurement requests.
+
+      </p>
+
+    </mat-card>
+
+    <mat-card
+      class="action-card"
+      (click)="addProcurement()">
+
+      <mat-icon>
+
+        add_box
+
+      </mat-icon>
+
+      <h3>Add Procurement</h3>
+
+      <p>
+
+        Create a new procurement request.
+
+      </p>
+
+    </mat-card>
+
+    <mat-card
+      class="action-card"
+      (click)="purchaseOrders()">
+
+      <mat-icon>
+
+        shopping_cart
+
+      </mat-icon>
+
+      <h3>Purchase Orders</h3>
+
+      <p>
+
+        View purchase orders.
+
+      </p>
+
+    </mat-card>
+
+    <mat-card
+      class="action-card"
+      (click)="tracking()">
+
+      <mat-icon>
+
+        local_shipping
+
+      </mat-icon>
+
+      <h3>Procurement Tracking</h3>
+
+      <p>
+
+        Track procurement progress.
+
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Recent Activity -->
+
+  <mat-card class="activity-card">
+
+    <h2>
+
+      Recent Procurement Activity
+
+    </h2>
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>Request ID</th>
+
+          <th>Item</th>
+
+          <th>Status</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let activity of recentActivities">
+
+          <td>
+
+            {{ activity.id }}
+
+          </td>
+
+          <td>
+
+            {{ activity.item }}
+
+          </td>
+
+          <td>
+
+            <span
+              class="status"
+              [class.pending]="activity.status==='Pending'"
+              [class.approved]="activity.status==='Approved'"
+              [class.completed]="activity.status==='Completed'">
+
+              {{ activity.status }}
+
+            </span>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </mat-card>
+
+</div>

@@ -1,0 +1,308 @@
+/* ===========================
+   Global
+=========================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f7fb;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===========================
+   Sidebar
+=========================== */
+
+.sidebar {
+  width: 270px;
+  background: #1e293b;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 25px 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.logo mat-icon {
+  color: #60a5fa;
+  font-size: 34px;
+  width: 34px;
+  height: 34px;
+}
+
+.logo h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar li:hover {
+  background: #334155;
+}
+
+.sidebar li mat-icon {
+  color: #60a5fa;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ===========================
+   Main Content
+=========================== */
+
+.main-content {
+  flex: 1;
+  padding: 35px;
+}
+
+/* ===========================
+   Header
+=========================== */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.topbar h1 {
+  font-size: 30px;
+  color: #1e293b;
+}
+
+.topbar p {
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.top-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.top-icons button {
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+/* ===========================
+   Search
+=========================== */
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input {
+  width: 220px;
+  height: 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  padding: 0 15px;
+  outline: none;
+  transition: .3s;
+}
+
+.search-input:focus {
+  border-color: #2563eb;
+}
+
+/* ===========================
+   Notification Panel
+=========================== */
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-panel {
+  position: absolute;
+  right: 0;
+  top: 55px;
+  width: 320px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  z-index: 999;
+  overflow: hidden;
+}
+
+.notification-panel h4 {
+  padding: 15px;
+  background: #2563eb;
+  color: white;
+}
+
+.notification-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background: #f5f7fb;
+}
+
+/* ===========================
+   Welcome Card
+=========================== */
+
+.welcome-card {
+  background: linear-gradient(135deg,#2563eb,#1d4ed8);
+  color: white;
+  border-radius: 20px;
+  padding: 35px;
+  margin-bottom: 35px;
+}
+
+.welcome-card h2 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.welcome-card p {
+  line-height: 1.7;
+}
+
+/* ===========================
+   Cards
+=========================== */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+  gap: 25px;
+}
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: .25s;
+  box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+}
+
+.card mat-icon {
+  color: #2563eb;
+  font-size: 55px;
+  width: 55px;
+  height: 55px;
+  margin-bottom: 15px;
+}
+
+.card h3 {
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ===========================
+   Empty Search
+=========================== */
+
+.no-results {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 60px;
+  color: #64748b;
+}
+
+.no-results mat-icon {
+  font-size: 70px;
+  width: 70px;
+  height: 70px;
+  margin-bottom: 15px;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width:900px){
+
+  .dashboard-container{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+  }
+
+  .search-input{
+    width:160px;
+  }
+
+}
+
+@media (max-width:600px){
+
+  .main-content{
+    padding:20px;
+  }
+
+  .topbar h1{
+    font-size:24px;
+  }
+
+  .welcome-card h2{
+    font-size:24px;
+  }
+
+}

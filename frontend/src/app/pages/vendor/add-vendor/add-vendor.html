@@ -1,0 +1,461 @@
+<div class="vendor-form-container">
+
+  <div class="page-header">
+
+    <h1>Add Vendor</h1>
+
+    <p>Register a new vendor in the Vendor Reliability Intelligence Platform.</p>
+
+  </div>
+
+  <form
+    [formGroup]="vendorForm"
+    (ngSubmit)="onSubmit()">
+
+    <!-- ================= Company Information ================= -->
+
+    <div class="section">
+
+      <h2>Company Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Company Name</mat-label>
+
+          <input
+            matInput
+            formControlName="companyName">
+
+          <mat-error *ngIf="vendorForm.get('companyName')?.hasError('required')">
+
+            Company Name is required
+
+          </mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Vendor Category</mat-label>
+
+          <mat-select formControlName="vendorCategory">
+
+            <mat-option value="IT">IT</mat-option>
+
+            <mat-option value="Manufacturing">Manufacturing</mat-option>
+
+            <mat-option value="Healthcare">Healthcare</mat-option>
+
+            <mat-option value="Logistics">Logistics</mat-option>
+
+            <mat-option value="Software">Software</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Contact Person</mat-label>
+
+          <input
+            matInput
+            formControlName="contactPerson">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Designation</mat-label>
+
+          <input
+            matInput
+            formControlName="designation">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Contact Details ================= -->
+
+    <div class="section">
+
+      <h2>Contact Details</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Email Address</mat-label>
+
+          <input
+            matInput
+            type="email"
+            formControlName="email">
+
+          <mat-error *ngIf="vendorForm.get('email')?.hasError('email')">
+
+            Enter a valid email
+
+          </mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Phone Number</mat-label>
+
+          <input
+            matInput
+            formControlName="phone">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Alternate Phone</mat-label>
+
+          <input
+            matInput
+            formControlName="alternatePhone">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Company Details ================= -->
+
+    <div class="section">
+
+      <h2>Company Details</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>GST Number</mat-label>
+
+          <input
+            matInput
+            formControlName="gstNumber">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>PAN Number</mat-label>
+
+          <input
+            matInput
+            formControlName="panNumber">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Company Registration Number</mat-label>
+
+          <input
+            matInput
+            formControlName="registrationNumber">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Address ================= -->
+
+    <div class="section">
+
+      <h2>Address</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Address Line 1</mat-label>
+
+          <input
+            matInput
+            formControlName="addressLine1">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Address Line 2</mat-label>
+
+          <input
+            matInput
+            formControlName="addressLine2">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>City</mat-label>
+
+          <input
+            matInput
+            formControlName="city">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>State</mat-label>
+
+          <input
+            matInput
+            formControlName="state">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Country</mat-label>
+
+          <input
+            matInput
+            formControlName="country">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Pincode</mat-label>
+
+          <input
+            matInput
+            formControlName="pincode">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+        <!-- ================= Other Information ================= -->
+
+    <div class="section">
+
+      <h2>Other Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Website</mat-label>
+
+          <input
+            matInput
+            formControlName="website"
+            placeholder="https://example.com">
+
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          class="full-width">
+
+          <mat-label>Description</mat-label>
+
+          <textarea
+            matInput
+            rows="4"
+            formControlName="description">
+
+          </textarea>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Bank Details ================= -->
+
+    <div class="section">
+
+      <h2>Bank Details</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Bank Account Number</mat-label>
+
+          <input
+            matInput
+            formControlName="accountNumber">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>IFSC Code</mat-label>
+
+          <input
+            matInput
+            formControlName="ifscCode">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Payment Terms</mat-label>
+
+          <input
+            matInput
+            formControlName="paymentTerms">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Vendor Status</mat-label>
+
+          <mat-select formControlName="vendorStatus">
+
+            <mat-option value="Active">
+
+              Active
+
+            </mat-option>
+
+            <mat-option value="Pending">
+
+              Pending
+
+            </mat-option>
+
+            <mat-option value="Inactive">
+
+              Inactive
+
+            </mat-option>
+
+            <mat-option value="Suspended">
+
+              Suspended
+
+            </mat-option>
+
+            <mat-option value="Rejected">
+
+              Rejected
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Documents ================= -->
+
+    <div class="section">
+
+      <h2>Vendor Documents</h2>
+
+      <div class="upload-box">
+
+        <mat-icon>
+
+          upload_file
+
+        </mat-icon>
+
+        <p>
+
+          Upload Vendor Documents
+
+        </p>
+
+        <br>
+
+        <label for="vendorFiles">
+
+          Choose Files
+
+        </label>
+
+        <input
+          id="vendorFiles"
+          type="file"
+          multiple
+          (change)="onFileSelected($event)">
+
+      </div>
+
+      <div
+        class="file-list"
+        *ngIf="uploadedFiles.length">
+
+        <div
+          class="file-item"
+          *ngFor="let file of uploadedFiles; let i=index">
+
+          <span>
+
+            {{ file }}
+
+          </span>
+
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            (click)="removeFile(i)">
+
+            <mat-icon>
+
+              delete
+
+            </mat-icon>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Buttons ================= -->
+
+    <div class="button-group">
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="cancel()">
+
+        Cancel
+
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit">
+
+        Save Vendor
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>

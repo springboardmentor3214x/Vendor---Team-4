@@ -1,0 +1,78 @@
+<div class="notifications-container">
+
+  <div class="page-header">
+
+    <h1>Notifications</h1>
+
+    <p>
+
+      View your latest system notifications.
+
+    </p>
+
+  </div>
+
+  <div
+    class="notification-card"
+    *ngFor="let notification of notifications; let i = index">
+
+    <div class="notification-info">
+
+      <div class="title-row">
+
+        <h2>
+
+          {{ notification.title }}
+
+        </h2>
+
+        <span
+          class="status"
+          [class.read]="notification.read">
+
+          {{ notification.read ? 'Read' : 'Unread' }}
+
+        </span>
+
+      </div>
+
+      <p>
+
+        {{ notification.message }}
+
+      </p>
+
+      <small>
+
+        {{ notification.time }}
+
+      </small>
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="!notification.read"
+        (click)="markAsRead(notification)">
+
+        Mark Read
+
+      </button>
+
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="deleteNotification(i)">
+
+        Delete
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

@@ -7,10 +7,21 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    full_name = Column(String)
+    full_name = Column(String, nullable=False)
 
-    email = Column(String, unique=True, index=True)
+    employee_id = Column(String, nullable=True)
 
-    hashed_password = Column(String)
+    company_name = Column(String, nullable=True)
 
-    role = Column(String)
+    email = Column(
+        String,
+        unique=True,
+        index=True,
+        nullable=False
+    )
+
+    mobile_number = Column(String, nullable=False)
+
+    hashed_password = Column(String, nullable=False)
+
+    role = Column(String, nullable=False)

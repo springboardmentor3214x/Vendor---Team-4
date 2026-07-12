@@ -1,18 +1,31 @@
 from datetime import datetime, timedelta
+
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+
 from sqlalchemy.orm import Session
 
-from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.config import (
+    SECRET_KEY,
+    ALGORITHM,
+    ACCESS_TOKEN_EXPIRE_MINUTES
+)
+
 from app.database import get_db
 from app.models.user import User
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto"
+)
+
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/auth/login"
+)
 
 
 def hash_password(password):
@@ -20,7 +33,10 @@ def hash_password(password):
 
 
 def verify_password(password, hashed):
-    return pwd_context.verify(password, hashed)
+    return pwd_context.verify(
+        password,
+        hashed
+    )
 
 
 def create_access_token(data: dict):
@@ -31,13 +47,64 @@ def create_access_token(data: dict):
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
-    to_encode.update({"exp": expire})
+    to_encode.update({
+        "exp": expire
+    })
 
     return jwt.encode(
         to_encode,
         SECRET_KEY,
         algorithm=ALGORITHM
     )
+
+
+def create_password_reset_token(
+    email: str
+):
+
+    expire = datetime.utcnow() + timedelta(
+        minutes=15
+    )
+
+    data = {
+        "sub": email,
+        "purpose": "password_reset",
+        "exp": expire
+    }
+
+    return jwt.encode(
+        data,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+
+
+def verify_password_reset_token(
+    token: str
+):
+
+    try:
+
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        email = payload.get("sub")
+
+        purpose = payload.get("purpose")
+
+        if (
+            email is None
+            or purpose != "password_reset"
+        ):
+            return None
+
+        return email
+
+    except JWTError:
+        return None
 
 
 def get_current_user(
@@ -66,7 +133,9 @@ def get_current_user(
     except JWTError:
         raise credentials_exception
 
-    user = db.query(User).filter(User.email == email).first()
+    user = db.query(User).filter(
+        User.email == email
+    ).first()
 
     if user is None:
         raise credentials_exception
