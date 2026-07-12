@@ -1,0 +1,193 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.vendor-container {
+  padding: 30px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+/* ================= Header ================= */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  h1 {
+    font-size: 34px;
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  p {
+    color: #64748b;
+    margin-top: 6px;
+  }
+}
+
+/* ================= Statistics ================= */
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.08);
+
+  h2 {
+    font-size: 34px;
+    color: #2563eb;
+  }
+
+  p {
+    margin-top: 10px;
+    color: #64748b;
+  }
+}
+
+.approved h2 {
+  color: #16a34a;
+}
+
+.pending h2 {
+  color: #f59e0b;
+}
+
+.rejected h2 {
+  color: #dc2626;
+}
+
+/* ================= Filters ================= */
+
+.filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+/* ================= Table ================= */
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+td,
+th {
+  white-space: nowrap;
+}
+
+.mat-mdc-header-row {
+  background: #f8fafc;
+}
+
+.mat-mdc-row:hover {
+  background: #f9fafb;
+}
+
+/* ================= Status ================= */
+
+.status-badge,
+.approval-badge {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.inactive {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ================= Buttons ================= */
+
+button[mat-icon-button] {
+  margin-right: 6px;
+}
+
+/* ================= Paginator ================= */
+
+mat-paginator {
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ================= Responsive ================= */
+
+@media (max-width: 992px) {
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .vendor-container {
+    padding: 15px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 1200px;
+  }
+
+}

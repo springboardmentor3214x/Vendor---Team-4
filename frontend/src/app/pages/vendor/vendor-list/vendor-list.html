@@ -1,0 +1,487 @@
+<div class="vendor-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Vendor Management</h1>
+
+      <p>Manage all registered vendors efficiently.</p>
+
+    </div>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="addVendor()">
+
+      <mat-icon>add</mat-icon>
+
+      Add Vendor
+
+    </button>
+
+  </div>
+
+  <!-- Statistics -->
+
+  <div class="stats-container">
+
+    <div class="stat-card">
+
+      <h2>{{ vendors.length }}</h2>
+
+      <p>Total Vendors</p>
+
+    </div>
+
+    <div class="stat-card approved">
+
+      <h2>
+
+        {{ vendors.filter(v => v.approvalStatus === 'Approved').length }}
+
+      </h2>
+
+      <p>Approved</p>
+
+    </div>
+
+    <div class="stat-card pending">
+
+      <h2>
+
+        {{ vendors.filter(v => v.approvalStatus === 'Pending').length }}
+
+      </h2>
+
+      <p>Pending</p>
+
+    </div>
+
+    <div class="stat-card rejected">
+
+      <h2>
+
+        {{ vendors.filter(v => v.approvalStatus === 'Rejected').length }}
+
+      </h2>
+
+      <p>Rejected</p>
+
+    </div>
+
+  </div>
+
+  <!-- Filters -->
+
+  <div class="filters">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Search Vendor</mat-label>
+
+      <input
+        matInput
+        [(ngModel)]="searchText"
+        (input)="onSearchChange()"
+        placeholder="Vendor ID / Company / Contact">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Category</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedCategory"
+        (selectionChange)="onFilterChange()">
+
+        <mat-option value="">
+
+          All
+
+        </mat-option>
+
+        <mat-option value="IT">
+
+          IT
+
+        </mat-option>
+
+        <mat-option value="Manufacturing">
+
+          Manufacturing
+
+        </mat-option>
+
+        <mat-option value="Software">
+
+          Software
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Status</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedStatus"
+        (selectionChange)="onFilterChange()">
+
+        <mat-option value="">
+
+          All
+
+        </mat-option>
+
+        <mat-option value="Active">
+
+          Active
+
+        </mat-option>
+
+        <mat-option value="Pending">
+
+          Pending
+
+        </mat-option>
+
+        <mat-option value="Inactive">
+
+          Inactive
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+  </div>
+
+  <!-- Vendor Table -->
+
+  <div class="table-container">
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort>
+
+      <!-- Vendor ID -->
+
+      <ng-container matColumnDef="vendorId">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Vendor ID
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          {{ vendor.vendorId }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Company -->
+
+      <ng-container matColumnDef="companyName">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Company Name
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          {{ vendor.companyName }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Category -->
+
+      <ng-container matColumnDef="category">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Category
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          {{ vendor.category }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Contact Person -->
+
+      <ng-container matColumnDef="contactPerson">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Contact Person
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          {{ vendor.contactPerson }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Email -->
+
+      <ng-container matColumnDef="email">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Email
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          {{ vendor.email }}
+
+        </td>
+
+      </ng-container>
+            <!-- Phone -->
+
+      <ng-container matColumnDef="phone">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Phone
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          {{ vendor.phone }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Status -->
+
+      <ng-container matColumnDef="status">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Status
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          <span
+            class="status-badge"
+            [ngClass]="{
+              'active': vendor.status === 'Active',
+              'pending': vendor.status === 'Pending',
+              'inactive': vendor.status === 'Inactive'
+            }">
+
+            {{ vendor.status }}
+
+          </span>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Approval Status -->
+
+      <ng-container matColumnDef="approvalStatus">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Approval Status
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          <span
+            class="approval-badge"
+            [ngClass]="{
+              'approved': vendor.approvalStatus === 'Approved',
+              'pending': vendor.approvalStatus === 'Pending',
+              'rejected': vendor.approvalStatus === 'Rejected'
+            }">
+
+            {{ vendor.approvalStatus }}
+
+          </span>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Actions -->
+
+      <ng-container matColumnDef="actions">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Actions
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let vendor">
+
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="viewVendor(vendor.vendorId)"
+            matTooltip="View">
+
+            <mat-icon>
+
+              visibility
+
+            </mat-icon>
+
+          </button>
+
+          <button
+            mat-icon-button
+            color="accent"
+            (click)="editVendor(vendor.vendorId)"
+            matTooltip="Edit">
+
+            <mat-icon>
+
+              edit
+
+            </mat-icon>
+
+          </button>
+
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="deleteVendor(vendor.vendorId)"
+            matTooltip="Delete">
+
+            <mat-icon>
+
+              delete
+
+            </mat-icon>
+
+          </button>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Header Row -->
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+
+      </tr>
+
+      <!-- Data Row -->
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+
+      </tr>
+
+      <!-- No Data -->
+
+      <tr
+        class="mat-row"
+        *matNoDataRow>
+
+        <td
+          class="mat-cell"
+          colspan="9">
+
+          No vendors found.
+
+        </td>
+
+      </tr>
+
+    </table>
+
+    <!-- Pagination -->
+
+    <mat-paginator
+      [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons>
+
+    </mat-paginator>
+
+  </div>
+
+</div>

@@ -1,0 +1,187 @@
+/* ---------- Global ---------- */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---------- Page ---------- */
+
+.profile-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+}
+
+/* ---------- Card ---------- */
+
+.profile-card {
+  width: 100%;
+  max-width: 700px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Header ---------- */
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.profile-header h2 {
+  font-size: 34px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 15px;
+}
+
+.profile-header p {
+  color: #64748b;
+  margin: 10px 0 25px;
+  line-height: 1.6;
+}
+
+/* ---------- Avatar ---------- */
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  margin: auto;
+  border-radius: 50%;
+  background: #e8f0fe;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-avatar mat-icon {
+  width: 80px;
+  height: 80px;
+  font-size: 80px;
+  color: #2563eb;
+}
+
+/* ---------- Sections ---------- */
+
+.section {
+  margin-top: 30px;
+}
+
+.section h3 {
+  font-size: 20px;
+  color: #1e293b;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* ---------- Form ---------- */
+
+.full-width {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+/* ---------- Role ---------- */
+
+.role-box {
+  margin: 20px 0;
+}
+
+.role-title {
+  display: block;
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.role-badge {
+  display: inline-block;
+  background: #dbeafe;
+  color: #2563eb;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ---------- Upload Button ---------- */
+
+.profile-header button {
+  margin-top: 10px;
+}
+
+/* ---------- Save Button ---------- */
+
+.save-btn {
+  width: 100%;
+  height: 50px;
+  margin-top: 35px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* ---------- Material ---------- */
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  border-radius: 10px;
+}
+
+::ng-deep .mat-mdc-form-field-error {
+  font-size: 13px;
+}
+
+button[mat-icon-button] mat-icon {
+  color: #64748b;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 768px) {
+
+  .profile-card {
+    padding: 25px;
+  }
+
+  .profile-header h2 {
+    font-size: 28px;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-avatar mat-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 70px;
+  }
+
+}
+.header-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.logout-btn {
+  color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
