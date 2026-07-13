@@ -1,0 +1,42 @@
+# .gitignore for VRIP Backend
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+ENV/
+
+# Environment Variables
+.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Docker
+docker-compose.override.yml

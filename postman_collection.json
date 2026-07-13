@@ -1,0 +1,641 @@
+{
+  "info": {
+    "name": "VRIP - Authentication & User Management API",
+    "description": "Complete API collection for Module 1: User Authentication & Role Management of the Vendor Reliability Intelligence Platform.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "API Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"username\": \"johndoe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecureP@ss1\",\n  \"phone_number\": \"+1-234-567-8900\",\n  \"company_name\": \"Acme Corp\",\n  \"designation\": \"Procurement Lead\",\n  \"role_name\": \"Vendor\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data) {",
+                  "    pm.collectionVariables.set('access_token', jsonData.data.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.data.refresh_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "admin@vrip.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "Admin@12345",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login (User)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data) {",
+                  "    pm.collectionVariables.set('access_token', jsonData.data.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.data.refresh_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "johndoe",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "SecureP@ss1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User (Me)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Updated\",\n  \"phone_number\": \"+1-999-888-7777\",\n  \"company_name\": \"New Company Inc\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"SecureP@ss1\",\n  \"new_password\": \"NewSecureP@ss2\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "change-password"]
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"paste-reset-token-here\",\n  \"new_password\": \"ResetP@ssw0rd\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "reset-password"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data) {",
+                  "    pm.collectionVariables.set('access_token', jsonData.data.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.data.refresh_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh-token",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users?page=1&per_page=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "20"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Updated\",\n  \"last_name\": \"User\",\n  \"role_name\": \"Procurement Manager\",\n  \"is_verified\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "2"]
+            }
+          }
+        },
+        {
+          "name": "Delete User (Soft Delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "2"]
+            }
+          }
+        },
+        {
+          "name": "Activate User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/2/activate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "2", "activate"]
+            }
+          }
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/2/deactivate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "2", "deactivate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "List All Roles",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/roles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles"]
+            }
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Quality Inspector\",\n  \"description\": \"Inspects vendor deliveries for quality compliance.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/roles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles"]
+            }
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Quality Inspector\",\n  \"description\": \"Updated description for quality inspector role.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/roles/7",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles", "7"]
+            }
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/roles/7",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles", "7"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
