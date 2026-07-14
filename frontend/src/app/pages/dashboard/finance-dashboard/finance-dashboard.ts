@@ -76,21 +76,52 @@ export class FinanceDashboard {
     this.showSearch = !this.showSearch;
   }
 
-  toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
-  }
+ toggleNotifications() {
+
+  this.router.navigate(['/notifications']);
+
+}
 
   goToProfile() {
     this.router.navigate(['/profile']);
   }
 
   logout() {
-    // JWT removal will be added later
-    this.router.navigate(['/login']);
-  }
+
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+
+  this.router.navigate(['/login']);
+
+}
 
   openModule(moduleName: string) {
-   
+
+  switch (moduleName) {
+
+    case 'Purchase Orders':
+      this.router.navigate(['/purchase-orders']);
+      break;
+
+    case 'Invoice Management':
+      alert(
+        
+      );
+      break;
+
+    case 'Payment Details':
+      alert(
+        
+      );
+      break;
+
+    default:
+      alert(
+        
+      );
+
   }
+
+}
 
 }

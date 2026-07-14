@@ -79,22 +79,58 @@ export class VendorDashboard {
   toggleSearch() {
     this.showSearch = !this.showSearch;
   }
+toggleNotifications() {
 
-  toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
-  }
+  this.router.navigate(['/notifications']);
+
+}
 
   goToProfile() {
     this.router.navigate(['/profile']);
   }
 
-  logout() {
-    // JWT token removal will be implemented after backend integration
-    this.router.navigate(['/login']);
-  }
+logout() {
+
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+
+  this.router.navigate(['/login']);
+
+}
 
   openModule(moduleName: string) {
-    alert(`${moduleName}\n\nThis module will be implemented in the next milestone.`);
+
+  switch (moduleName) {
+
+    case 'Vendor Profile':
+      this.router.navigate(['/profile']);
+      break;
+
+    case 'Orders':
+      alert(
+       
+      );
+      break;
+
+    case 'Contracts':
+      alert(
+      
+      );
+      break;
+
+    case 'Communication':
+      alert(
+      
+      );
+      break;
+
+    default:
+      alert(
+        
+      );
+
   }
+
+}
 
 }

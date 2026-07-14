@@ -81,20 +81,53 @@ export class ProcurementDashboard {
   }
 
   toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
-  }
+
+  this.router.navigate(['/notifications']);
+
+}
 
   goToProfile() {
     this.router.navigate(['/profile']);
   }
 
-  logout() {
-    // JWT removal will be added later
-    this.router.navigate(['/login']);
-  }
+logout() {
+
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+
+  this.router.navigate(['/login']);
+
+}
 
   openModule(moduleName: string) {
-    alert(`${moduleName}\n\nThis module will be implemented in the next milestone.`);
+
+  switch (moduleName) {
+
+    case 'Vendor Management':
+      this.router.navigate(['/vendor-management']);
+      break;
+
+    case 'Procurement':
+      this.router.navigate(['/procurement-management']);
+      break;
+
+    case 'Purchase Orders':
+      this.router.navigate(['/purchase-orders']);
+      break;
+
+    case 'Contracts':
+      alert(
+        
+      );
+      break;
+
+    default:
+      alert(
+      
+      );
+
   }
+
+}
 
 }

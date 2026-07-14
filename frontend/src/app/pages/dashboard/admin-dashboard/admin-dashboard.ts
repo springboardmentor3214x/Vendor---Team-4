@@ -86,9 +86,9 @@ export class AdminDashboard {
 
   toggleNotifications() {
 
-    this.showNotifications = !this.showNotifications;
+  this.router.navigate(['/notifications']);
 
-  }
+}
 
   goToProfile() {
 
@@ -96,16 +96,49 @@ export class AdminDashboard {
 
   }
 
-  logout() {
+ logout() {
 
-    this.router.navigate(['/login']);
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+
+  this.router.navigate(['/login']);
+
+}
+
+openModule(name: string) {
+
+  switch (name) {
+
+    case 'Vendor Management':
+      this.router.navigate(['/vendor-management']);
+      break;
+
+    case 'Procurement':
+      this.router.navigate(['/procurement-management']);
+      break;
+
+    case 'Reports':
+      this.router.navigate(['/reports']);
+      break;
+
+    case 'Analytics':
+      this.router.navigate(['/analytics']);
+      break;
+
+    case 'Notifications':
+      this.router.navigate(['/notifications']);
+      break;
+      case 'User Management':
+      alert(
+     
+      );
+      break;
+
+    default:
+      alert(
+     
+      );
 
   }
-
-  openModule(name: string) {
-
-    alert(`${name}\n\nThis module will be implemented in the next milestone.`);
-
-  }
-
+}
 }
