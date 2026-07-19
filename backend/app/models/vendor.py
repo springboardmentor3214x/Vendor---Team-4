@@ -9,7 +9,7 @@ from sqlalchemy import (
 )
 
 from sqlalchemy.sql import func
-
+from app.models.vendor_document import VendorDocument
 from app.database import Base
 
 

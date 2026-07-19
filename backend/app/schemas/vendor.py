@@ -169,3 +169,44 @@ class VendorResponse(BaseModel):
 class VendorApproval(BaseModel):
 
     approval_status: ApprovalStatus
+class VendorListResponse(BaseModel):
+
+    total: int
+
+    page: int
+
+    size: int
+
+    total_pages: int
+
+    items: list[VendorResponse]
+class VendorApprovalResponse(BaseModel):
+    message: str
+    vendor_id: str
+    approval_status: str
+    vendor_status: str
+class VendorDashboardResponse(BaseModel):
+    total_vendors: int
+    pending_vendors: int
+    approved_vendors: int
+    rejected_vendors: int
+    active_vendors: int
+    inactive_vendors: int
+    suspended_vendors: int
+class VendorDocumentResponse(BaseModel):
+    message: str
+    file_name: str
+    document_type: str
+
+
+class VendorDocumentListResponse(BaseModel):
+    id: int
+    document_type: str
+    file_name: str
+    file_path: str
+    file_size: int
+    file_type: str
+    uploaded_at: datetime
+
+    class Config:
+        from_attributes = True

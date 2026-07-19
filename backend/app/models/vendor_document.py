@@ -1,64 +1,49 @@
-from enum import Enum
-from sqlalchemy.orm import relationship
-
 from sqlalchemy import (
     Column,
     Integer,
     String,
     DateTime,
-    ForeignKey,
-    Enum as SQLEnum
+    ForeignKey
 )
 
-from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
+from datetime import datetime
 
 from app.database import Base
 
 
-class DocumentType(str, Enum):
-    GST_CERTIFICATE = "GST Certificate"
-    PAN_CARD = "PAN Card"
-    COMPANY_REGISTRATION = "Company Registration Certificate"
-    ISO_CERTIFICATE = "ISO Certificate"
-    OTHER = "Other"
-
-
 class VendorDocument(Base):
-
     __tablename__ = "vendor_documents"
 
-    id = Column(
-        Integer,
-        primary_key=True,
-        index=True
-    )
+    id = Column(Integer, primary_key=True, index=True)
 
     vendor_id = Column(
         Integer,
-        ForeignKey("vendors.id"),
+        ForeignKey("vendors.id", ondelete="CASCADE"),
         nullable=False
     )
 
-    document_type = Column(
-        SQLEnum(DocumentType),
-        nullable=False
-    )
+    document_type = Column(String(100), nullable=False)
 
-    file_name = Column(
-        String,
-        nullable=False
-    )
+    file_name = Column(String(255), nullable=False)
 
-    file_path = Column(
-        String,
-        nullable=False
+    file_path = Column(String(500), nullable=False)
+
+    file_size = Column(Integer)
+
+    file_type = Column(String(100))
+
+    uploaded_by = Column(
+        Integer,
+        ForeignKey("users.id")
     )
 
     uploaded_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now()
+        DateTime,
+        default=datetime.utcnow
     )
+
     vendor = relationship(
-    "Vendor",
-    back_populates="documents"
+        "Vendor",
+        back_populates="documents"
     )
