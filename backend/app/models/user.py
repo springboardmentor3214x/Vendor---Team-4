@@ -1,4 +1,6 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+
 from app.database import Base
 
 
@@ -25,3 +27,17 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
 
     role = Column(String, nullable=False)
+
+    # Requests created by this user
+    procurement_requests = relationship(
+        "ProcurementRequest",
+        foreign_keys="ProcurementRequest.requested_by",
+        back_populates="requester"
+    )
+
+    # Requests approved by this user
+    approved_procurements = relationship(
+        "ProcurementRequest",
+        foreign_keys="ProcurementRequest.approved_by",
+        back_populates="approver"
+    )

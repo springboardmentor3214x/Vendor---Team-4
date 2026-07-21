@@ -190,3 +190,15 @@ class Vendor(Base):
     back_populates="vendor",
     cascade="all, delete-orphan"
     )
+    procurement_requests = relationship(
+    "ProcurementRequest",
+    back_populates="vendor"
+    )
+    purchase_orders = relationship(
+    "PurchaseOrder",
+    back_populates="vendor"
+    )
+    invoices = relationship(
+    "Invoice",
+    back_populates="vendor"
+    )
