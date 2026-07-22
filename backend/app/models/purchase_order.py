@@ -118,3 +118,25 @@ class PurchaseOrder(Base):
     "Invoice",
     back_populates="purchase_order"
     )
+    delivery_performance = relationship(
+    "DeliveryPerformance",
+    back_populates="purchase_order",
+    uselist=False
+    )
+
+    product_quality = relationship(
+    "ProductQualityEvaluation",
+    back_populates="purchase_order",
+    uselist=False
+    )
+
+    communication_logs = relationship(
+    "CommunicationLog",
+    back_populates="purchase_order"
+    )
+
+    service_rating = relationship(
+    "ServiceRating",
+    back_populates="purchase_order",
+    uselist=False
+    )

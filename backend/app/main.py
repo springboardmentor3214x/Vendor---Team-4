@@ -11,6 +11,15 @@ from app.routers import purchase_order
 from app.routers import order_tracking
 from app.models.invoice import Invoice
 from app.routers import invoice
+from app.models.delivery_performance import DeliveryPerformance
+from app.routers import delivery_performance
+from app.models.product_quality import ProductQualityEvaluation
+from app.routers import product_quality
+from app.models.communication_log import CommunicationLog
+from app.routers import communication_log
+from app.models.service_rating import ServiceRating
+from app.routers import service_rating
+from app.routers import vendor_performance
 
 from app.database import Base, engine
 from app.routers import auth
@@ -39,6 +48,11 @@ app.include_router(procurement.router)
 app.include_router(purchase_order.router)
 app.include_router(order_tracking.router)
 app.include_router(invoice.router)
+app.include_router(delivery_performance.router)
+app.include_router(product_quality.router)
+app.include_router(communication_log.router)
+app.include_router(service_rating.router)
+app.include_router(vendor_performance.router)
 
 @app.get("/")
 def home():

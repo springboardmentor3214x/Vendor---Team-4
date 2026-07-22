@@ -202,3 +202,22 @@ class Vendor(Base):
     "Invoice",
     back_populates="vendor"
     )
+    delivery_performances = relationship(
+    "DeliveryPerformance",
+    back_populates="vendor"
+    )
+
+    product_quality_evaluations = relationship(
+    "ProductQualityEvaluation",
+    back_populates="vendor"
+    )
+
+    communication_logs = relationship(
+    "CommunicationLog",
+    back_populates="vendor"
+    )
+
+    service_ratings = relationship(
+    "ServiceRating",
+    back_populates="vendor"
+    )
