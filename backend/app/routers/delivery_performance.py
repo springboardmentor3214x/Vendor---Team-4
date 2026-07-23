@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.auth import get_current_user
-
+from app.services.vendor_performance_service import VendorPerformanceService
 from app.models.user import User
 from app.models.purchase_order import (
     PurchaseOrder,
@@ -84,5 +84,8 @@ def record_delivery(
     db.add(new_delivery)
     db.commit()
     db.refresh(new_delivery)
-
+    VendorPerformanceService.update_vendor_performance(
+        db,
+        new_delivery.vendor_id
+    )
     return new_delivery

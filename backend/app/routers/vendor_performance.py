@@ -13,6 +13,7 @@ from app.models.delivery_performance import (
     DeliveryStatus
 )
 from app.models.purchase_order import PurchaseOrder
+from app.services.vendor_performance_service import VendorPerformanceService
 
 from app.models.product_quality import ProductQualityEvaluation
 from app.models.communication_log import CommunicationLog
@@ -24,378 +25,56 @@ router = APIRouter(
     prefix="/vendor-performance",
     tags=["Vendor Performance"]
 )
-@router.get("/dashboard/summary", response_model=VendorDashboardResponse)
+@router.get(
+    "/dashboard/summary",
+    response_model=VendorDashboardResponse
+)
 def vendor_dashboard(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    vendors = db.query(Vendor).all()
 
-    if not vendors:
-        return VendorDashboardResponse(
-            total_vendors=0,
-            average_vendor_score=0,
-            best_vendor=None,
-            worst_vendor=None
-        )
+    dashboard = VendorPerformanceService.get_dashboard_summary(db)
 
-    vendor_scores = []
-    total_completed_orders = 0
-    delayed_deliveries = 0
-
-    all_delivery_scores = []
-    all_quality_scores = []
-    all_response_times = []
-    for vendor in vendors:
-
-        deliveries = db.query(DeliveryPerformance).filter(
-            DeliveryPerformance.vendor_id == vendor.id
-        ).all()
-
-        quality = db.query(ProductQualityEvaluation).filter(
-            ProductQualityEvaluation.vendor_id == vendor.id
-        ).all()
-
-        communication = db.query(CommunicationLog).filter(
-            CommunicationLog.vendor_id == vendor.id
-        ).all()
-
-        service = db.query(ServiceRating).filter(
-            ServiceRating.vendor_id == vendor.id
-        ).all()
-        total_completed_orders += len(deliveries)
-
-        delayed_deliveries += len(
-            [
-                d for d in deliveries
-                if d.delivery_status == DeliveryStatus.DELAYED
-            ]
-        )
-        on_time = (
-            len([
-                d for d in deliveries
-                if d.delivery_status != DeliveryStatus.DELAYED
-            ]) / len(deliveries) * 100
-            if deliveries else 0
-        )
-        all_delivery_scores.append(on_time)
-
-        quality_score = (
-            sum(
-                (
-                    q.material_quality +
-                    q.packaging_quality +
-                    q.quantity_accuracy +
-                    q.specification_compliance +
-                    (5 - q.product_defects)
-                ) / 5
-                for q in quality
-            ) / len(quality)
-            if quality else 0
-        )
-        all_quality_scores.append(quality_score)
-
-        response_time = (
-            sum(c.response_duration for c in communication)
-            / len(communication)
-            if communication else 0
-        )
-        if response_time:
-            all_response_times.append(response_time)
-
-        service_rating = (
-            sum(s.overall_service_rating for s in service)
-            / len(service)
-            if service else 0
-        )
-
-        overall = round(
-            (
-                on_time / 20 +
-                quality_score +
-                service_rating +
-                max(0, 5 - (response_time / 60))
-            ) / 4,
-            2
-        )
-
-        vendor_scores.append({
-            "name": vendor.company_name,
-            "score": overall
-        })
-
-    average_score = round(
-        sum(v["score"] for v in vendor_scores) / len(vendor_scores),
-        2
-    )
-
-    best_vendor = max(
-        vendor_scores,
-        key=lambda x: x["score"]
-    )
-
-    worst_vendor = min(
-        vendor_scores,
-        key=lambda x: x["score"]
-    )
-
-    average_delivery = round(
-        sum(all_delivery_scores) / len(all_delivery_scores),
-        2
-    ) if all_delivery_scores else 0
-
-    average_quality = round(
-        sum(all_quality_scores) / len(all_quality_scores),
-        2
-    ) if all_quality_scores else 0
-
-    average_response = round(
-        sum(all_response_times) / len(all_response_times),
-        2
-    ) if all_response_times else 0
-
-    return VendorDashboardResponse(
-    total_vendors=len(vendors),
-
-    total_completed_orders=total_completed_orders,
-    delayed_deliveries=delayed_deliveries,
-
-    average_delivery_performance=average_delivery,
-    average_quality_rating=average_quality,
-    average_response_time=average_response,
-
-    average_vendor_score=average_score,
-
-    best_vendor=best_vendor["name"],
-    worst_vendor=worst_vendor["name"]
-    )
-@router.get("/rankings", response_model=list[VendorRankingResponse])
+    return VendorDashboardResponse(**dashboard)
+@router.get("/rankings")
 def vendor_rankings(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    vendors = db.query(Vendor).all()
-
-    rankings = []
-
-    for vendor in vendors:
-
-        deliveries = db.query(DeliveryPerformance).filter(
-            DeliveryPerformance.vendor_id == vendor.id
-        ).all()
-
-        quality = db.query(ProductQualityEvaluation).filter(
-            ProductQualityEvaluation.vendor_id == vendor.id
-        ).all()
-
-        communications = db.query(CommunicationLog).filter(
-            CommunicationLog.vendor_id == vendor.id
-        ).all()
-
-        services = db.query(ServiceRating).filter(
-            ServiceRating.vendor_id == vendor.id
-        ).all()
-
-        on_time = (
-            len([
-                d for d in deliveries
-                if d.delivery_status != DeliveryStatus.DELAYED
-            ]) / len(deliveries) * 100
-            if deliveries else 0
-        )
-
-        quality_score = (
-            sum(
-                (
-                    q.material_quality +
-                    q.packaging_quality +
-                    q.quantity_accuracy +
-                    q.specification_compliance +
-                    (5 - q.product_defects)
-                ) / 5
-                for q in quality
-            ) / len(quality)
-            if quality else 0
-        )
-
-        response_time = (
-            sum(c.response_duration for c in communications)
-            / len(communications)
-            if communications else 0
-        )
-
-        service_rating = (
-            sum(s.overall_service_rating for s in services)
-            / len(services)
-            if services else 0
-        )
-
-        overall = round(
-            (
-                on_time / 20 +
-                quality_score +
-                service_rating +
-                max(0, 5 - (response_time / 60))
-            ) / 4,
-            2
-        )
-
-        rankings.append({
-            "vendor_id": vendor.id,
-            "vendor_name": vendor.company_name,
-            "vendor_category": getattr(vendor, "category", None),
-
-            "delivery_score": round(on_time / 20, 2),
-            "quality_score": round(quality_score, 2),
-
-            "communication_score": round(
-                max(0, 5 - (response_time / 60)),
-                2
-            ),
-
-            "service_rating": round(service_rating, 2),
-
-            "overall_vendor_score": overall
-        })
-
-    rankings.sort(
-        key=lambda x: x["overall_vendor_score"],
-        reverse=True
-    )
-
-    result = []
-
-    for index, vendor in enumerate(rankings, start=1):
-        result.append(
-            VendorRankingResponse(
-                rank=index,
-
-                vendor_id=vendor["vendor_id"],
-                vendor_name=vendor["vendor_name"],
-                vendor_category=vendor["vendor_category"],
-
-                delivery_score=vendor["delivery_score"],
-                quality_score=vendor["quality_score"],
-                communication_score=vendor["communication_score"],
-                service_rating=vendor["service_rating"],
-
-                overall_vendor_score=vendor["overall_vendor_score"]
-            )
-        )
-
-    return result
+    return VendorPerformanceService.get_rankings(db)
 @router.get("/{vendor_id}", response_model=VendorPerformanceResponse)
 def get_vendor_performance(
     vendor_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    vendor = db.query(Vendor).filter(Vendor.id == vendor_id).first()
+    performance = VendorPerformanceService.get_vendor_performance(
+        db,
+        vendor_id
+    )
 
-    if not vendor:
+    if not performance:
         raise HTTPException(
             status_code=404,
-            detail="Vendor not found."
+            detail="Vendor performance not found."
         )
 
-    deliveries = db.query(DeliveryPerformance).filter(
-        DeliveryPerformance.vendor_id == vendor_id
-    ).all()
-
-    quality = db.query(ProductQualityEvaluation).filter(
-        ProductQualityEvaluation.vendor_id == vendor_id
-    ).all()
-
-    communications = db.query(CommunicationLog).filter(
-        CommunicationLog.vendor_id == vendor_id
-    ).all()
-
-    services = db.query(ServiceRating).filter(
-        ServiceRating.vendor_id == vendor_id
-    ).all()
-
-    delayed_delivery_count = len([
-        d for d in deliveries
-        if d.delivery_status == DeliveryStatus.DELAYED
-    ])
-    
-    average_delay = (
-        sum(d.delay_days for d in deliveries) / len(deliveries)
-        if deliveries else 0
-    )
-
-    on_time = (
-        len([
-            d for d in deliveries
-            if d.delivery_status != DeliveryStatus.DELAYED
-        ]) / len(deliveries) * 100
-        if deliveries else 0
-    )
-
-    quality_score = (
-        sum(
-            (
-                q.material_quality +
-                q.packaging_quality +
-                q.quantity_accuracy +
-                q.specification_compliance +
-                (5 - q.product_defects)
-            ) / 5
-            for q in quality
-        ) / len(quality)
-        if quality else 0
-    )
-
-    response_time = (
-        sum(c.response_duration for c in communications) /
-        len(communications)
-        if communications else 0
-    )
-
-    service_rating = (
-        sum(s.overall_service_rating for s in services) /
-        len(services)
-        if services else 0
-    )
-
-    overall_score = round(
-        (
-            on_time / 20 +
-            quality_score +
-            service_rating +
-            max(0, 5 - (response_time / 60))
-        ) / 4,
-        2
-    )
-
-    completed_orders = len(deliveries)
-
-    total_orders = db.query(PurchaseOrder).filter(
-        PurchaseOrder.vendor_id == vendor_id
-    ).count()
-
-    order_completion_rate = round(
-        (completed_orders / total_orders) * 100,
-        2
-    ) if total_orders else 0
+    vendor = db.query(Vendor).filter(
+        Vendor.id == vendor_id
+    ).first()
 
     return VendorPerformanceResponse(
         vendor_id=vendor.id,
         vendor_name=vendor.company_name,
-
-        average_delivery_delay=round(average_delay, 2),
-        on_time_delivery_rate=round(on_time, 2),
-        delayed_delivery_count=delayed_delivery_count,
-
-        average_quality_score=round(quality_score, 2),
-
-        average_response_time=round(response_time, 2),
-
-        average_service_rating=round(service_rating, 2),
-
-        order_completion_rate=order_completion_rate,
-
-        overall_vendor_score=overall_score
+        average_delivery_delay=performance.average_delivery_delay,
+        on_time_delivery_rate=performance.on_time_delivery_rate,
+        delayed_delivery_count=performance.delayed_delivery_count,
+        average_quality_score=performance.average_quality_score,
+        average_response_time=performance.average_response_time,
+        average_service_rating=performance.average_service_rating,
+        order_completion_rate=performance.order_completion_rate,
+        overall_vendor_score=performance.overall_vendor_score
     )
 @router.get(
     "/history/{vendor_id}",

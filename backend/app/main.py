@@ -20,6 +20,16 @@ from app.routers import communication_log
 from app.models.service_rating import ServiceRating
 from app.routers import service_rating
 from app.routers import vendor_performance
+from app.models.vendor_reliability import VendorReliability
+from app.routers.vendor_reliability import router as vendor_reliability_router
+from app.models.vendor_performance import VendorPerformance
+from app.models.vendor_reliability_history import VendorReliabilityHistory
+from app.models.vendor_issue import VendorIssue
+from app.routers import vendor_issue
+from app.models import complaint
+from app.routers import complaint
+from app.routers import recommendation
+from app.routers import high_risk_warning
 
 from app.database import Base, engine
 from app.routers import auth
@@ -53,6 +63,11 @@ app.include_router(product_quality.router)
 app.include_router(communication_log.router)
 app.include_router(service_rating.router)
 app.include_router(vendor_performance.router)
+app.include_router(vendor_reliability_router)
+app.include_router(vendor_issue.router)
+app.include_router(complaint.router)
+app.include_router(recommendation.router)
+app.include_router(high_risk_warning.router)
 
 @app.get("/")
 def home():

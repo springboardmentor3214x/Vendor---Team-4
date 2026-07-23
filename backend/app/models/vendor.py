@@ -221,3 +221,14 @@ class Vendor(Base):
     "ServiceRating",
     back_populates="vendor"
     )
+
+    vendor_reliability = relationship(
+    "VendorReliability",
+    back_populates="vendor",
+    uselist=False
+    )
+    vendor_performance = relationship(
+    "VendorPerformance",
+    back_populates="vendor",
+    uselist=False
+    )

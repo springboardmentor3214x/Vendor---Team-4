@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.auth import get_current_user
-
+from app.services.vendor_performance_service import VendorPerformanceService
 from app.models.user import User
 from app.models.purchase_order import (
     PurchaseOrder,
@@ -89,5 +89,8 @@ def record_product_quality(
     db.add(evaluation)
     db.commit()
     db.refresh(evaluation)
-
+    VendorPerformanceService.update_vendor_performance(
+        db,
+        evaluation.vendor_id
+    )
     return evaluation
