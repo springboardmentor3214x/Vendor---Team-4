@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+
 import {
   AbstractControl,
   FormBuilder,
@@ -16,6 +17,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+
+import { AuthService } from '../../../services/auth.service';
+
 
 function passwordMatchValidator(
   control: AbstractControl
@@ -39,24 +43,67 @@ function passwordMatchValidator(
 
     if (confirmPassword.hasError('passwordMismatch')) {
 
-      const errors = { ...confirmPassword.errors };
+      const errors = {
+        ...confirmPassword.errors
+      };
+
       delete errors['passwordMismatch'];
 
       confirmPassword.setErrors(
-        Object.keys(errors).length ? errors : null
+        Object.keys(errors).length
+          ? errors
+          : null
       );
-
     }
+  }
+
+  return null;
+}
+
+
+function roleBasedValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+
+  const role = control.get('role')?.value;
+
+  const employeeId =
+    control.get('employeeId')?.value;
+
+  const companyName =
+    control.get('companyName')?.value;
+
+  if (
+    role === 'Vendor' &&
+    !companyName?.trim()
+  ) {
+
+    return {
+      companyNameRequired: true
+    };
+
+  }
+
+  if (
+    role &&
+    role !== 'Vendor' &&
+    !employeeId?.trim()
+  ) {
+
+    return {
+      employeeIdRequired: true
+    };
 
   }
 
   return null;
-
 }
+
 
 @Component({
   selector: 'app-register',
   standalone: true,
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -68,6 +115,7 @@ function passwordMatchValidator(
     MatIconModule,
     MatSelectModule
   ],
+
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
@@ -75,19 +123,24 @@ function passwordMatchValidator(
 export class Register {
 
   hidePassword = true;
+
   hideConfirmPassword = true;
 
   registerForm;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
 
     this.registerForm = this.fb.group(
       {
 
-        fullName: ['', Validators.required],
+        fullName: [
+          '',
+          Validators.required
+        ],
 
         employeeId: [''],
 
@@ -105,11 +158,16 @@ export class Register {
           '',
           [
             Validators.required,
-            Validators.pattern('^[0-9]{10}$')
+            Validators.pattern(
+              '^[0-9]{10}$'
+            )
           ]
         ],
 
-        role: ['', Validators.required],
+        role: [
+          '',
+          Validators.required
+        ],
 
         password: [
           '',
@@ -131,91 +189,107 @@ export class Register {
 
       },
       {
-        validators: passwordMatchValidator
+        validators: [
+          passwordMatchValidator,
+          roleBasedValidator
+        ]
       }
     );
 
   }
 
-  onSubmit() {
 
-    // Stop if form validation fails
-    if (this.registerForm.invalid) {
-      return;
-    }
+  onSubmit() {
 
     this.registerForm.markAllAsTouched();
 
-    // Registration form data
-    const registerData = this.registerForm.value;
+    if (this.registerForm.invalid) {
 
-    console.log('Register Data:', registerData);
+      if (
+        this.registerForm.hasError(
+          'companyNameRequired'
+        )
+      ) {
 
-    /*
- 
-    Replace the temporary console.log() above with
-    the Register API call.
+        alert(
+          'Company Name is required for Vendor'
+        );
 
-    
-    API Endpoint
-    
+      } else if (
+        this.registerForm.hasError(
+          'employeeIdRequired'
+        )
+      ) {
 
-    POST /register
+        alert(
+          'Employee ID is required for internal users'
+        );
 
-    
-    Request Body
-    
+      }
 
-    {
-      "fullName": "...",
-      "employeeId": "...",
-      "companyName": "...",
-      "email": "...",
-      "mobile": "...",
-      "role": "...",
-      "password": "..."
+      return;
     }
 
-    
-    Expected Response
-    
 
-    {
-      "success": true,
-      "message": "User registered successfully"
-    }
+    const registerData =
+      this.registerForm.value;
 
-    
-    Angular
-    
 
-    Replace:
+    this.authService
+      .register(registerData)
+      .subscribe({
 
-        console.log('Register Data:', registerData);
+        next: (response) => {
 
-    With something similar to:
+          console.log(
+            'Registration response:',
+            response
+          );
 
-        this.authService.register(registerData).subscribe({
+          alert(
+            'Registration successful'
+          );
 
-          next: (response) => {
+          this.router.navigate([
+            '/login'
+          ]);
 
-            // Registration successful
+        },
 
-            this.router.navigate(['/login']);
 
-          },
+        error: (error) => {
 
-          error: (error) => {
+          console.error(
+            'Registration error:',
+            error
+          );
 
-            // Display backend validation message
+          if (error.status === 400) {
 
-            this.registerError = error.error.message;
+            alert(
+              error.error?.detail
+            );
+
+          } else if (
+            error.status === 422
+          ) {
+
+            alert(
+              error.error?.detail?.[0]?.msg ||
+              'Please check the registration details'
+            );
+
+          } else {
+
+            alert(
+              'Registration failed'
+            );
 
           }
 
-        });
+        }
 
-    */
+      });
 
   }
 

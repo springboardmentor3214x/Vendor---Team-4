@@ -1,38 +1,55 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+
 import {
+  AbstractControl,
   FormBuilder,
   ReactiveFormsModule,
-  Validators,
-  AbstractControl,
-  ValidationErrors
+  ValidationErrors,
+  Validators
 } from '@angular/forms';
 
-import { Router, RouterLink } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink
+} from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { AuthService } from '../../../services/auth.service';
+
+
 function passwordMatchValidator(
   control: AbstractControl
 ): ValidationErrors | null {
 
-  const password = control.get('password')?.value;
-  const confirmPassword = control.get('confirmPassword')?.value;
+  const password =
+    control.get('password')?.value;
+
+  const confirmPassword =
+    control.get('confirmPassword')?.value;
 
   if (password !== confirmPassword) {
-    return { passwordMismatch: true };
+
+    return {
+      passwordMismatch: true
+    };
+
   }
 
   return null;
 
 }
 
+
 @Component({
   selector: 'app-reset-password',
   standalone: true,
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -42,6 +59,7 @@ function passwordMatchValidator(
     RouterLink,
     MatIconModule
   ],
+
   templateUrl: './reset-password.html',
   styleUrl: './reset-password.scss'
 })
@@ -49,128 +67,120 @@ function passwordMatchValidator(
 export class ResetPassword {
 
   hidePassword = true;
+
   hideConfirmPassword = true;
+
+  resetToken = '';
 
   resetPasswordForm;
 
+
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
 
-    this.resetPasswordForm = this.fb.group({
+    this.resetToken =
+      this.route.snapshot.queryParamMap
+        .get('token') || '';
 
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8)
+
+    this.resetPasswordForm = this.fb.group(
+      {
+
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8)
+          ]
+        ],
+
+        confirmPassword: [
+          '',
+          Validators.required
         ]
-      ],
 
-      confirmPassword: [
-        '',
-        Validators.required
-      ]
-
-    },
-    {
-      validators: passwordMatchValidator
-    });
+      },
+      {
+        validators: passwordMatchValidator
+      }
+    );
 
   }
 
+
   onSubmit() {
 
-    // Stop if form validation fails
+    this.resetPasswordForm.markAllAsTouched();
+
     if (this.resetPasswordForm.invalid) {
       return;
     }
 
-    // Form data
-    const resetPasswordData = this.resetPasswordForm.value;
 
-    console.log('Reset Password Data:', resetPasswordData);
+    if (!this.resetToken) {
 
-    /*
+      alert(
+        'Invalid password reset token'
+      );
 
+      return;
 
-    Replace the temporary console.log() above with
-    the Reset Password API call.
-
-    
-    API Endpoint
-    
-
-    POST /reset-password
-
-    
-    Request Body
-    
-
-    {
-      "token": "<RESET_TOKEN>",
-      "password": "...",
-      "confirmPassword": "..."
     }
 
-    Note:
-    The reset token will usually come from the
-    password reset email or URL.
 
-    Example:
+    const password =
+      this.resetPasswordForm.value.password!;
 
-    /reset-password?token=...
+    const confirmPassword =
+      this.resetPasswordForm.value
+        .confirmPassword!;
 
-    
-    Expected Response
-    
 
-    {
-      "success": true,
-      "message": "Password updated successfully."
-    }
+    this.authService
+      .resetPassword(
+        this.resetToken,
+        password,
+        confirmPassword
+      )
+      .subscribe({
 
-    OR
+        next: (response) => {
 
-    {
-      "success": false,
-      "message": "Reset token is invalid or expired."
-    }
+          console.log(
+            'Reset Password Response:',
+            response
+          );
 
-    
-    Angular 
-    
+          alert(
+            'Password reset successfully'
+          );
 
-    Replace:
+          this.router.navigate([
+            '/login'
+          ]);
 
-        console.log('Reset Password Data:', resetPasswordData);
+        },
 
-    With something similar to:
 
-        this.authService.resetPassword(
-          resetPasswordData
-        ).subscribe({
+        error: (error) => {
 
-          next: (response) => {
+          console.error(
+            'Reset Password Error:',
+            error
+          );
 
-            // Show success message
+          alert(
+            error.error?.detail ||
+            'Password reset failed'
+          );
 
-            // Redirect user to Login page
+        }
 
-            this.router.navigate(['/login']);
-
-          },
-
-          error: (error) => {
-
-            // Display backend validation message
-
-          }
-
-        });
-
-    */
+      });
 
   }
 

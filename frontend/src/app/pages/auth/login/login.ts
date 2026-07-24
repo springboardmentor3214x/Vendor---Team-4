@@ -1,7 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+
+import {
+  ChangeDetectorRef,
+  Component
+} from '@angular/core';
+
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+
+import {
+  Router,
+  RouterLink
+} from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -9,9 +22,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 
+import { AuthService } from '../../../services/auth.service';
+
+
 @Component({
   selector: 'app-login',
   standalone: true,
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -22,9 +39,11 @@ import { MatIconModule } from '@angular/material/icon';
     MatCheckboxModule,
     MatIconModule
   ],
+
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
+
 export class Login {
 
   hidePassword = true;
@@ -33,9 +52,12 @@ export class Login {
 
   loginForm;
 
+
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
 
     this.loginForm = this.fb.group({
@@ -59,113 +81,181 @@ export class Login {
 
   }
 
+
   onSubmit() {
 
-    // Stop if form validation fails
+    this.loginForm.markAllAsTouched();
+
     if (this.loginForm.invalid) {
       return;
     }
 
+
     this.loginError = '';
 
-    // Form values
-    const loginData = this.loginForm.value;
 
-    console.log('Login Data:', loginData);
+    const email =
+      this.loginForm.value.email!;
 
-    /*
-   
-
-    Replace the temporary console.log() above with
-    the FastAPI Login API call.
-
-    API Endpoint
-    POST /login
-
-    Request Body
-  
-
-    {
-      "email": "...",
-      "password": "..."
-    }
-
-    Expected Response
-  
-
-    {
-      "token": "JWT_TOKEN",
-      "role": "Administrator",
-      "user": {
-        "id": 1,
-        "name": "John Doe",
-        "email": "admin@test.com"
-      }
-    }
+    const password =
+      this.loginForm.value.password!;
 
 
-    Replace:
+    this.authService
+      .login(email, password)
+      .subscribe({
 
-        console.log('Login Data:', loginData);
+        next: (response) => {
 
-    With something similar to:
-
-        this.authService.login(loginData).subscribe({
-
-          next: (response) => {
-
-            // Save JWT
-            localStorage.setItem('token', response.token);
-
-            // Save User Role
-            localStorage.setItem('role', response.role);
-
-            // Redirect according to role
-
-            Administrator
-              -> /admin-dashboard
-
-            Procurement Manager
-              -> /procurement-dashboard
-
-            Supply Chain Manager
-              -> /supply-chain-dashboard
-
-            Vendor
-              -> /vendor-dashboard
-
-            Finance Officer
-              -> /finance-dashboard
-
-            Auditor
-              -> /auditor-dashboard
-
-          },
-
-          error: () => {
-
-            this.loginError = 'Invalid email or password';
-
-          }
-
-        });
+          console.log(
+            'Login response:',
+            response
+          );
 
 
-    1. Auth Guard checks whether a JWT token exists.
-
-    2. Role Guard checks the user's role.
-
-    3. Backend should return:
-
-       - JWT Token
-       - User Role
-       - User Information
-
-    4. No changes are required in the UI.
-       Only replace this section with the API call.
+          localStorage.setItem(
+            'token',
+            response.access_token
+          );
 
 
-    */
+          this.authService
+            .getCurrentUser()
+            .subscribe({
+
+              next: (user) => {
+
+                console.log(
+                  'Current user:',
+                  user
+                );
+
+
+                const role =
+                  user.role
+                    .trim()
+                    .toLowerCase();
+
+
+                localStorage.setItem(
+                  'role',
+                  role
+                );
+
+
+                console.log(
+                  'Normalized role:',
+                  role
+                );
+
+
+                switch (role) {
+
+                  case 'administrator':
+
+                    this.router.navigate([
+                      '/admin-dashboard'
+                    ]);
+
+                    break;
+
+
+                  case 'procurement manager':
+
+                    this.router.navigate([
+                      '/procurement-dashboard'
+                    ]);
+
+                    break;
+
+
+                  case 'supply chain manager':
+
+                    this.router.navigate([
+                      '/supply-chain-dashboard'
+                    ]);
+
+                    break;
+
+
+                  case 'vendor':
+
+                    this.router.navigate([
+                      '/vendor-dashboard'
+                    ]);
+
+                    break;
+
+
+                  case 'finance officer':
+
+                    this.router.navigate([
+                      '/finance-dashboard'
+                    ]);
+
+                    break;
+
+
+                  case 'auditor':
+
+                    this.router.navigate([
+                      '/auditor-dashboard'
+                    ]);
+
+                    break;
+
+
+                  default:
+
+                    console.log(
+                      'Unknown role:',
+                      role
+                    );
+
+                    this.loginError =
+                      'Invalid user role';
+
+                    this.cdr.detectChanges();
+
+                }
+
+              },
+
+
+              error: (error) => {
+
+                console.error(
+                  'User error:',
+                  error
+                );
+
+                this.loginError =
+                  'Unable to get user details';
+
+                this.cdr.detectChanges();
+
+              }
+
+            });
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Login error:',
+            error
+          );
+
+          this.loginError =
+            'Invalid user credentials';
+
+          this.cdr.detectChanges();
+
+        }
+
+      });
 
   }
 

@@ -1,0 +1,156 @@
+.history-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 6px;
+    color: #666;
+  }
+}
+
+.summary-card,
+.table-card {
+  padding: 24px;
+}
+
+.summary-card h2,
+.table-card h2 {
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 13px;
+    color: #757575;
+    margin-bottom: 6px;
+  }
+
+  span {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  small {
+    margin-top: 6px;
+    color: #666;
+    font-size: 13px;
+  }
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  p {
+    margin-top: 12px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #1976d2;
+  }
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.table-header mat-form-field {
+  width: 300px;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  font-weight: 600;
+}
+
+th,
+td {
+  padding: 14px;
+}
+
+mat-progress-bar {
+  margin-top: 8px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+
+  .history-container {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-header mat-form-field {
+    width: 100%;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+}

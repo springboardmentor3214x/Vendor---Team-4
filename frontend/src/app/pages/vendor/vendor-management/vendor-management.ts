@@ -18,29 +18,162 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './vendor-management.html',
   styleUrl: './vendor-management.scss'
 })
+
 export class VendorManagement {
 
   constructor(private router: Router) {}
 
-  totalVendors = 0;
-  approved = 0;
-  pending = 0;
-  rejected = 0;
+  /*
+  ===========================================================
 
-  openVendorList() {
+  Temporary Dashboard Data
+
+  Future Backend
+
+  GET /api/vendors/dashboard
+
+  FastAPI will retrieve dashboard statistics
+  from PostgreSQL.
+
+  ===========================================================
+  */
+
+  totalVendors = 42;
+
+  approved = 31;
+
+  pending = 6;
+
+  active = 28;
+
+  suspended = 2;
+
+  rejected = 3;
+
+  // ================= Vendor List =================
+
+  openVendorList(): void {
+
     this.router.navigate(['/vendor-list']);
+
   }
 
-  addVendor() {
+  // ================= Add Vendor =================
+
+  addVendor(): void {
+
     this.router.navigate(['/add-vendor']);
+
   }
 
-  approval() {
+  // ================= Vendor Approval =================
+
+  approval(): void {
+
     this.router.navigate(['/vendor-approval']);
+
   }
 
-  documents() {
+  // ================= Vendor Documents =================
+
+  documents(): void {
+
+    /*
+    Future Route
+
+    /vendor-documents
+
+    At present, uploaded documents are managed
+    through the Add Vendor, Edit Vendor,
+    and Vendor Details pages.
+    */
+
     this.router.navigate(['/vendor-list']);
+
   }
+
+  // ================= Vendor Details =================
+
+  details(): void {
+
+    /*
+    Future Navigation
+
+    this.router.navigate(['/vendor-details', vendorId]);
+
+    Vendor ID will be passed from the
+    selected vendor record.
+    */
+
+    this.router.navigate(['/vendor-details', 'V001']);
+
+  }
+
+  /*
+  ===========================================================
+
+  Backend Responsibilities
+
+  GET /api/vendors/dashboard
+
+  Return
+
+  - Total Vendors
+
+  - Approved Vendors
+
+  - Pending Vendors
+
+  - Active Vendors
+
+  - Suspended Vendors
+
+  - Rejected Vendors
+
+  ===========================================================
+
+  Procurement Integration
+
+  Only vendors whose
+
+  Approval Status = Approved
+
+  AND
+
+  Vendor Status = Active
+
+  are available during Procurement.
+
+  ===========================================================
+
+  Database Relationships
+
+  Vendor
+
+  -> Purchase Orders
+
+  -> Procurement Records
+
+  -> Uploaded Documents
+
+  -> Contracts (Future)
+
+  ===========================================================
+
+  Future Module Integration
+
+  Procurement Management
+
+  Vendor Performance
+
+  Vendor Reliability
+
+  Reports & Dashboards
+
+  Contract Management
+
+  ===========================================================
+
+  */
 
 }

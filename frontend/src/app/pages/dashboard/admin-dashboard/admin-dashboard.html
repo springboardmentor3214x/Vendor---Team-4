@@ -18,9 +18,9 @@
 
         <ul>
 
-          <li *ngFor="let item of menuItems" (click)="openModule(item.title)" style="cursor: pointer;">
+          <li *ngFor="let item of menuItems">
 
-          <mat-icon>{{ item.icon }}</mat-icon>
+            <mat-icon>{{ item.icon }}</mat-icon>
 
             <span>{{ item.title }}</span>
 

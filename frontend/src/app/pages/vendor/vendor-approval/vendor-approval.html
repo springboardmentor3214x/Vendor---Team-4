@@ -1,12 +1,173 @@
 <div class="approval-container">
 
+  <!-- ================= Page Header ================= -->
+
   <div class="page-header">
 
-    <h1>Vendor Approval</h1>
+    <h1>Vendor Approval Workflow</h1>
 
-    <p>Approve or reject newly registered vendors.</p>
+    <p>
+
+      Review newly registered vendors before approving them for procurement.
+
+    </p>
 
   </div>
+
+  <!-- ================= Summary Cards ================= -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h3>Total Pending</h3>
+
+      <h2>{{ pendingCount }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Approved Today</h3>
+
+      <h2>{{ approvedToday }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Rejected Today</h3>
+
+      <h2>{{ rejectedToday }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Total Requests</h3>
+
+      <h2>{{ vendors.length }}</h2>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Search & Filters ================= -->
+
+  <div class="filter-section">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        Search Vendor
+
+      </mat-label>
+
+      <input
+        matInput
+        placeholder="Vendor ID, Company, Contact Person"
+        [(ngModel)]="searchText">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        Vendor Category
+
+      </mat-label>
+
+      <mat-select [(ngModel)]="selectedCategory">
+
+        <mat-option value="">
+
+          All Categories
+
+        </mat-option>
+
+        <mat-option value="Raw Material Suppliers">
+
+          Raw Material Suppliers
+
+        </mat-option>
+
+        <mat-option value="Equipment Vendors">
+
+          Equipment Vendors
+
+        </mat-option>
+
+        <mat-option value="IT Vendors">
+
+          IT Vendors
+
+        </mat-option>
+
+        <mat-option value="Service Providers">
+
+          Service Providers
+
+        </mat-option>
+
+        <mat-option value="Logistics Partners">
+
+          Logistics Partners
+
+        </mat-option>
+
+        <mat-option value="Maintenance Vendors">
+
+          Maintenance Vendors
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        Approval Status
+
+      </mat-label>
+
+      <mat-select [(ngModel)]="selectedApprovalStatus">
+
+        <mat-option value="">
+
+          All
+
+        </mat-option>
+
+        <mat-option value="Pending">
+
+          Pending
+
+        </mat-option>
+
+        <mat-option value="Approved">
+
+          Approved
+
+        </mat-option>
+
+        <mat-option value="Rejected">
+
+          Rejected
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+  </div>
+
+  <!-- ================= Vendor Approval Table ================= -->
 
   <table>
 
@@ -16,15 +177,23 @@
 
         <th>Vendor ID</th>
 
-        <th>Company</th>
+        <th>Company Name</th>
 
-        <th>Category</th>
+        <th>Vendor Category</th>
 
         <th>Contact Person</th>
 
-        <th>Status</th>
+        <th>Email</th>
 
-        <th>Action</th>
+        <th>Phone</th>
+
+        <th>Vendor Status</th>
+
+        <th>Approval Status</th>
+
+        <th>Registered On</th>
+
+        <th>Actions</th>
 
       </tr>
 
@@ -32,25 +201,54 @@
 
     <tbody>
 
-      <tr *ngFor="let vendor of vendors">
+      <tr *ngFor="let vendor of filteredVendors()">
 
-        <td>{{ vendor.vendorId }}</td>
+        <td>
 
-        <td>{{ vendor.companyName }}</td>
+          {{ vendor.vendorId }}
 
-        <td>{{ vendor.category }}</td>
+        </td>
 
-        <td>{{ vendor.contactPerson }}</td>
+        <td>
+
+          {{ vendor.companyName }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.category }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.contactPerson }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.email }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.phone }}
+
+        </td>
 
         <td>
 
           <span
             class="status"
-            [class.approved]="vendor.status==='Approved'"
-            [class.rejected]="vendor.status==='Rejected'"
-            [class.pending]="vendor.status==='Pending'">
+            [class.active]="vendor.vendorStatus==='Active'"
+            [class.pending]="vendor.vendorStatus==='Pending'"
+            [class.inactive]="vendor.vendorStatus==='Inactive'"
+            [class.suspended]="vendor.vendorStatus==='Suspended'">
 
-            {{ vendor.status }}
+            {{ vendor.vendorStatus }}
 
           </span>
 
@@ -58,11 +256,41 @@
 
         <td>
 
+          <span
+            class="status"
+            [class.approved]="vendor.approvalStatus==='Approved'"
+            [class.rejected]="vendor.approvalStatus==='Rejected'"
+            [class.pending]="vendor.approvalStatus==='Pending'">
+
+            {{ vendor.approvalStatus }}
+
+          </span>
+
+        </td>
+
+        <td>
+
+          {{ vendor.registeredDate }}
+
+        </td>
+
+        <td>
+                    <button
+            mat-stroked-button
+            color="primary"
+            type="button"
+            (click)="viewVendor(vendor)">
+
+            View
+
+          </button>
+
           <button
             mat-flat-button
             color="primary"
+            type="button"
             (click)="approveVendor(vendor)"
-            [disabled]="vendor.status==='Approved'">
+            [disabled]="vendor.approvalStatus === 'Approved'">
 
             Approve
 
@@ -71,8 +299,9 @@
           <button
             mat-flat-button
             color="warn"
+            type="button"
             (click)="rejectVendor(vendor)"
-            [disabled]="vendor.status==='Rejected'">
+            [disabled]="vendor.approvalStatus === 'Rejected'">
 
             Reject
 
@@ -85,5 +314,154 @@
     </tbody>
 
   </table>
+
+  <!-- ================= Approval Workflow ================= -->
+
+  <mat-card class="info-card">
+
+    <h2>Approval Workflow</h2>
+
+    <p>
+
+      Newly registered vendors are assigned an initial
+      <strong>Approval Status</strong> of
+      <strong>Pending</strong>.
+
+      Authorized users can approve or reject vendor registrations after
+      reviewing company information and uploaded documents.
+
+    </p>
+
+    <ul>
+
+      <li>Pending → Approved</li>
+
+      <li>Pending → Rejected</li>
+
+      <li>Approval actions are recorded for audit purposes.</li>
+
+      <li>Only authorized users can approve or reject vendors.</li>
+
+    </ul>
+
+  </mat-card>
+
+  <!-- ================= Audit Information ================= -->
+
+  <mat-card class="info-card">
+
+    <h2>Audit Information</h2>
+
+    <p>
+
+      FastAPI automatically records approval activities.
+
+    </p>
+
+    <ul>
+
+      <li><strong>Approved By</strong></li>
+
+      <li><strong>Approved Date</strong></li>
+
+      <li><strong>Rejected By</strong></li>
+
+      <li><strong>Rejected Date</strong></li>
+
+      <li><strong>Last Updated By</strong></li>
+
+      <li><strong>Last Updated Date</strong></li>
+
+    </ul>
+
+  </mat-card>
+
+  <!-- ================= Backend Validation ================= -->
+
+  <mat-card class="info-card">
+
+    <h2>Backend Processing</h2>
+
+    <p>
+
+      Vendor approval is processed by the FastAPI backend before updating
+      PostgreSQL.
+
+    </p>
+
+    <ul>
+
+      <li>Validate vendor exists.</li>
+
+      <li>Validate user authorization.</li>
+
+      <li>Update Approval Status.</li>
+
+      <li>Update Vendor Status according to business rules.</li>
+
+      <li>Store audit information.</li>
+
+      <li>Return updated vendor information.</li>
+
+    </ul>
+
+  </mat-card>
+
+  <!-- ================= Procurement Integration ================= -->
+
+  <mat-card class="info-card">
+
+    <h2>Procurement Integration</h2>
+
+    <p>
+
+      Vendors become available in Procurement Management only when:
+
+    </p>
+
+    <ul>
+
+      <li><strong>Approval Status = Approved</strong></li>
+
+      <li><strong>Vendor Status = Active</strong></li>
+
+    </ul>
+
+    <p>
+
+      Pending, Rejected, Suspended and Inactive vendors will not appear
+      during Vendor Assignment in Procurement.
+
+    </p>
+
+  </mat-card>
+
+  <!-- ================= Future Module Integration ================= -->
+
+  <mat-card class="info-card">
+
+    <h2>Future Module Integration</h2>
+
+    <p>
+
+      Approved vendor information will be reused by the following modules:
+
+    </p>
+
+    <ul>
+
+      <li>Procurement Management</li>
+
+      <li>Vendor Performance</li>
+
+      <li>Vendor Reliability</li>
+
+      <li>Reports & Analytics</li>
+
+      <li>Contract Management</li>
+
+    </ul>
+
+  </mat-card>
 
 </div>

@@ -1,0 +1,413 @@
+<div class="dashboard-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+      <h1>Vendor Reliability Dashboard</h1>
+      <p>
+        Monitor vendor reliability, procurement risk, supplier rankings, performance trends, and intelligent procurement recommendations.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ================= Summary Cards ================= -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+      <h3>Total Vendors Evaluated</h3>
+      <h2>{{ totalVendors }}</h2>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <h3>Average Reliability Score</h3>
+      <h2>{{ averageReliability }}%</h2>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <h3>High Reliability Vendors</h3>
+      <h2>{{ highReliability }}</h2>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <h3>Medium Reliability Vendors</h3>
+      <h2>{{ mediumReliability }}</h2>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <h3>High Risk Vendors</h3>
+      <h2>{{ highRisk }}</h2>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <h3>Top Ranked Vendor</h3>
+      <h2>{{ topVendor }}</h2>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <h3>Recommended Vendors</h3>
+      <h2>{{ recommendedVendors }}</h2>
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Quick Navigation ================= -->
+
+  <mat-card class="navigation-card">
+
+    <h2>Quick Navigation</h2>
+
+    <div class="navigation-buttons">
+
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/reliability-score">
+
+        Reliability Score
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/supplier-ranking">
+
+        Supplier Ranking
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/procurement-risk-dashboard">
+
+        Risk Dashboard
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/performance-trend-analysis">
+
+        Performance Trends
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/procurement-recommendations">
+
+        Recommendations
+
+      </button>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Filters ================= -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Vendor</mat-label>
+
+        <input
+          matInput
+          placeholder="Search Vendor"
+          [(ngModel)]="searchText"
+          (keyup)="applyFilters()">
+
+        <mat-icon matSuffix>search</mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Vendor Category</mat-label>
+
+        <mat-select
+          [(value)]="selectedCategory"
+          (selectionChange)="applyFilters()">
+
+          <mat-option value="">
+            All Categories
+          </mat-option>
+
+          <mat-option
+            *ngFor="let category of categories"
+            [value]="category">
+
+            {{ category }}
+
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Risk Level</mat-label>
+
+        <mat-select
+          [(value)]="selectedRisk"
+          (selectionChange)="applyFilters()">
+
+          <mat-option value="">
+            All Risk Levels
+          </mat-option>
+
+          <mat-option value="Low">
+            Low Risk
+          </mat-option>
+
+          <mat-option value="Medium">
+            Medium Risk
+          </mat-option>
+
+          <mat-option value="High">
+            High Risk
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Charts ================= -->
+
+  <div class="chart-grid">
+
+    <mat-card class="chart-card">
+
+      <h2>Vendor Reliability Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Reliability Trend Chart
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Risk Distribution</h2>
+
+      <div class="chart-placeholder">
+
+        Risk Distribution Chart
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Top Vendors ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>Top Reliable Vendors</h2>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      class="mat-elevation-z2">
+
+      <!-- Vendor -->
+
+      <ng-container matColumnDef="vendor">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Vendor
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.vendor }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Category -->
+
+      <ng-container matColumnDef="category">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Category
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.category }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Reliability -->
+
+      <ng-container matColumnDef="reliability">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Reliability Score
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <mat-progress-bar
+            mode="determinate"
+            [value]="row.reliability">
+          </mat-progress-bar>
+
+          <small>{{ row.reliability }}%</small>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Risk -->
+
+      <ng-container matColumnDef="risk">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Risk Level
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.risk }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Recommendation -->
+
+      <ng-container matColumnDef="recommendation">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Recommendation
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.recommendation }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Reliability Details -->
+
+      <ng-container matColumnDef="details">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Details
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <button
+            mat-raised-button
+            color="primary"
+            [routerLink]="['/reliability-score']">
+
+            View Score
+
+          </button>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Compare -->
+
+      <ng-container matColumnDef="compare">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Compare
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <button
+            mat-stroked-button
+            color="accent"
+            (click)="compareVendor(row)">
+
+            Compare
+
+          </button>
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

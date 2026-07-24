@@ -1,0 +1,184 @@
+.delivery-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+/* ================= Header ================= */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 6px;
+    color: #666;
+    font-size: 15px;
+  }
+}
+
+/* ================= Summary Card ================= */
+
+.summary-card {
+  padding: 24px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 13px;
+    color: #757575;
+    margin-bottom: 6px;
+  }
+
+  span {
+    font-size: 17px;
+    font-weight: 600;
+  }
+}
+
+/* ================= Form ================= */
+
+.form-card {
+  padding: 24px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* ================= Table ================= */
+
+.table-card {
+  padding: 24px;
+
+  table {
+    width: 100%;
+  }
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  mat-form-field {
+    width: 300px;
+  }
+}
+
+/* ================= Status Badge ================= */
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.earlydelivery {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.ontimedelivery {
+  background: #d4edda;
+  color: #155724;
+}
+
+.delayeddelivery {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* ================= Responsive ================= */
+
+@media (max-width: 992px) {
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .delivery-container {
+    padding: 16px;
+  }
+
+  .summary-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  .button-group {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .table-card {
+    overflow-x: auto;
+  }
+
+}

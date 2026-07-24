@@ -1,10 +1,15 @@
 <div class="vendor-form-container">
 
+  <!-- ================= Page Header ================= -->
+
   <div class="page-header">
 
     <h1>Edit Vendor</h1>
 
-    <p>Update vendor information in the Vendor Reliability Intelligence Platform.</p>
+    <p>
+      Update vendor information in the Vendor Reliability Intelligence Platform.
+      Changes will be validated by FastAPI before being saved to PostgreSQL.
+    </p>
 
   </div>
 
@@ -30,7 +35,7 @@
 
           <mat-error *ngIf="vendorForm.get('companyName')?.hasError('required')">
 
-            Company Name is required
+            Company Name is required.
 
           </mat-error>
 
@@ -42,15 +47,29 @@
 
           <mat-select formControlName="vendorCategory">
 
-            <mat-option value="IT">IT</mat-option>
+            <mat-option value="Raw Material Suppliers">
+              Raw Material Suppliers
+            </mat-option>
 
-            <mat-option value="Manufacturing">Manufacturing</mat-option>
+            <mat-option value="Equipment Vendors">
+              Equipment Vendors
+            </mat-option>
 
-            <mat-option value="Healthcare">Healthcare</mat-option>
+            <mat-option value="IT Vendors">
+              IT Vendors
+            </mat-option>
 
-            <mat-option value="Logistics">Logistics</mat-option>
+            <mat-option value="Service Providers">
+              Service Providers
+            </mat-option>
 
-            <mat-option value="Software">Software</mat-option>
+            <mat-option value="Logistics Partners">
+              Logistics Partners
+            </mat-option>
+
+            <mat-option value="Maintenance Vendors">
+              Maintenance Vendors
+            </mat-option>
 
           </mat-select>
 
@@ -58,11 +77,17 @@
 
         <mat-form-field appearance="outline">
 
-          <mat-label>Contact Person</mat-label>
+          <mat-label>Contact Person Name</mat-label>
 
           <input
             matInput
             formControlName="contactPerson">
+
+          <mat-error *ngIf="vendorForm.get('contactPerson')?.hasError('required')">
+
+            Contact Person is required.
+
+          </mat-error>
 
         </mat-form-field>
 
@@ -74,17 +99,23 @@
             matInput
             formControlName="designation">
 
+          <mat-error *ngIf="vendorForm.get('designation')?.hasError('required')">
+
+            Designation is required.
+
+          </mat-error>
+
         </mat-form-field>
 
       </div>
 
     </div>
 
-    <!-- ================= Contact Details ================= -->
+    <!-- ================= Contact Information ================= -->
 
     <div class="section">
 
-      <h2>Contact Details</h2>
+      <h2>Contact Information</h2>
 
       <div class="form-grid">
 
@@ -97,9 +128,15 @@
             type="email"
             formControlName="email">
 
+          <mat-error *ngIf="vendorForm.get('email')?.hasError('required')">
+
+            Email Address is required.
+
+          </mat-error>
+
           <mat-error *ngIf="vendorForm.get('email')?.hasError('email')">
 
-            Enter a valid email
+            Enter a valid email address.
 
           </mat-error>
 
@@ -112,6 +149,18 @@
           <input
             matInput
             formControlName="phone">
+
+          <mat-error *ngIf="vendorForm.get('phone')?.hasError('required')">
+
+            Phone Number is required.
+
+          </mat-error>
+
+          <mat-error *ngIf="vendorForm.get('phone')?.hasError('pattern')">
+
+            Enter a valid 10-digit phone number.
+
+          </mat-error>
 
         </mat-form-field>
 
@@ -145,6 +194,12 @@
             matInput
             formControlName="gstNumber">
 
+          <mat-error *ngIf="vendorForm.get('gstNumber')?.hasError('required')">
+
+            GST Number is required.
+
+          </mat-error>
+
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -154,6 +209,12 @@
           <input
             matInput
             formControlName="panNumber">
+
+          <mat-error *ngIf="vendorForm.get('panNumber')?.hasError('required')">
+
+            PAN Number is required.
+
+          </mat-error>
 
         </mat-form-field>
 
@@ -165,21 +226,29 @@
             matInput
             formControlName="registrationNumber">
 
+          <mat-error *ngIf="vendorForm.get('registrationNumber')?.hasError('required')">
+
+            Company Registration Number is required.
+
+          </mat-error>
+
         </mat-form-field>
 
       </div>
 
     </div>
 
-    <!-- ================= Address ================= -->
+    <!-- ================= Company Address ================= -->
 
     <div class="section">
 
-      <h2>Address</h2>
+      <h2>Company Address</h2>
 
       <div class="form-grid">
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field
+          appearance="outline"
+          class="full-width">
 
           <mat-label>Address Line 1</mat-label>
 
@@ -187,9 +256,17 @@
             matInput
             formControlName="addressLine1">
 
+          <mat-error *ngIf="vendorForm.get('addressLine1')?.hasError('required')">
+
+            Address Line 1 is required.
+
+          </mat-error>
+
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field
+          appearance="outline"
+          class="full-width">
 
           <mat-label>Address Line 2</mat-label>
 
@@ -207,6 +284,12 @@
             matInput
             formControlName="city">
 
+          <mat-error *ngIf="vendorForm.get('city')?.hasError('required')">
+
+            City is required.
+
+          </mat-error>
+
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -216,6 +299,12 @@
           <input
             matInput
             formControlName="state">
+
+          <mat-error *ngIf="vendorForm.get('state')?.hasError('required')">
+
+            State is required.
+
+          </mat-error>
 
         </mat-form-field>
 
@@ -227,6 +316,12 @@
             matInput
             formControlName="country">
 
+          <mat-error *ngIf="vendorForm.get('country')?.hasError('required')">
+
+            Country is required.
+
+          </mat-error>
+
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -236,6 +331,18 @@
           <input
             matInput
             formControlName="pincode">
+
+          <mat-error *ngIf="vendorForm.get('pincode')?.hasError('required')">
+
+            Pincode is required.
+
+          </mat-error>
+
+          <mat-error *ngIf="vendorForm.get('pincode')?.hasError('pattern')">
+
+            Enter a valid 6-digit pincode.
+
+          </mat-error>
 
         </mat-form-field>
 
@@ -325,33 +432,23 @@
           <mat-select formControlName="vendorStatus">
 
             <mat-option value="Active">
-
               Active
-
             </mat-option>
 
             <mat-option value="Pending">
-
               Pending
-
             </mat-option>
 
             <mat-option value="Inactive">
-
               Inactive
-
             </mat-option>
 
             <mat-option value="Suspended">
-
               Suspended
-
             </mat-option>
 
             <mat-option value="Rejected">
-
               Rejected
-
             </mat-option>
 
           </mat-select>
@@ -362,11 +459,85 @@
 
     </div>
 
-    <!-- ================= Documents ================= -->
+    <!-- ================= Approval Status ================= -->
+
+    <div class="section">
+
+      <h2>Approval Information</h2>
+
+      <mat-card class="status-card">
+
+        <div class="status-grid">
+
+          <div>
+
+            <h3>Approval Status</h3>
+
+            <p>{{ vendorForm.get('approvalStatus')?.value }}</p>
+
+          </div>
+
+          <div>
+
+            <h3>Vendor Status</h3>
+
+            <p>{{ vendorForm.get('vendorStatus')?.value }}</p>
+
+          </div>
+
+        </div>
+
+        <p class="status-note">
+
+          Approval Status is controlled through the
+          <strong>Vendor Approval Workflow</strong>.
+          This page allows updating vendor information only.
+
+        </p>
+
+      </mat-card>
+
+    </div>
+
+    <!-- ================= Vendor Documents ================= -->
 
     <div class="section">
 
       <h2>Vendor Documents</h2>
+
+      <mat-card class="document-card">
+
+        <h3>Supported Documents</h3>
+
+        <ul>
+
+          <li>GST Certificate</li>
+
+          <li>PAN Card</li>
+
+          <li>Company Registration Certificate</li>
+
+          <li>ISO Certificate (Optional)</li>
+
+          <li>Other Supporting Documents</li>
+
+        </ul>
+
+        <p>
+
+          Supported formats:
+          <strong>PDF, JPG, JPEG, PNG</strong>
+
+        </p>
+
+        <p>
+
+          Maximum file size:
+          <strong>5 MB</strong>
+
+        </p>
+
+      </mat-card>
 
       <div class="upload-box">
 
@@ -376,13 +547,17 @@
 
         </mat-icon>
 
+        <h3>
+
+          Replace or Upload Vendor Documents
+
+        </h3>
+
         <p>
 
-          Upload Vendor Documents
+          Upload new documents or replace existing vendor documents.
 
         </p>
-
-        <br>
 
         <label for="vendorFiles">
 
@@ -402,33 +577,113 @@
         class="file-list"
         *ngIf="uploadedFiles.length">
 
+        <p class="file-count">
+
+          Uploaded Documents ({{ uploadedFiles.length }})
+
+        </p>
+
         <div
           class="file-item"
           *ngFor="let file of uploadedFiles; let i=index">
 
           <span>
 
-            {{ file }}
+            {{ file.name }}
 
           </span>
 
-          <button
-            mat-icon-button
-            color="warn"
-            type="button"
-            (click)="removeFile(i)">
+          <div>
 
-            <mat-icon>
+            <button
+              mat-button
+              type="button">
 
-              delete
+              View
 
-            </mat-icon>
+            </button>
 
-          </button>
+            <button
+              mat-icon-button
+              color="warn"
+              type="button"
+              (click)="removeFile(i)">
+
+              <mat-icon>
+
+                delete
+
+              </mat-icon>
+
+            </button>
+
+          </div>
 
         </div>
 
       </div>
+
+    </div>
+
+    <!-- ================= Audit Information ================= -->
+
+    <div class="info-card">
+
+      <h2>Audit Information</h2>
+
+      <p>
+
+        The following information is maintained automatically by the backend.
+
+      </p>
+
+      <ul>
+
+        <li><strong>Created By:</strong> System Administrator</li>
+
+        <li><strong>Created Date:</strong> 12 June 2026</li>
+
+        <li><strong>Last Updated By:</strong> Procurement Manager</li>
+
+        <li><strong>Last Updated Date:</strong> 20 June 2026</li>
+
+        <li><strong>Approved By:</strong> Administrator</li>
+
+        <li><strong>Approved Date:</strong> 15 June 2026</li>
+
+      </ul>
+
+    </div>
+
+    <!-- ================= Backend Validation ================= -->
+
+    <div class="info-card">
+
+      <h2>Backend Validation</h2>
+
+      <p>
+
+        FastAPI validates vendor information before updating the database.
+
+      </p>
+
+      <ul>
+
+        <li>Duplicate Company Name validation (business rules).</li>
+
+        <li>Email Address uniqueness validation.</li>
+
+        <li>GST Number uniqueness validation.</li>
+
+        <li>PAN Number uniqueness validation.</li>
+
+        <li>Company Registration Number uniqueness validation.</li>
+
+        <li>Document validation and storage.</li>
+
+        <li>Audit information updated automatically.</li>
+
+      </ul>
 
     </div>
 
@@ -450,7 +705,7 @@
         color="primary"
         type="submit">
 
-        Save Vendor
+        Update Vendor
 
       </button>
 

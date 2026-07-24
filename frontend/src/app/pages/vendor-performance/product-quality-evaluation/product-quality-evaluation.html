@@ -1,0 +1,323 @@
+<div class="quality-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+      <h1>Product Quality Evaluation</h1>
+      <p>
+        Evaluate the quality of delivered products and record inspection results.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ================= Purchase Order Information ================= -->
+
+  <mat-card class="summary-card">
+
+    <h2>Purchase Order Information</h2>
+
+    <div class="summary-grid">
+
+      <div class="summary-item">
+        <label>Purchase Order Number</label>
+        <span>{{ purchaseOrderNumber }}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Vendor Name</label>
+        <span>{{ vendorName }}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Inspection Date</label>
+        <span>{{ inspectionDate }}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Delivery Status</label>
+        <span class="status-badge completed">
+          {{ deliveryStatus }}
+        </span>
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Quality Evaluation Form ================= -->
+
+  <mat-card class="form-card">
+
+    <h2>Quality Evaluation</h2>
+
+    <form [formGroup]="qualityForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-grid">
+
+        <!-- Material Quality -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Material Quality</mat-label>
+
+          <mat-select formControlName="materialQuality">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <!-- Packaging Quality -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Packaging Quality</mat-label>
+
+          <mat-select formControlName="packagingQuality">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <!-- Quantity Accuracy -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Quantity Accuracy</mat-label>
+
+          <mat-select formControlName="quantityAccuracy">
+
+            <mat-option value="Accurate">Accurate</mat-option>
+            <mat-option value="Minor Difference">Minor Difference</mat-option>
+            <mat-option value="Major Difference">Major Difference</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <!-- Specification Compliance -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Specification Compliance</mat-label>
+
+          <mat-select formControlName="specificationCompliance">
+
+            <mat-option value="Fully Compliant">Fully Compliant</mat-option>
+            <mat-option value="Partially Compliant">Partially Compliant</mat-option>
+            <mat-option value="Non-Compliant">Non-Compliant</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <!-- Overall Rating -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Overall Quality Rating</mat-label>
+
+          <mat-select formControlName="overallRating">
+
+            <mat-option value="Excellent">Excellent</mat-option>
+            <mat-option value="Good">Good</mat-option>
+            <mat-option value="Average">Average</mat-option>
+            <mat-option value="Poor">Poor</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+      <!-- Product Defects -->
+
+      <mat-form-field appearance="outline" class="full-width">
+
+        <mat-label>Product Defects</mat-label>
+
+        <textarea
+          matInput
+          rows="3"
+          formControlName="productDefects">
+        </textarea>
+
+      </mat-form-field>
+
+      <!-- Inspector Remarks -->
+
+      <mat-form-field appearance="outline" class="full-width">
+
+        <mat-label>Inspector Remarks</mat-label>
+
+        <textarea
+          matInput
+          rows="4"
+          formControlName="inspectorRemarks">
+        </textarea>
+
+      </mat-form-field>
+
+      <!-- Buttons -->
+
+      <div class="button-group">
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit">
+
+          <mat-icon>save</mat-icon>
+
+          Save Evaluation
+
+        </button>
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="resetForm()">
+
+          <mat-icon>restart_alt</mat-icon>
+
+          Reset
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </mat-card>
+
+  <!-- ================= Quality Evaluation History ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>Quality Evaluation History</h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search</mat-label>
+
+        <input
+          matInput
+          placeholder="Search Evaluations"
+          (keyup)="applyFilter($event)">
+
+        <mat-icon matSuffix>search</mat-icon>
+
+      </mat-form-field>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z2">
+
+      <!-- Purchase Order -->
+
+      <ng-container matColumnDef="purchaseOrder">
+
+        <th mat-header-cell *matHeaderCellDef>Purchase Order</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.purchaseOrder }}
+        </td>
+
+      </ng-container>
+
+      <!-- Vendor -->
+
+      <ng-container matColumnDef="vendor">
+
+        <th mat-header-cell *matHeaderCellDef>Vendor</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.vendor }}
+        </td>
+
+      </ng-container>
+
+      <!-- Inspection -->
+
+      <ng-container matColumnDef="inspectionDate">
+
+        <th mat-header-cell *matHeaderCellDef>Inspection Date</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.inspectionDate }}
+        </td>
+
+      </ng-container>
+
+      <!-- Rating -->
+
+      <ng-container matColumnDef="overallRating">
+
+        <th mat-header-cell *matHeaderCellDef>Overall Rating</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.overallRating }}
+        </td>
+
+      </ng-container>
+
+      <!-- Inspector -->
+
+      <ng-container matColumnDef="inspector">
+
+        <th mat-header-cell *matHeaderCellDef>Inspector</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.inspector }}
+        </td>
+
+      </ng-container>
+
+      <!-- Status -->
+
+      <ng-container matColumnDef="status">
+
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <span class="status-badge completed">
+
+            {{ row.status }}
+
+          </span>
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

@@ -52,23 +52,27 @@ export class VendorDashboard {
   // Sidebar & Dashboard Cards
 
   menuItems = [
-    {
-      title: 'Vendor Profile',
-      icon: 'business'
-    },
-    {
-      title: 'Orders',
-      icon: 'shopping_bag'
-    },
-    {
-      title: 'Contracts',
-      icon: 'description'
-    },
-    {
-      title: 'Communication',
-      icon: 'chat'
-    }
-  ];
+  {
+    title: 'Vendor Profile',
+    icon: 'business'
+  },
+  {
+    title: 'Orders',
+    icon: 'shopping_bag'
+  },
+  {
+    title: 'Contracts',
+    icon: 'description'
+  },
+  {
+    title: 'Communication',
+    icon: 'chat'
+  },
+  {
+    title: 'Vendor Dashboard',
+    icon: 'dashboard'
+  }
+];
 
   get filteredItems() {
     return this.menuItems.filter(item =>
@@ -104,6 +108,10 @@ logout() {
 
     case 'Vendor Profile':
       this.router.navigate(['/profile']);
+      break;
+    
+    case 'Vendor Dashboard':
+      this.router.navigate(['/vendor-home']);
       break;
 
     case 'Orders':

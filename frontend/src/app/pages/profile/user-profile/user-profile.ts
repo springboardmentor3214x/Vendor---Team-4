@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+
 import {
   AbstractControl,
   FormBuilder,
@@ -8,10 +13,15 @@ import {
   Validators
 } from '@angular/forms';
 
+import { Router } from '@angular/router';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+
+import { AuthService } from '../../../services/auth.service';
+
 
 function passwordMatchValidator(
   control: AbstractControl
@@ -31,28 +41,32 @@ function passwordMatchValidator(
       passwordMismatch: true
     });
 
-  } else {
+  } else if (
+    confirmPassword.hasError('passwordMismatch')
+  ) {
 
-    if (confirmPassword.hasError('passwordMismatch')) {
+    const errors = {
+      ...confirmPassword.errors
+    };
 
-      const errors = { ...confirmPassword.errors };
-      delete errors['passwordMismatch'];
+    delete errors['passwordMismatch'];
 
-      confirmPassword.setErrors(
-        Object.keys(errors).length ? errors : null
-      );
-
-    }
+    confirmPassword.setErrors(
+      Object.keys(errors).length
+        ? errors
+        : null
+    );
 
   }
 
   return null;
-
 }
+
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -61,72 +75,344 @@ function passwordMatchValidator(
     MatButtonModule,
     MatIconModule
   ],
+
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss'
 })
 
-export class UserProfile {
+export class UserProfile implements OnInit {
 
   hideCurrent = true;
   hideNew = true;
   hideConfirm = true;
 
+  isEditMode = false;
+
   profileForm;
 
-  constructor(private fb: FormBuilder) {
+  originalProfile: any;
 
-    this.profileForm = this.fb.group({
 
-      fullName: [
-        'Exampl user',
-        Validators.required
-      ],
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
 
-      email: [
-        {
-          value: 'example@example.com',
-          disabled: true
+    this.profileForm = this.fb.group(
+      {
+
+        fullName: [
+          '',
+          Validators.required
+        ],
+
+        email: [''],
+
+        mobile: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(
+              '^[0-9]{10}$'
+            )
+          ]
+        ],
+
+        role: [''],
+
+        currentPassword: [''],
+
+        newPassword: [
+          '',
+          Validators.minLength(8)
+        ],
+
+        confirmPassword: ['']
+
+      },
+      {
+        validators: passwordMatchValidator
+      }
+    );
+
+  }
+
+
+  ngOnInit(): void {
+
+    this.loadProfile();
+
+  }
+
+
+  loadProfile() {
+
+    this.authService
+      .getCurrentUser()
+      .subscribe({
+
+        next: (user) => {
+
+          this.originalProfile = user;
+
+          this.profileForm.patchValue({
+
+            fullName: user.name,
+
+            email: user.email,
+
+            mobile: user.mobile_number,
+
+            role: user.role
+
+          });
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Profile Load Error:',
+            error
+          );
+
+          if (error.status === 401) {
+
+            this.logout();
+
+          } else {
+
+            alert(
+              'Unable to load profile'
+            );
+
+          }
+
         }
-      ],
 
-      mobile: [
-        '9999999999',
-        [
-          Validators.required,
-          Validators.pattern('^[0-9]{10}$')
-        ]
-      ],
+      });
 
-      role: [
-        {
-          value: 'Administrator',
-          disabled: true
-        }
-      ],
+  }
 
-      currentPassword: [''],
 
-      newPassword: [
-        '',
-        Validators.minLength(8)
-      ],
+  enableEdit() {
 
-      confirmPassword: ['']
+    this.isEditMode = true;
 
-    },
-    {
-      validators: passwordMatchValidator
+  }
+
+
+  cancelEdit() {
+
+    this.isEditMode = false;
+
+    this.profileForm.patchValue({
+
+      fullName:
+        this.originalProfile.name,
+
+      email:
+        this.originalProfile.email,
+
+      mobile:
+        this.originalProfile.mobile_number,
+
+      role:
+        this.originalProfile.role,
+
+      currentPassword: '',
+
+      newPassword: '',
+
+      confirmPassword: ''
+
     });
 
   }
 
+
   onSubmit() {
 
-    if (this.profileForm.invalid) {
+  this.profileForm.markAllAsTouched();
+
+  if (this.profileForm.invalid) {
+    return;
+  }
+
+  const formData =
+    this.profileForm.getRawValue();
+
+  const currentPassword =
+    formData.currentPassword || '';
+
+  const newPassword =
+    formData.newPassword || '';
+
+  const confirmPassword =
+    formData.confirmPassword || '';
+
+  const passwordChangeStarted =
+    currentPassword ||
+    newPassword ||
+    confirmPassword;
+
+  if (
+    passwordChangeStarted &&
+    (
+      !currentPassword ||
+      !newPassword ||
+      !confirmPassword
+    )
+  ) {
+
+    alert(
+      'Please complete all password fields'
+    );
+
+    return;
+  }
+
+  this.authService
+    .updateProfile(
+      formData.fullName!,
+      formData.mobile!
+    )
+    .subscribe({
+
+      next: () => {
+
+        if (passwordChangeStarted) {
+
+          this.updatePasswordIfNeeded();
+
+        } else {
+
+          alert(
+            'Profile updated successfully'
+          );
+
+          this.isEditMode = false;
+
+          this.loadProfile();
+
+        }
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Profile Update Error:',
+          error
+        );
+
+        alert(
+          error.error?.detail ||
+          'Profile update failed'
+        );
+
+      }
+
+    });
+
+}
+
+
+  updatePasswordIfNeeded() {
+
+    const formData =
+      this.profileForm.getRawValue();
+
+    const currentPassword =
+      formData.currentPassword || '';
+
+    const newPassword =
+      formData.newPassword || '';
+
+    const confirmPassword =
+      formData.confirmPassword || '';
+
+
+    if (
+      !currentPassword &&
+      !newPassword &&
+      !confirmPassword
+    ) {
+
       return;
+
     }
 
-    console.log(this.profileForm.getRawValue());
+
+    if (
+      !currentPassword ||
+      !newPassword ||
+      !confirmPassword
+    ) {
+
+      alert(
+        'Please complete all password fields'
+      );
+
+      return;
+
+    }
+
+
+    this.authService
+      .updatePassword(
+        currentPassword,
+        newPassword,
+        confirmPassword
+      )
+      .subscribe({
+
+        next: () => {
+
+  alert(
+    'Profile and password updated successfully'
+  );
+
+  this.profileForm.patchValue({
+
+    currentPassword: '',
+
+    newPassword: '',
+
+    confirmPassword: ''
+
+  });
+
+  this.isEditMode = false;
+
+  this.loadProfile();
+
+},
+
+
+        error: (error) => {
+
+          alert(
+            error.error?.detail ||
+            'Password update failed'
+          );
+
+        }
+
+      });
+
+  }
+
+
+  logout() {
+
+    localStorage.removeItem('token');
+
+    localStorage.removeItem('role');
+
+    this.router.navigate(['/login']);
 
   }
 

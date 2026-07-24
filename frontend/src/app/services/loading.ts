@@ -1,8 +1,3 @@
-/*import { Service } from '@angular/core';
-
-@Service()
-export class Loading {}
-*/
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 

@@ -100,7 +100,7 @@ export class SupplyChainDashboard {
   switch (moduleName) {
 
     case 'Vendor Performance':
-      this.router.navigate(['/vendor-performance']);
+      this.router.navigate(['/vendor-performance-dashboard']);
       break;
 
     case 'Vendor Reliability':

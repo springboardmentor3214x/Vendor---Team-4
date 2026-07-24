@@ -22,56 +22,111 @@ export class ProcurementDashboard {
 
   constructor(private router: Router) {}
 
-  totalProcurements = 0;
-  pending = 0;
-  approved = 0;
-  completed = 0;
+  // ================= Statistics =================
+
+  totalRequests = 125;
+
+  pending = 28;
+
+  approved = 46;
+
+  purchaseOrders = 39;
+
+  delivered = 31;
+
+  completed = 24;
+
+  cancelled = 7;
+
+  // ================= Recent Activities =================
 
   recentActivities = [
+
     {
-      id: 'PR001',
-      item: 'Laptop Purchase',
-      status: 'Pending'
+      id: 'PR-0001',
+      title: 'Laptop Purchase',
+      vendor: 'ABC Technologies',
+      status: 'Pending',
+      date: '21-Jul-2026'
     },
+
     {
-      id: 'PR002',
-      item: 'Office Chairs',
-      status: 'Approved'
+      id: 'PR-0002',
+      title: 'Office Chairs',
+      vendor: 'XYZ Suppliers',
+      status: 'Approved',
+      date: '20-Jul-2026'
     },
+
     {
-      id: 'PR003',
-      item: 'Network Switch',
-      status: 'Completed'
+      id: 'PR-0003',
+      title: 'Network Switch',
+      vendor: 'Global Office Solutions',
+      status: 'Ordered',
+      date: '19-Jul-2026'
+    },
+
+    {
+      id: 'PR-0004',
+      title: 'Desktop Computers',
+      vendor: 'ABC Technologies',
+      status: 'Delivered',
+      date: '18-Jul-2026'
+    },
+
+    {
+      id: 'PR-0005',
+      title: 'Printer Cartridges',
+      vendor: 'XYZ Suppliers',
+      status: 'Completed',
+      date: '17-Jul-2026'
+    },
+
+    {
+      id: 'PR-0006',
+      title: 'Projectors',
+      vendor: '-',
+      status: 'Cancelled',
+      date: '16-Jul-2026'
     }
+
   ];
+
+  // ================= Navigation =================
 
   procurementList() {
 
-    console.log('Navigate to Procurement List');
-
-    // this.router.navigate(['/procurement-list']);
+    this.router.navigate(['/procurement-request-list']);
 
   }
 
   addProcurement() {
 
-    console.log('Navigate to Add Procurement');
-
-    // this.router.navigate(['/add-procurement']);
+    this.router.navigate(['/procurement-request']);
 
   }
 
-  purchaseOrders() {
+  purchaseOrdersPage() {
 
-    this.router.navigate(['/purchase-orders']);
+    this.router.navigate(['/purchase-order-details']);
 
   }
 
-  tracking() {
+  orderTracking() {
 
-    console.log('Navigate to Procurement Tracking');
+    this.router.navigate(['/order-tracking']);
 
-    // this.router.navigate(['/procurement-tracking']);
+  }
+
+  invoiceManagement() {
+
+    this.router.navigate(['/invoice-management']);
+
+  }
+
+  vendorAssignment() {
+
+    this.router.navigate(['/vendor-assignment']);
 
   }
 

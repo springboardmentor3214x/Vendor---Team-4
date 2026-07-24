@@ -1,15 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+
 import { Router, RouterLink } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
+import { AuthService } from '../../../services/auth.service';
+
+
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -18,16 +28,19 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule,
     MatButtonModule
   ],
+
   templateUrl: './forgot-password.html',
   styleUrl: './forgot-password.scss'
 })
+
 export class ForgotPassword {
 
   forgotPasswordForm;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
 
     this.forgotPasswordForm = this.fb.group({
@@ -44,84 +57,61 @@ export class ForgotPassword {
 
   }
 
+
   onSubmit() {
 
-    // Stop if validation fails
+    this.forgotPasswordForm.markAllAsTouched();
+
     if (this.forgotPasswordForm.invalid) {
       return;
     }
 
-    // Form data
-    const forgotPasswordData = this.forgotPasswordForm.value;
+    const email =
+      this.forgotPasswordForm.value.email!;
 
-    console.log('Forgot Password Data:', forgotPasswordData);
 
-    /*
-    
-    Replace the temporary console.log() above with
-    the Forgot Password API call.
+    this.authService
+      .forgotPassword(email)
+      .subscribe({
 
-    
-    API Endpoint
-    
+        next: (response) => {
 
-    POST /forgot-password
+          console.log(
+            'Forgot Password Response:',
+            response
+          );
 
-    
-    Request Body
-    
+          alert(
+            'Reset token generated successfully'
+          );
 
-    {
-      "email": "user@example.com"
-    }
+          this.router.navigate(
+            ['/reset-password'],
+            {
+              queryParams: {
+                token: response.reset_token
+              }
+            }
+          );
 
-    
-    Expected Response
-    
+        },
 
-    {
-      "success": true,
-      "message": "Password reset link sent successfully."
-    }
 
-    OR
+        error: (error) => {
 
-    {
-      "success": false,
-      "message": "Email not found."
-    }
+          console.error(
+            'Forgot Password Error:',
+            error
+          );
 
-    
-    Angular 
-    
+          alert(
+            error.error?.detail ||
+            'Unable to process request'
+          );
 
-    Replace:
+        }
 
-        console.log('Forgot Password Data:', forgotPasswordData);
-
-    With something similar to:
-
-        this.authService.forgotPassword(forgotPasswordData).subscribe({
-
-          next: (response) => {
-
-            // Show success message
-
-            // Redirect to Login page
-            // OR
-            // Redirect to Reset Password page
-
-          },
-
-          error: (error) => {
-
-            // Display backend error message
-
-          }
-
-        });
-
-    */
+      });
 
   }
 

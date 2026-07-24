@@ -1,0 +1,314 @@
+<div class="service-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Service Rating</h1>
+
+      <p>
+        Evaluate the overall service provided by the vendor after procurement completion.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- ================= Purchase Order Information ================= -->
+
+  <mat-card class="summary-card">
+
+    <h2>Purchase Order Information</h2>
+
+    <div class="summary-grid">
+
+      <div class="summary-item">
+
+        <label>Purchase Order Number</label>
+
+        <span>{{ purchaseOrderNumber }}</span>
+
+      </div>
+
+      <div class="summary-item">
+
+        <label>Vendor Name</label>
+
+        <span>{{ vendorName }}</span>
+
+      </div>
+
+      <div class="summary-item">
+
+        <label>Procurement Status</label>
+
+        <span class="status-badge completed">
+
+          {{ procurementStatus }}
+
+        </span>
+
+      </div>
+
+      <div class="summary-item">
+
+        <label>Completion Date</label>
+
+        <span>{{ completionDate }}</span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Service Rating Form ================= -->
+
+  <mat-card class="form-card">
+
+    <h2>Vendor Service Evaluation</h2>
+
+    <form
+      [formGroup]="serviceRatingForm"
+      (ngSubmit)="onSubmit()">
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Professionalism</mat-label>
+
+          <mat-select formControlName="professionalism">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Customer Support</mat-label>
+
+          <mat-select formControlName="customerSupport">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Documentation Quality</mat-label>
+
+          <mat-select formControlName="documentationQuality">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Flexibility</mat-label>
+
+          <mat-select formControlName="flexibility">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Communication Effectiveness</mat-label>
+
+          <mat-select formControlName="communicationEffectiveness">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Issue Resolution</mat-label>
+
+          <mat-select formControlName="issueResolution">
+
+            <mat-option *ngFor="let rating of ratings" [value]="rating">
+              {{ rating }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Overall Service Rating</mat-label>
+
+          <mat-select formControlName="overallServiceRating">
+
+            <mat-option value="Excellent">Excellent</mat-option>
+            <mat-option value="Good">Good</mat-option>
+            <mat-option value="Average">Average</mat-option>
+            <mat-option value="Poor">Poor</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+      <!-- Comments -->
+
+      <mat-form-field
+        appearance="outline"
+        class="full-width">
+
+        <mat-label>Comments</mat-label>
+
+        <textarea
+          matInput
+          rows="4"
+          formControlName="comments">
+        </textarea>
+
+      </mat-form-field>
+
+      <!-- Buttons -->
+
+      <div class="button-group">
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit">
+
+          <mat-icon>save</mat-icon>
+
+          Submit Rating
+
+        </button>
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="resetForm()">
+
+          <mat-icon>restart_alt</mat-icon>
+
+          Reset
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </mat-card>
+
+  <!-- ================= Rating History ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>Service Rating History</h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search</mat-label>
+
+        <input
+          matInput
+          placeholder="Search Ratings"
+          (keyup)="applyFilter($event)">
+
+        <mat-icon matSuffix>search</mat-icon>
+
+      </mat-form-field>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z2">
+
+      <ng-container matColumnDef="purchaseOrder">
+
+        <th mat-header-cell *matHeaderCellDef>Purchase Order</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.purchaseOrder }}
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="vendor">
+
+        <th mat-header-cell *matHeaderCellDef>Vendor</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.vendor }}
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="overallRating">
+
+        <th mat-header-cell *matHeaderCellDef>Overall Rating</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.overallRating }}
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="reviewedBy">
+
+        <th mat-header-cell *matHeaderCellDef>Reviewed By</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.reviewedBy }}
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.date }}
+        </td>
+
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

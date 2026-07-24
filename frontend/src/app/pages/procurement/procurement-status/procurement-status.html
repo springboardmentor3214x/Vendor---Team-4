@@ -1,0 +1,271 @@
+<div class="status-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Procurement Status Management</h1>
+
+      <p>
+        Monitor procurement lifecycle and update procurement status.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Statistics -->
+
+  <div class="stats-container">
+
+    <mat-card class="stat-card total">
+
+      <h2>{{ total }}</h2>
+
+      <p>Total Procurements</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card pending">
+
+      <h2>{{ pending }}</h2>
+
+      <p>Pending</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card approved">
+
+      <h2>{{ approved }}</h2>
+
+      <p>Approved</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card ordered">
+
+      <h2>{{ ordered }}</h2>
+
+      <p>Ordered</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card delivered">
+
+      <h2>{{ delivered }}</h2>
+
+      <p>Delivered</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card completed">
+
+      <h2>{{ completed }}</h2>
+
+      <p>Completed</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search</mat-label>
+
+        <input
+          matInput
+          placeholder="Search Request ID, Vendor, PO..."
+          [(ngModel)]="searchText">
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Status</mat-label>
+
+        <mat-select [(ngModel)]="statusFilter">
+
+          <mat-option value="All">All</mat-option>
+
+          <mat-option value="Pending">Pending</mat-option>
+
+          <mat-option value="Approved">Approved</mat-option>
+
+          <mat-option value="Ordered">Ordered</mat-option>
+
+          <mat-option value="Delivered">Delivered</mat-option>
+
+          <mat-option value="Completed">Completed</mat-option>
+
+          <mat-option value="Cancelled">Cancelled</mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Procurement Cards -->
+
+  <div class="status-grid">
+
+    <mat-card
+      class="status-card"
+      *ngFor="let item of filteredProcurements">
+
+      <div class="card-header">
+
+        <div>
+
+          <h3>{{ item.id }}</h3>
+
+          <small>{{ item.poNumber }}</small>
+
+        </div>
+
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'pending': item.status==='Pending',
+            'approved': item.status==='Approved',
+            'ordered': item.status==='Ordered',
+            'delivered': item.status==='Delivered',
+            'completed': item.status==='Completed',
+            'cancelled': item.status==='Cancelled'
+          }">
+
+          {{ item.status }}
+
+        </span>
+
+      </div>
+
+      <p>
+
+        <strong>Request Title:</strong>
+
+        {{ item.title }}
+
+      </p>
+
+      <p>
+
+        <strong>Vendor:</strong>
+
+        {{ item.vendor }}
+
+      </p>
+
+      <p>
+
+        <strong>Purchase Order:</strong>
+
+        {{ item.poNumber }}
+
+      </p>
+
+      <p>
+
+        <strong>Current Stage:</strong>
+
+        {{ item.stage }}
+
+      </p>
+
+      <p>
+
+        <strong>Expected Delivery:</strong>
+
+        {{ item.expectedDelivery }}
+
+      </p>
+
+      <p>
+
+        <strong>Last Updated:</strong>
+
+        {{ item.lastUpdated }}
+
+      </p>
+
+      <!-- Progress -->
+
+      <div class="progress-section">
+
+        <div class="progress-label">
+
+          <span>Procurement Progress</span>
+
+          <span>{{ item.progress }}%</span>
+
+        </div>
+
+        <div class="progress-bar">
+
+          <div
+            class="progress-fill"
+            [style.width.%]="item.progress">
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Status History -->
+
+      <div class="history-section">
+
+        <h4>Status History</h4>
+
+        <ul>
+
+          <li *ngFor="let history of item.history">
+
+            {{ history }}
+
+          </li>
+
+        </ul>
+
+      </div>
+
+      <!-- Actions -->
+
+      <div class="action-buttons">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="viewDetails(item)">
+
+          View Details
+
+        </button>
+
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="updateStatus(item)">
+
+          Update Status
+
+        </button>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+</div>

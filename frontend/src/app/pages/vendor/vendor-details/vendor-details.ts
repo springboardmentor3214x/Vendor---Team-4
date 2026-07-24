@@ -16,9 +16,31 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './vendor-details.html',
   styleUrl: './vendor-details.scss'
 })
+
 export class VendorDetails {
 
   constructor(private router: Router) {}
+
+  /*
+  ============================================================
+  Temporary Sample Data
+
+  FastAPI Endpoint
+
+  GET /api/vendors/{vendorId}
+
+  Backend will retrieve:
+
+  - Vendor Information
+  - Uploaded Documents
+  - Approval Status
+  - Vendor Status
+  - Audit Information
+
+  from PostgreSQL.
+
+  ============================================================
+  */
 
   vendor = {
 
@@ -26,7 +48,7 @@ export class VendorDetails {
 
     companyName: 'ABC Technologies',
 
-    vendorCategory: 'IT',
+    vendorCategory: 'IT Vendors',
 
     contactPerson: 'John Smith',
 
@@ -68,9 +90,37 @@ export class VendorDetails {
 
     vendorStatus: 'Active',
 
-    approvalStatus: 'Approved'
+    approvalStatus: 'Approved',
+
+    createdBy: 'Administrator',
+
+    createdDate: '15-07-2026',
+
+    lastUpdatedBy: 'Procurement Manager',
+
+    lastUpdatedDate: '20-07-2026',
+
+    approvedBy: 'Administrator',
+
+    approvedDate: '21-07-2026'
 
   };
+
+  /*
+  ============================================================
+  Future Backend
+
+  Documents will be retrieved from PostgreSQL
+  using the Vendor ID.
+
+  One Vendor
+
+      ↓
+
+  Multiple Uploaded Documents
+
+  ============================================================
+  */
 
   documents = [
 
@@ -84,15 +134,45 @@ export class VendorDetails {
 
   ];
 
-  back() {
+  // ================= Navigation =================
+
+  back(): void {
 
     this.router.navigate(['/vendor-list']);
 
   }
 
-  editVendor() {
+  editVendor(): void {
 
     this.router.navigate(['/edit-vendor', this.vendor.vendorId]);
+
+  }
+
+  // ================= Documents =================
+
+  viewDocument(document: string): void {
+
+    /*
+    FastAPI
+
+    GET /api/vendor-documents/view/{documentId}
+
+    */
+
+    console.log('View document:', document);
+
+  }
+
+  downloadDocument(document: string): void {
+
+    /*
+    FastAPI
+
+    GET /api/vendor-documents/download/{documentId}
+
+    */
+
+    console.log('Download document:', document);
 
   }
 

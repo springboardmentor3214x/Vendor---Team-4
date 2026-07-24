@@ -1,0 +1,205 @@
+.invoice-container {
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 25px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  p {
+    margin-top: 8px;
+    color: #6b7280;
+    font-size: 15px;
+  }
+}
+
+.filter-card {
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.invoice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 25px;
+}
+
+.invoice-card {
+  padding: 22px;
+  transition: 0.3s ease;
+  border-radius: 12px;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    color: #1976d2;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .po-number {
+    margin-top: 6px;
+    color: #757575;
+    font-size: 14px;
+  }
+}
+
+.status-badge {
+  padding: 7px 16px;
+  border-radius: 25px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.verified {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.paid {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: 20px;
+
+  strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #374151;
+    font-size: 14px;
+  }
+
+  p {
+    margin: 0;
+    color: #6b7280;
+    word-break: break-word;
+  }
+
+  a {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.action-buttons {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  button {
+    flex: 1 1 180px;
+    min-width: 170px;
+  }
+}
+
+/* Tablet */
+
+@media (max-width: 992px) {
+
+  .invoice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+  .invoice-container {
+    padding: 15px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    h1 {
+      font-size: 25px;
+    }
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+}

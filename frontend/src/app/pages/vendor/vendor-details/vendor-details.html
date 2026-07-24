@@ -1,12 +1,17 @@
 <div class="vendor-details-container">
 
+  <!-- ================= Page Header ================= -->
+
   <div class="page-header">
 
     <div>
 
       <h1>Vendor Details</h1>
 
-      <p>View complete vendor information.</p>
+      <p>
+        View complete vendor information, uploaded documents,
+        approval details and audit history.
+      </p>
 
     </div>
 
@@ -14,6 +19,7 @@
 
       <button
         mat-stroked-button
+        type="button"
         (click)="back()">
 
         <mat-icon>arrow_back</mat-icon>
@@ -25,6 +31,7 @@
       <button
         mat-flat-button
         color="primary"
+        type="button"
         (click)="editVendor()">
 
         <mat-icon>edit</mat-icon>
@@ -37,7 +44,7 @@
 
   </div>
 
-  <!-- Company Information -->
+  <!-- ================= Company Information ================= -->
 
   <div class="section">
 
@@ -46,35 +53,50 @@
     <div class="details-grid">
 
       <div>
+
         <label>Vendor ID</label>
+
         <p>{{ vendor.vendorId }}</p>
+
       </div>
 
       <div>
+
         <label>Company Name</label>
+
         <p>{{ vendor.companyName }}</p>
+
       </div>
 
       <div>
+
         <label>Vendor Category</label>
+
         <p>{{ vendor.vendorCategory }}</p>
+
       </div>
 
       <div>
+
         <label>Contact Person</label>
+
         <p>{{ vendor.contactPerson }}</p>
+
       </div>
 
       <div>
+
         <label>Designation</label>
+
         <p>{{ vendor.designation }}</p>
+
       </div>
 
     </div>
 
   </div>
 
-  <!-- Contact Information -->
+  <!-- ================= Contact Information ================= -->
 
   <div class="section">
 
@@ -83,25 +105,34 @@
     <div class="details-grid">
 
       <div>
-        <label>Email</label>
+
+        <label>Email Address</label>
+
         <p>{{ vendor.email }}</p>
+
       </div>
 
       <div>
-        <label>Phone</label>
+
+        <label>Phone Number</label>
+
         <p>{{ vendor.phone }}</p>
+
       </div>
 
       <div>
+
         <label>Alternate Phone</label>
+
         <p>{{ vendor.alternatePhone }}</p>
+
       </div>
 
     </div>
 
   </div>
 
-  <!-- Company Details -->
+  <!-- ================= Company Details ================= -->
 
   <div class="section">
 
@@ -110,25 +141,34 @@
     <div class="details-grid">
 
       <div>
+
         <label>GST Number</label>
+
         <p>{{ vendor.gstNumber }}</p>
+
       </div>
 
       <div>
+
         <label>PAN Number</label>
+
         <p>{{ vendor.panNumber }}</p>
+
       </div>
 
       <div>
+
         <label>Registration Number</label>
+
         <p>{{ vendor.registrationNumber }}</p>
+
       </div>
 
     </div>
 
   </div>
 
-  <!-- Address -->
+  <!-- ================= Address ================= -->
 
   <div class="section">
 
@@ -137,40 +177,57 @@
     <div class="details-grid">
 
       <div>
+
         <label>Address Line 1</label>
+
         <p>{{ vendor.addressLine1 }}</p>
+
       </div>
 
       <div>
+
         <label>Address Line 2</label>
+
         <p>{{ vendor.addressLine2 }}</p>
+
       </div>
 
       <div>
+
         <label>City</label>
+
         <p>{{ vendor.city }}</p>
+
       </div>
 
       <div>
+
         <label>State</label>
+
         <p>{{ vendor.state }}</p>
+
       </div>
 
       <div>
+
         <label>Country</label>
+
         <p>{{ vendor.country }}</p>
+
       </div>
 
       <div>
+
         <label>Pincode</label>
+
         <p>{{ vendor.pincode }}</p>
+
       </div>
 
     </div>
 
   </div>
-
-  <!-- Other Details -->
+    <!-- ================= Other Details ================= -->
 
   <div class="section">
 
@@ -179,20 +236,26 @@
     <div class="details-grid">
 
       <div>
+
         <label>Website</label>
+
         <p>{{ vendor.website }}</p>
+
       </div>
 
       <div class="full-width">
+
         <label>Description</label>
+
         <p>{{ vendor.description }}</p>
+
       </div>
 
     </div>
 
   </div>
 
-  <!-- Bank Details -->
+  <!-- ================= Bank Details ================= -->
 
   <div class="section">
 
@@ -201,47 +264,82 @@
     <div class="details-grid">
 
       <div>
+
         <label>Account Number</label>
+
         <p>{{ vendor.accountNumber }}</p>
+
       </div>
 
       <div>
+
         <label>IFSC Code</label>
+
         <p>{{ vendor.ifscCode }}</p>
+
       </div>
 
       <div>
+
         <label>Payment Terms</label>
+
         <p>{{ vendor.paymentTerms }}</p>
+
       </div>
 
     </div>
 
   </div>
 
-  <!-- Status -->
+  <!-- ================= Vendor Status ================= -->
 
   <div class="section">
 
-    <h2>Status</h2>
+    <h2>Vendor Status</h2>
 
     <div class="details-grid">
 
       <div>
+
         <label>Vendor Status</label>
-        <p>{{ vendor.vendorStatus }}</p>
+
+        <p>
+
+          <span
+            class="status"
+            [ngClass]="vendor.vendorStatus.toLowerCase()">
+
+            {{ vendor.vendorStatus }}
+
+          </span>
+
+        </p>
+
       </div>
 
       <div>
+
         <label>Approval Status</label>
-        <p>{{ vendor.approvalStatus }}</p>
+
+        <p>
+
+          <span
+            class="status"
+            [ngClass]="vendor.approvalStatus.toLowerCase()">
+
+            {{ vendor.approvalStatus }}
+
+          </span>
+
+        </p>
+
       </div>
 
     </div>
 
   </div>
 
-  <!-- Documents -->
+  <!-- ================= Uploaded Documents ================= -->
 
   <div class="section">
 
@@ -251,19 +349,183 @@
       class="document"
       *ngFor="let document of documents">
 
-      <mat-icon>
+      <div class="document-name">
 
-        description
+        <mat-icon>
 
-      </mat-icon>
+          description
 
-      <span>
+        </mat-icon>
 
-        {{ document }}
+        <span>
 
-      </span>
+          {{ document }}
+
+        </span>
+
+      </div>
+
+      <div class="document-actions">
+
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="viewDocument(document)">
+
+          View
+
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="downloadDocument(document)">
+
+          Download
+
+        </button>
+
+      </div>
 
     </div>
+
+  </div>
+
+  <!-- ================= Audit Information ================= -->
+
+  <div class="section">
+
+    <h2>Audit Information</h2>
+
+    <div class="details-grid">
+
+      <div>
+
+        <label>Created By</label>
+
+        <p>{{ vendor.createdBy }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Created Date</label>
+
+        <p>{{ vendor.createdDate }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Last Updated By</label>
+
+        <p>{{ vendor.lastUpdatedBy }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Last Updated Date</label>
+
+        <p>{{ vendor.lastUpdatedDate }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Approved By</label>
+
+        <p>{{ vendor.approvedBy }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Approved Date</label>
+
+        <p>{{ vendor.approvedDate }}</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ================= Backend Processing ================= -->
+
+  <div class="info-card">
+
+    <h2>Backend Processing</h2>
+
+    <p>
+
+      Vendor details are retrieved from the FastAPI backend and stored in
+      PostgreSQL.
+
+    </p>
+
+    <ul>
+
+      <li>Retrieve vendor information by Vendor ID.</li>
+
+      <li>Retrieve uploaded documents.</li>
+
+      <li>Retrieve audit information.</li>
+
+      <li>Retrieve approval and vendor status.</li>
+
+      <li>Return complete vendor details to Angular.</li>
+
+    </ul>
+
+  </div>
+
+  <!-- ================= Procurement Integration ================= -->
+
+  <div class="info-card">
+
+    <h2>Procurement Integration</h2>
+
+    <p>
+
+      Only vendors whose
+      <strong>Approval Status</strong> is
+      <strong>Approved</strong> and whose
+      <strong>Vendor Status</strong> is
+      <strong>Active</strong>
+      can be selected during Procurement.
+
+    </p>
+
+  </div>
+
+  <!-- ================= Future Module Integration ================= -->
+
+  <div class="info-card">
+
+    <h2>Future Module Integration</h2>
+
+    <p>
+
+      Vendor information maintained here will be used by future modules.
+
+    </p>
+
+    <ul>
+
+      <li>Procurement Management</li>
+
+      <li>Vendor Performance</li>
+
+      <li>Vendor Reliability</li>
+
+      <li>Reports & Analytics</li>
+
+      <li>Contract Management</li>
+
+    </ul>
 
   </div>
 

@@ -1,0 +1,185 @@
+<div class="tracking-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Order Tracking</h1>
+
+      <p>
+        Monitor purchase orders from dispatch to successful delivery.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Order</mat-label>
+
+        <input
+          matInput
+          placeholder="Purchase Order or Vendor"
+          [(ngModel)]="searchText">
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Delivery Status</mat-label>
+
+        <mat-select [(ngModel)]="statusFilter">
+
+          <mat-option value="All">All</mat-option>
+          <mat-option value="Awaiting Shipment">Awaiting Shipment</mat-option>
+          <mat-option value="In Transit">In Transit</mat-option>
+          <mat-option value="Delivered">Delivered</mat-option>
+          <mat-option value="Delayed">Delayed</mat-option>
+          <mat-option value="Completed">Completed</mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Orders -->
+
+  <div class="order-grid">
+
+    <mat-card
+      class="order-card"
+      *ngFor="let order of filteredOrders">
+
+      <div class="card-header">
+
+        <div>
+
+          <h2>{{ order.poNumber }}</h2>
+
+          <p class="vendor-name">
+
+            Vendor : {{ order.vendor }}
+
+          </p>
+
+        </div>
+
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'awaiting': order.deliveryStatus === 'Awaiting Shipment',
+            'transit': order.deliveryStatus === 'In Transit',
+            'delivered': order.deliveryStatus === 'Delivered',
+            'delayed': order.deliveryStatus === 'Delayed',
+            'completed': order.deliveryStatus === 'Completed'
+          }">
+
+          {{ order.deliveryStatus }}
+
+        </span>
+
+      </div>
+
+      <div class="details-grid">
+
+        <div>
+
+          <strong>Dispatch Date</strong>
+
+          <p>{{ order.dispatchDate }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Expected Delivery</strong>
+
+          <p>{{ order.expectedDelivery }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Actual Delivery</strong>
+
+          <p>{{ order.actualDelivery }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Current Location</strong>
+
+          <p>{{ order.currentLocation }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Delay Status</strong>
+
+          <span
+            class="delay-badge"
+            [class.on-time]="order.delayStatus==='On Time'"
+            [class.delayed]="order.delayStatus==='Delayed'">
+
+            {{ order.delayStatus }}
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="progress-section">
+
+        <div class="progress-label">
+
+          <span>Delivery Progress</span>
+
+          <span>{{ order.progress }}%</span>
+
+        </div>
+
+        <div class="progress-bar">
+
+          <div
+            class="progress-fill"
+            [style.width.%]="order.progress">
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="action-buttons">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="viewOrder(order)">
+
+          View Details
+
+        </button>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+</div>

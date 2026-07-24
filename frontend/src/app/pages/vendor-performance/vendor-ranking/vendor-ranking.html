@@ -1,0 +1,238 @@
+<div class="ranking-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Vendor Ranking</h1>
+
+      <p>
+        Compare vendor performance scores and identify the highest-performing vendors.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- ================= Summary Cards ================= -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h3>Total Vendors</h3>
+
+      <h2>{{ totalVendors }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Top Ranked Vendor</h3>
+
+      <h2>{{ topVendor }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Average Performance</h3>
+
+      <h2>{{ averagePerformance }}%</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Last Updated</h3>
+
+      <h2>{{ lastUpdated }}</h2>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Ranking Table ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>Vendor Ranking List</h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Vendor</mat-label>
+
+        <input
+          matInput
+          placeholder="Search Vendor"
+          (keyup)="applyFilter($event)">
+
+        <mat-icon matSuffix>search</mat-icon>
+
+      </mat-form-field>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z2">
+
+      <!-- Rank -->
+
+      <ng-container matColumnDef="rank">
+
+        <th mat-header-cell *matHeaderCellDef>Rank</th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <span class="rank-badge">
+            #{{ row.rank }}
+          </span>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Vendor -->
+
+      <ng-container matColumnDef="vendor">
+
+        <th mat-header-cell *matHeaderCellDef>Vendor</th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.vendor }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Category -->
+
+      <ng-container matColumnDef="category">
+
+        <th mat-header-cell *matHeaderCellDef>Category</th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.category }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Overall -->
+
+      <ng-container matColumnDef="overall">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Overall Score
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <mat-progress-bar
+            mode="determinate"
+            [value]="row.overall">
+          </mat-progress-bar>
+
+          <small>{{ row.overall }}%</small>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Delivery -->
+
+      <ng-container matColumnDef="delivery">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Delivery
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.delivery }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Quality -->
+
+      <ng-container matColumnDef="quality">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Quality
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.quality }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Communication -->
+
+      <ng-container matColumnDef="communication">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Communication
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.communication }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Service -->
+
+      <ng-container matColumnDef="service">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Service
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.service }}
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

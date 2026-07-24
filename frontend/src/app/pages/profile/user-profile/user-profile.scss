@@ -167,3 +167,21 @@ button[mat-icon-button] mat-icon {
   }
 
 }
+.header-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.logout-btn {
+  color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}

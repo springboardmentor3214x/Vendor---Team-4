@@ -1,0 +1,338 @@
+<div class="trend-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Performance Trend Analysis</h1>
+
+      <p>
+        Analyse historical vendor reliability trends based on procurement and performance data.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- ================= Summary Cards ================= -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h3>Average Reliability</h3>
+
+      <h2>{{ averageReliability }}%</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Improving Vendors</h3>
+
+      <h2>{{ improvingVendors }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Declining Vendors</h3>
+
+      <h2>{{ decliningVendors }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Stable Vendors</h3>
+
+      <h2>{{ stableVendors }}</h2>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Filters ================= -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Vendor</mat-label>
+
+        <input
+          matInput
+          [(ngModel)]="searchText"
+          (keyup)="applyFilters()"
+          placeholder="Search Vendor">
+
+        <mat-icon matSuffix>search</mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Vendor Category</mat-label>
+
+        <mat-select
+          [(value)]="selectedCategory"
+          (selectionChange)="applyFilters()">
+
+          <mat-option value="">All Categories</mat-option>
+
+          <mat-option
+            *ngFor="let category of categories"
+            [value]="category">
+
+            {{ category }}
+
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Charts ================= -->
+
+  <div class="chart-grid">
+
+    <mat-card class="chart-card">
+
+      <h2>Monthly Reliability Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Monthly Reliability Chart
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Yearly Reliability Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Yearly Reliability Chart
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Delivery Performance Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Delivery Trend Chart
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Product Quality Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Quality Trend Chart
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Communication Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Communication Trend Chart
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Contract Compliance Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Contract Compliance Chart
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Issue Resolution Trend</h2>
+
+      <div class="chart-placeholder">
+
+        Issue Resolution Chart
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Trend Table ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>Vendor Performance Trends</h2>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      class="mat-elevation-z2">
+
+      <!-- Vendor -->
+
+      <ng-container matColumnDef="vendor">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Vendor
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.vendor }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Category -->
+
+      <ng-container matColumnDef="category">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Category
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.category }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Monthly -->
+
+      <ng-container matColumnDef="monthly">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Monthly Score
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.monthly }}%
+
+        </td>
+
+      </ng-container>
+
+      <!-- Yearly -->
+
+      <ng-container matColumnDef="yearly">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Yearly Score
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.yearly }}%
+
+        </td>
+
+      </ng-container>
+
+      <!-- Trend -->
+
+      <ng-container matColumnDef="trend">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Trend
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.trend }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Details -->
+
+      <ng-container matColumnDef="details">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Details
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <button
+            mat-raised-button
+            color="primary"
+            [routerLink]="['/reliability-score']">
+
+            View
+
+          </button>
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>
