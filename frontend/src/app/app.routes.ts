@@ -44,6 +44,14 @@ import { Reports } from './pages/reports/reports/reports';
 
 // Notifications
 import { Notifications } from './pages/notifications/notifications/notifications';
+// Vendor Reliability
+
+import { VendorReliabilityDashboard } from './pages/vendor-reliability/vendor-reliability-dashboard/vendor-reliability-dashboard';
+import { ReliabilityScore } from './pages/vendor-reliability/reliability-score/reliability-score';
+import { SupplierRanking } from './pages/vendor-reliability/supplier-ranking/supplier-ranking';
+import { ProcurementRiskDashboard } from './pages/vendor-reliability/procurement-risk-dashboard/procurement-risk-dashboard';
+import { ProcurementRecommendations } from './pages/vendor-reliability/procurement-recommendations/procurement-recommendations';
+import { PerformanceTrendAnalysis } from './pages/vendor-reliability/performance-trend-analysis/performance-trend-analysis';
 
 export const routes: Routes = [
 
@@ -213,11 +221,76 @@ export const routes: Routes = [
     component: Notifications
   },
 
+  {
+    path: 'vendor-reliability-dashboard',
+    component: VendorReliabilityDashboard,
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['Procurement Manager','Administrator','Supply Chain Manager']
+    }
+},
+
+  {
+  path: 'reliability-score/:id',
+  component: ReliabilityScore,
+  canActivate: [authGuard, roleGuard],
+  data: {
+    roles: ['Procurement Manager', 'Administrator','Supply Chain Manager']
+  }
+},
+
+{
+  path: 'supplier-ranking',
+  component: SupplierRanking,
+  canActivate: [authGuard, roleGuard],
+  data: {
+    roles: ['Procurement Manager', 'Administrator', 'Supply Chain Manager']
+  }
+},
+
+  {
+  path: 'procurement-risk-dashboard',
+  component: ProcurementRiskDashboard,
+  canActivate: [authGuard, roleGuard],
+  data: {
+    roles: [
+      'Procurement Manager',
+      'Administrator'
+    ]
+  }
+},
+
+{
+  path: 'procurement-recommendations',
+  component: ProcurementRecommendations,
+  canActivate: [authGuard, roleGuard],
+  data: {
+    roles: [
+      'Procurement Manager',
+      'Administrator',
+      'Supply Chain Manager'
+    ]
+  }
+},
+
+{
+  path: 'performance-trend-analysis',
+  component: PerformanceTrendAnalysis,
+  canActivate: [authGuard, roleGuard],
+  data: {
+    roles: [
+      'Procurement Manager',
+      'Administrator',
+      'Supply Chain Manager'
+    ]
+  }
+},
+
+
   // Invalid URL
 
   {
     path: '**',
     redirectTo: 'login'
   }
-
 ];

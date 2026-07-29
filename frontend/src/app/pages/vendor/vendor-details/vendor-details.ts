@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+
+import { VendorService } from '../../../services/vendor.service';
 
 @Component({
   selector: 'app-vendor-details',
@@ -16,84 +18,59 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './vendor-details.html',
   styleUrl: './vendor-details.scss'
 })
-export class VendorDetails {
+export class VendorDetails implements OnInit {
 
-  constructor(private router: Router) {}
-
-  vendor = {
-
-    vendorId: 'V001',
-
-    companyName: 'ABC Technologies',
-
-    vendorCategory: 'IT',
-
-    contactPerson: 'John Smith',
-
-    designation: 'Sales Manager',
-
-    email: 'abc@gmail.com',
-
-    phone: '9876543210',
-
-    alternatePhone: '9876543211',
-
-    gstNumber: '22ABCDE1234F1Z5',
-
-    panNumber: 'ABCDE1234F',
-
-    registrationNumber: 'REG987654',
-
-    addressLine1: 'Sector 5',
-
-    addressLine2: 'Salt Lake',
-
-    city: 'Kolkata',
-
-    state: 'West Bengal',
-
-    country: 'India',
-
-    pincode: '700091',
-
-    website: 'www.abctech.com',
-
-    description: 'IT Service Provider',
-
-    accountNumber: '123456789012',
-
-    ifscCode: 'SBIN0001234',
-
-    paymentTerms: '30 Days',
-
-    vendorStatus: 'Active',
-
-    approvalStatus: 'Approved'
-
-  };
+  vendor: any = {};
 
   documents = [
-
     'GST Certificate.pdf',
-
     'PAN Card.pdf',
-
     'Registration Certificate.pdf',
-
     'ISO Certificate.pdf'
-
   ];
 
-  back() {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private vendorService: VendorService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-    this.router.navigate(['/vendor-list']);
+  ngOnInit(): void {
+
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    console.log("Route ID:", id);
+
+    this.vendorService.getVendorById(id).subscribe({
+
+      next: (response: any) => {
+
+        console.log("Vendor Response:", response);
+
+        this.vendor = response;
+
+        // Force Angular to refresh the UI
+        this.cdr.detectChanges();
+
+      },
+
+      error: (err: any) => {
+
+        console.error("Vendor Error:", err);
+
+      }
+
+    });
 
   }
 
-  editVendor() {
+  back(): void {
+    this.router.navigate(['/vendor-list']);
+  }
 
-    this.router.navigate(['/edit-vendor', this.vendor.vendorId]);
-
+  editVendor(): void {
+    this.router.navigate(['/edit-vendor', this.vendor.id]);
   }
 
 }

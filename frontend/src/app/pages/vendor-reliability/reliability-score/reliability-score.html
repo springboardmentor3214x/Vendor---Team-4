@@ -1,0 +1,54 @@
+<div class="score-container">
+
+  <!-- ================= Header ================= -->
+  <div class="page-header">
+
+    <div>
+
+      <h1>Vendor Reliability Score</h1>
+
+      <p>
+        View the calculated reliability score and the factors contributing to the vendor's overall reliability.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- ================= Vendor Information ================= -->
+
+  <mat-card class="summary-card">
+
+  <h2>Vendor Information</h2>
+  <div class="summary-grid">
+
+    <div class="summary-item">
+      <label>Vendor Name</label>
+      <span>{{ vendorName }}</span>
+    </div>
+
+    <div class="summary-item">
+      <label>Reliability Score</label>
+      <span>{{ reliabilityScore }}%</span>
+    </div>
+
+    <div class="summary-item">
+      <label>Risk Level</label>
+      <span>{{ riskLevel }}</span>
+    </div>
+
+    <div class="summary-item">
+      <label>Recommendation</label>
+      <span>{{ recommendation }}</span>
+    </div>
+
+    <div class="summary-item">
+      <label>Last Calculated</label>
+      <span>{{ lastCalculated | date:'medium' }}</span>
+    </div>
+
+  </div>
+
+</mat-card>
+
+  

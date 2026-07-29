@@ -1,0 +1,324 @@
+<div class="dashboard">
+
+  <!-- Header -->
+
+  <div class="header">
+
+    <div>
+
+      <h1>Vendor Dashboard</h1>
+
+      <p>
+        Welcome back,
+        <strong>{{ companyName }}</strong> 👋
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Welcome Banner -->
+
+  <div class="banner">
+
+    <div>
+
+      <h2>Vendor Reliability Intelligence</h2>
+
+      <p>
+        Monitor your business performance, track orders,
+        manage contracts and improve vendor reliability
+        from one centralized dashboard.
+      </p>
+
+    </div>
+
+    <div class="banner-score">
+
+      <span>Reliability</span>
+
+      <h1>{{ reliabilityScore }}%</h1>
+
+    </div>
+
+  </div>
+
+  <!-- KPI Cards -->
+
+  <div class="stats">
+
+    <div class="stat-card blue">
+
+      <mat-icon>business</mat-icon>
+
+      <h3>{{ vendorCategory }}</h3>
+
+      <p>Vendor Category</p>
+
+    </div>
+
+    <div class="stat-card green">
+
+      <mat-icon>verified</mat-icon>
+
+      <h3>{{ vendorStatus }}</h3>
+
+      <p>Status</p>
+
+    </div>
+
+    <div class="stat-card yellow">
+
+      <mat-icon>star</mat-icon>
+
+      <h3>{{ vendorRating }}/5</h3>
+
+      <p>Vendor Rating</p>
+
+    </div>
+
+    <div class="stat-card purple">
+
+      <mat-icon>analytics</mat-icon>
+
+      <h3>{{ reliabilityScore }}%</h3>
+
+      <p>Reliability Score</p>
+
+    </div>
+
+    <div class="stat-card red">
+
+      <mat-icon>payments</mat-icon>
+
+      <h3>{{ revenue }}</h3>
+
+      <p>Total Revenue</p>
+
+    </div>
+
+    <div class="stat-card cyan">
+
+      <mat-icon>inventory_2</mat-icon>
+
+      <h3>{{ completedOrders }}</h3>
+
+      <p>Completed Orders</p>
+
+    </div>
+
+  </div>
+
+  <!-- Analytics -->
+
+  <div class="analytics-grid">
+
+    <!-- Revenue -->
+
+    <div class="panel">
+
+      <h2>Revenue Trend</h2>
+
+      <div class="chart">
+
+        <div class="bar" style="height:40%"></div>
+
+        <div class="bar" style="height:55%"></div>
+
+        <div class="bar" style="height:70%"></div>
+
+        <div class="bar" style="height:60%"></div>
+
+        <div class="bar" style="height:85%"></div>
+
+        <div class="bar" style="height:100%"></div>
+
+      </div>
+
+      <div class="months">
+
+        <span>Jan</span>
+
+        <span>Feb</span>
+
+        <span>Mar</span>
+
+        <span>Apr</span>
+
+        <span>May</span>
+
+        <span>Jun</span>
+
+      </div>
+
+    </div>
+
+    <!-- Performance -->
+
+    <div class="panel">
+
+      <h2>Performance Overview</h2>
+
+      <div class="progress-item">
+
+        <span>On-Time Delivery</span>
+
+        <strong>{{ onTimeDelivery }}</strong>
+
+      </div>
+
+      <div class="progress">
+
+        <div class="fill" style="width:96%"></div>
+
+      </div>
+
+      <div class="progress-item">
+
+        <span>Reliability Score</span>
+
+        <strong>{{ reliabilityScore }}%</strong>
+
+      </div>
+
+      <div class="progress">
+
+        <div class="fill purple" style="width:92%"></div>
+
+      </div>
+
+      <div class="performance-info">
+
+        <div>
+
+          <h3>{{ pendingOrders }}</h3>
+
+          <span>Pending Orders</span>
+
+        </div>
+
+        <div>
+
+          <h3>{{ contracts }}</h3>
+
+          <span>Contracts</span>
+
+        </div>
+
+        <div>
+
+          <h3>{{ riskLevel }}</h3>
+
+          <span>Risk Level</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Bottom -->
+
+  <div class="bottom-grid">
+
+    <!-- Recent Activity -->
+
+    <div class="panel">
+
+      <h2>Recent Activity</h2>
+
+      <div
+        class="activity"
+        *ngFor="let activity of recentActivities">
+
+        <mat-icon>check_circle</mat-icon>
+
+        <span>{{ activity }}</span>
+
+      </div>
+
+    </div>
+
+    <!-- Notifications -->
+
+    <div class="panel">
+
+      <h2>Notifications</h2>
+
+      <div
+        class="activity"
+        *ngFor="let note of notifications">
+
+        <mat-icon>notifications</mat-icon>
+
+        <span>{{ note }}</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Vendor Information -->
+
+  <div class="panel">
+
+    <h2>Vendor Information</h2>
+
+    <div class="info-grid">
+
+      <div>
+
+        <label>Company</label>
+
+        <p>{{ companyName }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Vendor ID</label>
+
+        <p>{{ vendorId }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Contact Person</label>
+
+        <p>{{ contactPerson }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Email</label>
+
+        <p>{{ email }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Phone</label>
+
+        <p>{{ phone }}</p>
+
+      </div>
+
+      <div>
+
+        <label>Address</label>
+
+        <p>{{ address }}</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,299 @@
+<div class="recommendation-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Procurement Recommendations</h1>
+
+      <p>
+
+        View backend-generated procurement recommendations based on Vendor Reliability Scores, Procurement Risk Levels, and historical vendor performance.
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- ================= Summary Cards ================= -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h3>Total Vendors</h3>
+
+      <h2>{{ totalVendors }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Recommended Vendors</h3>
+
+      <h2>{{ recommendedVendors }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Not Recommended</h3>
+
+      <h2>{{ notRecommended }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Average Reliability</h3>
+
+      <h2>{{ averageReliability }}%</h2>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Filters ================= -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Vendor</mat-label>
+
+        <input
+          matInput
+          placeholder="Search Vendor"
+          [(ngModel)]="searchText"
+          (keyup)="applyFilters()">
+
+        <mat-icon matSuffix>search</mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Vendor Category</mat-label>
+
+        <mat-select
+          [(value)]="selectedCategory"
+          (selectionChange)="applyFilters()">
+
+          <mat-option value="">
+            All Categories
+          </mat-option>
+
+          <mat-option
+            *ngFor="let category of categories"
+            [value]="category">
+
+            {{ category }}
+
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Recommendation</mat-label>
+
+        <mat-select
+          [(value)]="selectedRecommendation"
+          (selectionChange)="applyFilters()">
+
+          <mat-option value="">
+            All
+          </mat-option>
+
+          <mat-option value="Highly Recommended">
+            Highly Recommended
+          </mat-option>
+
+          <mat-option value="Recommended">
+            Recommended
+          </mat-option>
+
+          <mat-option value="Not Recommended">
+            Not Recommended
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Recommendation Notice ================= -->
+
+  <mat-card class="recommendation-card">
+
+    <h2>Recommendation Engine</h2>
+
+    <p>
+
+      Recommendations are automatically generated using vendor reliability analysis based on delivery performance, product quality, communication efficiency, service ratings, procurement risk level, and the overall reliability score.
+
+    </p>
+
+  </mat-card>
+
+  <!-- ================= Recommendation Table ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>Vendor Recommendations</h2>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      class="mat-elevation-z2">
+
+      <!-- Vendor -->
+
+      <ng-container matColumnDef="vendor">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Vendor
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.vendor }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Category -->
+
+      <ng-container matColumnDef="category">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Category
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.category }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Reliability -->
+
+      <ng-container matColumnDef="reliability">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Reliability
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <mat-progress-bar
+            mode="determinate"
+            [value]="row.reliability">
+          </mat-progress-bar>
+
+          <small>{{ row.reliability }}%</small>
+
+        </td>
+
+      </ng-container>
+
+      <!-- Risk -->
+
+      <ng-container matColumnDef="risk">
+
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+
+          Risk Level
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.risk }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Recommendation -->
+
+      <ng-container matColumnDef="recommendation">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Recommendation
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          {{ row.recommendation }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Details -->
+
+      <ng-container matColumnDef="details">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Details
+
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+
+          <button
+            mat-raised-button
+            color="primary"
+            [routerLink]="['/reliability-score', row.vendor_id]">
+
+            View Score
+
+          </button>
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

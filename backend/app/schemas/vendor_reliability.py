@@ -38,11 +38,13 @@ class VendorReliabilityDashboard(BaseModel):
     high_risk_vendors: int
 
     top_vendor: str | None = None
+    recommended_vendors: int
 
 class VendorReliabilityRanking(BaseModel):
     rank: int
     vendor_id: int
     vendor_name: str
+    vendor_category: str
     reliability_score: float
     risk_level: str
     recommendation: str

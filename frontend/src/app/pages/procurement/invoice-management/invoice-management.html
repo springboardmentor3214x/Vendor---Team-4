@@ -1,0 +1,213 @@
+<div class="invoice-container">
+
+  <!-- Page Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Invoice Management</h1>
+
+      <p>
+        Manage vendor invoices, verify payments and approve finance requests.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Invoice</mat-label>
+
+        <input
+          matInput
+          placeholder="Invoice Number, PO Number or Vendor"
+          [(ngModel)]="searchText">
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Payment Status</mat-label>
+
+        <mat-select [(ngModel)]="statusFilter">
+
+          <mat-option value="All">All</mat-option>
+          <mat-option value="Pending">Pending</mat-option>
+          <mat-option value="Verified">Verified</mat-option>
+          <mat-option value="Approved">Approved</mat-option>
+          <mat-option value="Paid">Paid</mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Invoice Cards -->
+
+  <div class="invoice-grid">
+
+    <mat-card
+      class="invoice-card"
+      *ngFor="let invoice of filteredInvoices">
+
+      <div class="card-header">
+
+        <div>
+
+          <h2>{{ invoice.invoiceNo }}</h2>
+
+          <p class="po-number">
+            Purchase Order : {{ invoice.poNumber }}
+          </p>
+
+        </div>
+
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'pending': invoice.status === 'Pending',
+            'verified': invoice.status === 'Verified',
+            'approved': invoice.status === 'Approved',
+            'paid': invoice.status === 'Paid'
+          }">
+
+          {{ invoice.status }}
+
+        </span>
+
+      </div>
+
+      <div class="details-grid">
+
+        <div>
+
+          <strong>Vendor Name</strong>
+
+          <p>{{ invoice.vendor }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Invoice Date</strong>
+
+          <p>{{ invoice.invoiceDate }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Invoice Amount</strong>
+
+          <p>{{ invoice.invoiceAmount }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Tax Amount</strong>
+
+          <p>{{ invoice.taxAmount }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Total Amount</strong>
+
+          <p>{{ invoice.totalAmount }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Due Date</strong>
+
+          <p>{{ invoice.dueDate }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Supporting Invoice</strong>
+
+          <p>
+
+            <a
+              href="#"
+              (click)="$event.preventDefault(); viewDocument(invoice)">
+
+              {{ invoice.document }}
+
+            </a>
+
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="action-buttons">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="uploadInvoice(invoice)">
+
+          Upload Invoice
+
+        </button>
+
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="verifyInvoice(invoice)">
+
+          Verify Invoice
+
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="approvePayment(invoice)">
+
+          Approve Payment
+
+        </button>
+
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="rejectInvoice(invoice)">
+
+          Reject Invoice
+
+        </button>
+
+        <button
+          mat-stroked-button
+          (click)="viewInvoice(invoice)">
+
+          View Details
+
+        </button>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+</div>

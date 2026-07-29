@@ -1,0 +1,318 @@
+<div class="dashboard-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+      <h1>Vendor Performance Dashboard</h1>
+      <p>
+        Monitor vendor performance, rankings, delivery efficiency, quality,
+        communication and service metrics.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ================= Statistics ================= -->
+
+  <div class="stats-container">
+
+    <mat-card class="stat-card vendors">
+      <mat-icon>groups</mat-icon>
+      <h2>{{ totalVendors }}</h2>
+      <p>Total Vendors Evaluated</p>
+    </mat-card>
+
+    <mat-card class="stat-card delivery">
+      <mat-icon>local_shipping</mat-icon>
+      <h2>{{ averageDelivery }}%</h2>
+      <p>Average Delivery Performance</p>
+    </mat-card>
+
+    <mat-card class="stat-card quality">
+      <mat-icon>verified</mat-icon>
+      <h2>{{ averageQuality }}/5</h2>
+      <p>Average Product Quality</p>
+    </mat-card>
+
+    <mat-card class="stat-card response">
+      <mat-icon>schedule</mat-icon>
+      <h2>{{ averageResponse }} hrs</h2>
+      <p>Average Response Time</p>
+    </mat-card>
+
+    <mat-card class="stat-card completed">
+      <mat-icon>assignment_turned_in</mat-icon>
+      <h2>{{ completedOrders }}</h2>
+      <p>Completed Orders</p>
+    </mat-card>
+
+    <mat-card class="stat-card delayed">
+      <mat-icon>warning</mat-icon>
+      <h2>{{ delayedDeliveries }}</h2>
+      <p>Delayed Deliveries</p>
+    </mat-card>
+
+    <mat-card class="stat-card ranking">
+      <mat-icon>emoji_events</mat-icon>
+      <h2>{{ rankedVendors }}</h2>
+      <p>Vendor Rankings</p>
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Quick Navigation ================= -->
+
+  <mat-card class="navigation-card">
+
+    <h2>Quick Navigation</h2>
+
+    <div class="navigation-grid">
+
+      <mat-card
+        class="nav-item"
+        (click)="deliveryPerformance()">
+
+        <mat-icon>local_shipping</mat-icon>
+
+        <h3>Delivery Performance</h3>
+
+        <p>Monitor delivery performance and delays.</p>
+
+      </mat-card>
+
+      <mat-card
+        class="nav-item"
+        (click)="productQualityEvaluation()">
+
+        <mat-icon>fact_check</mat-icon>
+
+        <h3>Product Quality</h3>
+
+        <p>Evaluate delivered products.</p>
+
+      </mat-card>
+
+      <mat-card
+        class="nav-item"
+        (click)="communicationTracking()">
+
+        <mat-icon>forum</mat-icon>
+
+        <h3>Communication Tracking</h3>
+
+        <p>Track vendor response performance.</p>
+
+      </mat-card>
+
+      <mat-card
+        class="nav-item"
+        (click)="serviceRating()">
+
+        <mat-icon>support_agent</mat-icon>
+
+        <h3>Service Rating</h3>
+
+        <p>Rate vendor services.</p>
+
+      </mat-card>
+
+      <mat-card
+        class="nav-item"
+        (click)="performanceHistory()">
+
+        <mat-icon>history</mat-icon>
+
+        <h3>Performance History</h3>
+
+        <p>Review historical performance records.</p>
+
+      </mat-card>
+
+      <mat-card
+        class="nav-item"
+        (click)="vendorRanking()">
+
+        <mat-icon>leaderboard</mat-icon>
+
+        <h3>Vendor Ranking</h3>
+
+        <p>View vendor rankings.</p>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Performance Trends ================= -->
+
+  <div class="charts-grid">
+
+    <mat-card class="chart-card">
+
+      <h2>Delivery Performance Trend</h2>
+
+      <div class="chart-placeholder">
+
+        <mat-icon>insert_chart</mat-icon>
+
+        <p>Chart will be displayed here</p>
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Product Quality Trend</h2>
+
+      <div class="chart-placeholder">
+
+        <mat-icon>bar_chart</mat-icon>
+
+        <p>Chart will be displayed here</p>
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h2>Communication Response Trend</h2>
+
+      <div class="chart-placeholder">
+
+        <mat-icon>timeline</mat-icon>
+
+        <p>Chart will be displayed here</p>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Recent Activities ================= -->
+
+  <mat-card class="table-card">
+
+    <h2>Recent Vendor Activities</h2>
+
+    <table
+      mat-table
+      [dataSource]="activities"
+      class="mat-elevation-z2">
+
+      <!-- Vendor -->
+
+      <ng-container matColumnDef="vendor">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Vendor
+
+        </th>
+
+        <td mat-cell *matCellDef="let activity">
+
+          {{ activity.vendor }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Purchase Order -->
+
+      <ng-container matColumnDef="purchaseOrder">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Purchase Order
+
+        </th>
+
+        <td mat-cell *matCellDef="let activity">
+
+          {{ activity.purchaseOrder }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Activity -->
+
+      <ng-container matColumnDef="activity">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Activity
+
+        </th>
+
+        <td mat-cell *matCellDef="let activity">
+
+          {{ activity.activity }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Date -->
+
+      <ng-container matColumnDef="date">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Date
+
+        </th>
+
+        <td mat-cell *matCellDef="let activity">
+
+          {{ activity.date }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Status -->
+
+      <ng-container matColumnDef="status">
+
+        <th mat-header-cell *matHeaderCellDef>
+
+          Status
+
+        </th>
+
+        <td mat-cell *matCellDef="let activity">
+
+          <span
+            class="status-badge"
+            [ngClass]="activity.status.toLowerCase()">
+
+            {{ activity.status }}
+
+          </span>
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

@@ -1,0 +1,149 @@
+.assignment-container {
+  max-width: 1300px;
+  margin: 30px auto;
+  padding: 25px;
+}
+
+/* Header */
+
+.page-header {
+  margin-bottom: 25px;
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 8px;
+    color: #666;
+    font-size: 15px;
+  }
+}
+
+/* Cards */
+
+.section-card {
+  margin-bottom: 25px;
+  padding: 20px;
+
+  h2 {
+    margin: 0 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eeeeee;
+    font-size: 22px;
+    font-weight: 600;
+    color: #3f51b5;
+  }
+}
+
+/* Form Layout */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* Vendor Information */
+
+strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #444;
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+  color: #666;
+}
+
+.status {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.inactive {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Remarks */
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Buttons */
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.button-group button {
+  min-width: 170px;
+}
+
+/* Hover Effect */
+
+.section-card:hover {
+  transition: 0.3s ease;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+
+@media (max-width: 992px) {
+
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .assignment-container {
+    padding: 15px;
+  }
+
+  .section-card {
+    padding: 15px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+
+}

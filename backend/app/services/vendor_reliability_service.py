@@ -217,6 +217,7 @@ class VendorReliabilityService:
                 "rank": rank,
                 "vendor_id": reliability.vendor_id,
                 "vendor_name": vendor.company_name if vendor else "Unknown",
+                "vendor_category": vendor.vendor_category if vendor else None,
                 "reliability_score": reliability.reliability_score,
                 "risk_level": reliability.risk_level,
                 "recommendation": reliability.recommendation
@@ -234,30 +235,57 @@ class VendorReliabilityService:
             return {
                 "total_vendors": 0,
                 "average_reliability_score": 0,
-                "low_risk_vendors": 0,
-                "medium_risk_vendors": 0,
-                "high_risk_vendors": 0
+                "high_reliability_vendors": 0,
+                "medium_reliability_vendors": 0,
+                "high_risk_vendors": 0,
+                "top_vendor": None,
+                "recommended_vendors": 0
             }
 
+        top = max(
+            reliabilities,
+            key=lambda r: r.reliability_score
+        )
+
+        top_vendor = db.query(Vendor).filter(
+            Vendor.id == top.vendor_id
+        ).first()
+
         return {
+
             "total_vendors": len(reliabilities),
+
             "average_reliability_score": round(
                 sum(r.reliability_score for r in reliabilities) /
                 len(reliabilities),
                 2
             ),
-            "low_risk_vendors": sum(
-                r.risk_level == "Low Risk"
+
+            "high_reliability_vendors": sum(
+                r.reliability_score >= 90
                 for r in reliabilities
             ),
-            "medium_risk_vendors": sum(
-                r.risk_level == "Medium Risk"
+
+            "medium_reliability_vendors": sum(
+                60 <= r.reliability_score < 90
                 for r in reliabilities
             ),
+
             "high_risk_vendors": sum(
                 r.risk_level == "High Risk"
                 for r in reliabilities
+            ),
+
+            "top_vendor": (
+                top_vendor.company_name
+                if top_vendor else None
+            ),
+
+            "recommended_vendors": sum(
+                r.recommendation != "Not Recommended"
+                for r in reliabilities
             )
+
         }
     @staticmethod
     def get_vendor_history(db: Session, vendor_id: int):

@@ -28,8 +28,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { VendorService } from '../../../services/vendor.service';
 
 interface Vendor {
+
+  id: number;
 
   vendorId: string;
 
@@ -74,7 +77,10 @@ interface Vendor {
 
 export class VendorList implements AfterViewInit {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private vendorService: VendorService
+) {}
 
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
@@ -110,54 +116,63 @@ export class VendorList implements AfterViewInit {
 
   selectedStatus = '';
 
-  vendors: Vendor[] = [
-
-    {
-      vendorId: 'V001',
-      companyName: 'ABC Technologies',
-      category: 'IT',
-      contactPerson: 'John Smith',
-      email: 'abc@gmail.com',
-      phone: '9876543210',
-      status: 'Active',
-      approvalStatus: 'Approved'
-    },
-
-    {
-      vendorId: 'V002',
-      companyName: 'XYZ Pvt Ltd',
-      category: 'Manufacturing',
-      contactPerson: 'David Lee',
-      email: 'xyz@gmail.com',
-      phone: '9876543211',
-      status: 'Pending',
-      approvalStatus: 'Pending'
-    },
-
-    {
-      vendorId: 'V003',
-      companyName: 'Tech Solutions',
-      category: 'Software',
-      contactPerson: 'Alex Brown',
-      email: 'tech@gmail.com',
-      phone: '9876543212',
-      status: 'Inactive',
-      approvalStatus: 'Rejected'
-    }
-
-  ];
+  vendors: Vendor[] = [];
 
   dataSource = new MatTableDataSource<Vendor>();
+  loadVendors() {
 
+    this.vendorService.getAllVendors(
+        this.searchText,
+        this.selectedCategory,
+        this.selectedStatus
+    ).subscribe({
+
+        next: (response: any) => {
+
+            this.vendors = response.items.map((v: any) => ({
+
+                id: v.id,
+
+                vendorId: v.vendor_id,
+
+                companyName: v.company_name,
+
+                category: v.vendor_category,
+
+                contactPerson: v.contact_person,
+
+                email: v.email,
+
+                phone: v.phone,
+
+                status: v.vendor_status,
+
+                approvalStatus: v.approval_status
+
+            }));
+
+            this.refreshTable();
+
+        },
+
+        error: (err: any) => {
+
+            console.error(err);
+
+        }
+
+    });
+
+}
   ngAfterViewInit(): void {
 
-    this.refreshTable();
+    this.loadVendors();
 
     this.dataSource.paginator = this.paginator;
 
     this.dataSource.sort = this.sort;
 
-  }
+}
 
   get filteredVendors(): Vendor[] {
 
@@ -201,17 +216,17 @@ export class VendorList implements AfterViewInit {
 
   }
 
-  onSearchChange(): void {
+  onSearchChange(){
 
-    this.refreshTable();
+    this.loadVendors();
 
-  }
+}
 
-  onFilterChange(): void {
+  onFilterChange(){
 
-    this.refreshTable();
+    this.loadVendors();
 
-  }
+}
 
   addVendor(): void {
 
@@ -219,32 +234,40 @@ export class VendorList implements AfterViewInit {
 
   }
 
-  viewVendor(id: string): void {
+  viewVendor(id:number){
 
-    this.router.navigate(['/vendor-details', id]);
+    this.router.navigate(['/vendor-details',id]);
 
-  }
+}
 
-  editVendor(id: string): void {
+  editVendor(id:number){
 
-    this.router.navigate(['/edit-vendor', id]);
+    this.router.navigate(['/edit-vendor',id]);
 
-  }
+}
 
-  deleteVendor(id: string): void {
+  deleteVendor(id:number){
 
-    if (confirm('Are you sure you want to delete this vendor?')) {
+    if(confirm("Are you sure?")){
 
-      this.vendors = this.vendors.filter(
+        this.vendorService.deleteVendor(id).subscribe({
 
-        vendor => vendor.vendorId !== id
+            next:()=>{
 
-      );
+                this.loadVendors();
 
-      this.refreshTable();
+            },
+
+            error:(err)=>{
+
+                console.log(err);
+
+            }
+
+        });
 
     }
 
-  }
+}
 
 }

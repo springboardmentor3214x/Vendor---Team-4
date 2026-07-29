@@ -1,0 +1,131 @@
+.procurement-form-container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 25px;
+}
+
+.page-header {
+  margin-bottom: 25px;
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 8px;
+    color: #666;
+    font-size: 15px;
+  }
+}
+
+.section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.full-width {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.upload-box {
+  border: 2px dashed #bdbdbd;
+  border-radius: 8px;
+  padding: 25px;
+  text-align: center;
+  transition: 0.3s;
+
+  &:hover {
+    border-color: #3f51b5;
+  }
+
+  input[type="file"] {
+    margin-bottom: 15px;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+.file-list {
+  margin-top: 20px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f7f7;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.file-item span {
+  word-break: break-word;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+button {
+  min-width: 150px;
+}
+
+@media (max-width: 768px) {
+  .procurement-form-container {
+    padding: 15px;
+  }
+
+  .section {
+    padding: 15px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+}

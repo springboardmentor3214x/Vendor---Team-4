@@ -1,0 +1,292 @@
+<div class="purchase-order-details-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Purchase Order Details</h1>
+
+      <p>
+        View complete purchase order information.
+      </p>
+
+    </div>
+
+    <div class="header-buttons">
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="printPurchaseOrder()">
+
+        <mat-icon>print</mat-icon>
+
+        Print
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="downloadPdf()">
+
+        <mat-icon>download</mat-icon>
+
+        Download PDF
+
+      </button>
+
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="updateStatus()">
+
+        <mat-icon>update</mat-icon>
+
+        Update Status
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Purchase Order Information -->
+
+  <mat-card class="details-card">
+
+    <h2>Purchase Order Information</h2>
+
+    <div class="details-grid">
+
+      <div>
+
+        <strong>Purchase Order Number</strong>
+
+        <p>{{ purchaseOrder.poNumber }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Purchase Order Date</strong>
+
+        <p>{{ purchaseOrder.orderDate }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Status</strong>
+
+        <p>
+
+          <span
+            class="status"
+            [ngClass]="purchaseOrder.status.toLowerCase()">
+
+            {{ purchaseOrder.status }}
+
+          </span>
+
+        </p>
+
+      </div>
+
+      <div>
+
+        <strong>Approved By</strong>
+
+        <p>{{ purchaseOrder.approvedBy }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Payment Terms</strong>
+
+        <p>{{ purchaseOrder.paymentTerms }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Vendor Information -->
+
+  <mat-card class="details-card">
+
+    <h2>Vendor Information</h2>
+
+    <div class="details-grid">
+
+      <div>
+
+        <strong>Vendor Name</strong>
+
+        <p>{{ purchaseOrder.vendor }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Vendor Address</strong>
+
+        <p>{{ purchaseOrder.vendorAddress }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Contact Person</strong>
+
+        <p>{{ purchaseOrder.contactPerson }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Procurement Request Information -->
+
+  <mat-card class="details-card">
+
+    <h2>Procurement Request Information</h2>
+
+    <div class="details-grid">
+
+      <div>
+
+        <strong>Request Number</strong>
+
+        <p>{{ purchaseOrder.requestNumber }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Department</strong>
+
+        <p>{{ purchaseOrder.department }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Requested By</strong>
+
+        <p>{{ purchaseOrder.requestedBy }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Ordered Product -->
+
+  <mat-card class="details-card">
+
+    <h2>Ordered Product</h2>
+
+    <div class="details-grid">
+
+      <div>
+
+        <strong>Product Name</strong>
+
+        <p>{{ purchaseOrder.product }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Quantity</strong>
+
+        <p>{{ purchaseOrder.quantity }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Unit Price</strong>
+
+        <p>₹ {{ purchaseOrder.unitPrice }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Tax</strong>
+
+        <p>{{ purchaseOrder.tax }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Total Amount</strong>
+
+        <p>₹ {{ purchaseOrder.totalAmount }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Delivery Information -->
+
+  <mat-card class="details-card">
+
+    <h2>Delivery Information</h2>
+
+    <div class="details-grid">
+
+      <div>
+
+        <strong>Shipping Address</strong>
+
+        <p>{{ purchaseOrder.shippingAddress }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Expected Delivery</strong>
+
+        <p>{{ purchaseOrder.expectedDelivery }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Delivery Status</strong>
+
+        <p>{{ purchaseOrder.deliveryStatus }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Remarks -->
+
+  <mat-card class="remarks-card">
+
+    <h2>Remarks</h2>
+
+    <p>
+
+      {{ purchaseOrder.remarks }}
+
+    </p>
+
+  </mat-card>
+
+</div>

@@ -1,0 +1,386 @@
+<div class="purchase-order-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Purchase Order Creation</h1>
+
+      <p>
+
+        Generate a purchase order for an approved procurement request.
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <form
+    [formGroup]="purchaseOrderForm"
+    (ngSubmit)="createPurchaseOrder()">
+
+    <!-- Purchase Order Information -->
+
+    <mat-card class="section-card">
+
+      <h2>Purchase Order Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Purchase Order Number</mat-label>
+
+          <input
+            matInput
+            formControlName="purchaseOrderNumber"
+            readonly>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Procurement Request Number</mat-label>
+
+          <mat-select formControlName="procurementRequest">
+
+            <mat-option
+              *ngFor="let request of procurementRequests"
+              [value]="request">
+
+              {{ request }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Purchase Order Status</mat-label>
+
+          <mat-select formControlName="status">
+
+            <mat-option value="Draft">Draft</mat-option>
+            <mat-option value="Generated">Generated</mat-option>
+            <mat-option value="Approved">Approved</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Vendor Information -->
+
+    <mat-card class="section-card">
+
+      <h2>Vendor Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Vendor Name</mat-label>
+
+          <mat-select formControlName="vendor">
+
+            <mat-option
+              *ngFor="let vendor of vendors"
+              [value]="vendor">
+
+              {{ vendor }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Vendor Address</mat-label>
+
+          <input
+            matInput
+            formControlName="vendorAddress">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Contact Person</mat-label>
+
+          <input
+            matInput
+            formControlName="contactPerson">
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Product Information -->
+
+    <mat-card class="section-card">
+
+      <h2>Product Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Product Details</mat-label>
+
+          <input
+            matInput
+            formControlName="productDetails">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Quantity Ordered</mat-label>
+
+          <input
+            matInput
+            type="number"
+            formControlName="quantity">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Unit Price</mat-label>
+
+          <input
+            matInput
+            type="number"
+            formControlName="unitPrice">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Total Cost</mat-label>
+
+          <input
+            matInput
+            type="number"
+            formControlName="totalCost">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Tax Details</mat-label>
+
+          <input
+            matInput
+            formControlName="taxDetails">
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Delivery Information -->
+
+    <mat-card class="section-card">
+
+      <h2>Delivery Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Shipping Address</mat-label>
+
+          <textarea
+            matInput
+            rows="3"
+            formControlName="shippingAddress">
+
+          </textarea>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Expected Delivery Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="deliveryPicker"
+            formControlName="expectedDelivery">
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="deliveryPicker">
+
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #deliveryPicker></mat-datepicker>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Payment Terms</mat-label>
+
+          <mat-select formControlName="paymentTerms">
+
+            <mat-option value="Advance Payment">
+              Advance Payment
+            </mat-option>
+
+            <mat-option value="Net 15">
+              Net 15
+            </mat-option>
+
+            <mat-option value="Net 30">
+              Net 30
+            </mat-option>
+
+            <mat-option value="Net 45">
+              Net 45
+            </mat-option>
+
+            <mat-option value="Net 60">
+              Net 60
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Approval Information -->
+
+    <mat-card class="section-card">
+
+      <h2>Approval Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Approved By</mat-label>
+
+          <input
+            matInput
+            formControlName="approvedBy">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Purchase Order Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="orderPicker"
+            formControlName="orderDate">
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="orderPicker">
+
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #orderPicker></mat-datepicker>
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Remarks -->
+
+    <mat-card class="section-card">
+
+      <h2>Additional Remarks</h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Remarks</mat-label>
+
+        <textarea
+          matInput
+          rows="5"
+          formControlName="remarks">
+
+        </textarea>
+
+      </mat-form-field>
+
+    </mat-card>
+
+    <!-- Buttons -->
+
+    <div class="button-group">
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit">
+
+        <mat-icon>
+
+          shopping_cart_checkout
+
+        </mat-icon>
+
+        Generate Purchase Order
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        type="button"
+        (click)="savePurchaseOrder()">
+
+        <mat-icon>
+
+          save
+
+        </mat-icon>
+
+        Save
+
+      </button>
+
+      <button
+        mat-stroked-button
+        color="warn"
+        type="button"
+        (click)="cancelPurchaseOrder()">
+
+        <mat-icon>
+
+          cancel
+
+        </mat-icon>
+
+        Cancel
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
