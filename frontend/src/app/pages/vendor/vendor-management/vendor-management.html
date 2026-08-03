@@ -19,6 +19,8 @@
 
   </div>
 
+  <p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
+
   <!-- ================= Dashboard Summary ================= -->
 
   <div class="stats">
@@ -267,8 +269,9 @@
 
     <p>
 
+      /*
       Every vendor record maintains audit information for tracking
-      changes throughout the vendor lifecycle.
+      changes throughout the vendor lifecycle.*/
 
     </p>
 

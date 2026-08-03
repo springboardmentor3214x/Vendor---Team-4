@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { ProcurementService } from '../../../services/procurement.service';
 
 @Component({
   selector: 'app-procurement-dashboard',
@@ -18,25 +19,31 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './procurement-dashboard.html',
   styleUrl: './procurement-dashboard.scss'
 })
-export class ProcurementDashboard {
+export class ProcurementDashboard implements OnInit {
 
-  constructor(private router: Router) {}
+  constructor(
+  private router: Router,
+  private procurementService: ProcurementService
+) {}
+ngOnInit(): void {
+  this.loadDashboard();
+}
 
   // ================= Statistics =================
 
-  totalRequests = 125;
+  totalRequests = 0;
 
-  pending = 28;
+  pending = 0;
 
-  approved = 46;
+  approved = 0;
 
-  purchaseOrders = 39;
+  purchaseOrders = 0;
 
-  delivered = 31;
+  delivered = 0;
 
-  completed = 24;
+  completed = 0;
 
-  cancelled = 7;
+  cancelled = 0;
 
   // ================= Recent Activities =================
 
@@ -129,5 +136,31 @@ export class ProcurementDashboard {
     this.router.navigate(['/vendor-assignment']);
 
   }
+  loadDashboard(): void {
+
+  this.procurementService.getDashboard().subscribe({
+
+    next: (data) => {
+
+  this.totalRequests = data.total_requests;
+  this.pending = data.pending_requests;
+  this.approved = data.approved_requests;
+  this.completed = data.completed_requests;
+  this.cancelled = data.cancelled_requests;
+
+  // The dashboard API doesn't return these yet,
+  // so keep them as 0 for now.
+  this.purchaseOrders = 0;
+  this.delivered = 0;
+
+},
+
+    error: (err) => {
+      console.error(err);
+    }
+
+  });
+
+}
 
 }

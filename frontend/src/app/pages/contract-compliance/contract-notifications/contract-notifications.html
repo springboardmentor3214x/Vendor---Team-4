@@ -1,0 +1,321 @@
+<div class="contract-notifications-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Contract Notifications</h1>
+
+      <p>
+        Monitor contract expiry alerts and renewal reminders.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Summary Cards -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h2>{{ totalNotifications }}</h2>
+
+      <p>Total Notifications</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ expiringContracts }}</h2>
+
+      <p>Expiring Contracts</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ urgentNotifications }}</h2>
+
+      <p>Urgent Alerts</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ expiredContracts }}</h2>
+
+      <p>Expired Contracts</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Contract</mat-label>
+
+        <input
+          matInput
+          placeholder="Contract Number or Vendor"
+          (keyup)="applyFilter($event)">
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Notification Type</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByType($event.value)">
+
+          <mat-option value="">
+            All Notifications
+          </mat-option>
+
+          <mat-option value="90">
+            90 Days Reminder
+          </mat-option>
+
+          <mat-option value="30">
+            30 Days Reminder
+          </mat-option>
+
+          <mat-option value="7">
+            7 Days Reminder
+          </mat-option>
+
+          <mat-option value="expired">
+            Expiry Day
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Notifications Table -->
+
+  <mat-card>
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Contract Expiry Notifications
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort>
+
+        <!-- Contract Number -->
+
+        <ng-container matColumnDef="contractNumber">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Contract Number
+
+          </th>
+
+          <td mat-cell *matCellDef="let item">
+
+            {{ item.contractNumber }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Vendor Name -->
+
+        <ng-container matColumnDef="vendorName">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Vendor Name
+
+          </th>
+
+          <td mat-cell *matCellDef="let item">
+
+            {{ item.vendorName }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Expiry Date -->
+
+        <ng-container matColumnDef="expiryDate">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Expiry Date
+
+          </th>
+
+          <td mat-cell *matCellDef="let item">
+
+            {{ item.expiryDate }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Remaining Days -->
+
+        <ng-container matColumnDef="remainingDays">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Remaining Days
+
+          </th>
+
+          <td mat-cell *matCellDef="let item">
+
+            {{ item.remainingDays }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Renewal Status -->
+
+        <ng-container matColumnDef="renewalStatus">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Renewal Status
+
+          </th>
+
+          <td mat-cell *matCellDef="let item">
+
+            <mat-chip>
+
+              {{ item.renewalStatus }}
+
+            </mat-chip>
+
+          </td>
+
+        </ng-container>
+
+        <!-- Notification Channel -->
+
+        <ng-container matColumnDef="notificationChannel">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Notification Channel
+
+          </th>
+
+          <td mat-cell *matCellDef="let item">
+
+            {{ item.notificationChannel }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Actions -->
+
+        <ng-container matColumnDef="actions">
+
+          <th mat-header-cell *matHeaderCellDef>
+
+            Actions
+
+          </th>
+
+          <td mat-cell *matCellDef="let item">
+
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewNotification(item.id)">
+
+              <mat-icon>visibility</mat-icon>
+
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="sendReminder(item.id)">
+
+              <mat-icon>notifications</mat-icon>
+
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="markAsRead(item.id)">
+
+              <mat-icon>done</mat-icon>
+
+            </button>
+
+          </td>
+
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns">
+        </tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns">
+        </tr>
+
+      </table>
+
+      <mat-paginator
+        [pageSize]="5"
+        [pageSizeOptions]="[5,10,20]"
+        showFirstLastButtons>
+      </mat-paginator>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

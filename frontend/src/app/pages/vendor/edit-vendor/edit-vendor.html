@@ -473,7 +473,7 @@
 
             <h3>Approval Status</h3>
 
-            <p>{{ vendorForm.get('approvalStatus')?.value }}</p>
+            <p>{{ approvalStatus }}</p>
 
           </div>
 
@@ -558,6 +558,22 @@
           Upload new documents or replace existing vendor documents.
 
         </p>
+
+        <mat-form-field appearance="outline" class="document-type-field">
+
+          <mat-label>Document Type</mat-label>
+
+          <mat-select [(ngModel)]="selectedDocumentType" [ngModelOptions]="{standalone: true}">
+
+            <mat-option value="GST Certificate">GST Certificate</mat-option>
+            <mat-option value="PAN Card">PAN Card</mat-option>
+            <mat-option value="Registration Certificate">Registration Certificate</mat-option>
+            <mat-option value="ISO Certificate">ISO Certificate</mat-option>
+            <mat-option value="Other">Other</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
 
         <label for="vendorFiles">
 

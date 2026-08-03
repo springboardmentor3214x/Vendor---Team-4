@@ -1,0 +1,78 @@
+.add-contract-container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 6px;
+    color: #666;
+  }
+}
+
+.section-card {
+  margin-bottom: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.upload-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  label {
+    font-weight: 500;
+    color: #444;
+  }
+
+  input[type="file"] {
+    padding: 10px;
+    border: 1px dashed #bbb;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+@media (max-width: 768px) {
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+
+}

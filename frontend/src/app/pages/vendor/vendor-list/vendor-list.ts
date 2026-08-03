@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  OnInit,
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +31,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { VendorService, VendorRecord } from '../../../services/vendor.service';
+
 interface Vendor {
+
+  id: number;
 
   vendorId: string;
 
@@ -84,9 +89,12 @@ interface Vendor {
   styleUrl: './vendor-list.scss'
 })
 
-export class VendorList implements AfterViewInit {
+export class VendorList implements OnInit, AfterViewInit {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private vendorService: VendorService
+  ) {}
 
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
@@ -140,129 +148,73 @@ export class VendorList implements AfterViewInit {
 
   selectedApprovalStatus = '';
 
-  /*
-  ===========================================================
+  loading = false;
 
-  Temporary Sample Data
+  errorMessage = '';
 
-  Future Backend
+  // ================= Vendor Data =================
+  // Retrieved from the FastAPI backend: GET /vendors/
 
-  GET /api/vendors
-
-  FastAPI will retrieve vendor information
-  from PostgreSQL.
-
-  ===========================================================
-  */
-
-  vendors: Vendor[] = [
-
-    {
-      vendorId: 'V001',
-      companyName: 'ABC Technologies',
-      category: 'IT Vendors',
-      contactPerson: 'John Smith',
-      designation: 'Sales Manager',
-      email: 'john@abctech.com',
-      phone: '9876543210',
-      alternatePhone: '9123456780',
-      gstNumber: '29ABCDE1234F1Z5',
-      panNumber: 'ABCDE1234F',
-      companyRegistrationNumber: 'CIN123456789',
-      vendorStatus: 'Active',
-      approvalStatus: 'Approved'
-    },
-
-    {
-      vendorId: 'V002',
-      companyName: 'Global Manufacturing',
-      category: 'Equipment Vendors',
-      contactPerson: 'David Lee',
-      designation: 'Business Head',
-      email: 'david@globalmfg.com',
-      phone: '9876543211',
-      alternatePhone: '9123456781',
-      gstNumber: '27PQRSX4567K1Z2',
-      panNumber: 'PQRSX4567K',
-      companyRegistrationNumber: 'CIN223456789',
-      vendorStatus: 'Pending',
-      approvalStatus: 'Pending'
-    },
-
-    {
-      vendorId: 'V003',
-      companyName: 'Fast Logistics',
-      category: 'Logistics Partners',
-      contactPerson: 'Sarah Wilson',
-      designation: 'Operations Manager',
-      email: 'sarah@fastlogistics.com',
-      phone: '9876543212',
-      alternatePhone: '9123456782',
-      gstNumber: '19LMNOP9876A1Z8',
-      panNumber: 'LMNOP9876A',
-      companyRegistrationNumber: 'CIN323456789',
-      vendorStatus: 'Active',
-      approvalStatus: 'Approved'
-    },
-
-    {
-      vendorId: 'V004',
-      companyName: 'Prime Services',
-      category: 'Service Providers',
-      contactPerson: 'Rahul Sharma',
-      designation: 'Director',
-      email: 'rahul@primeservices.com',
-      phone: '9876543213',
-      alternatePhone: '9123456783',
-      gstNumber: '07ZXCVB1122P1Z4',
-      panNumber: 'ZXCVB1122P',
-      companyRegistrationNumber: 'CIN423456789',
-      vendorStatus: 'Suspended',
-      approvalStatus: 'Rejected'
-    },
-
-    {
-      vendorId: 'V005',
-      companyName: 'Steel Suppliers Ltd.',
-      category: 'Raw Material Suppliers',
-      contactPerson: 'Ankit Verma',
-      designation: 'Procurement Head',
-      email: 'ankit@steelsuppliers.com',
-      phone: '9876543214',
-      alternatePhone: '9123456784',
-      gstNumber: '22FGHIJ5678L1Z6',
-      panNumber: 'FGHIJ5678L',
-      companyRegistrationNumber: 'CIN523456789',
-      vendorStatus: 'Inactive',
-      approvalStatus: 'Pending'
-    },
-
-    {
-      vendorId: 'V006',
-      companyName: 'MaintainPro Solutions',
-      category: 'Maintenance Vendors',
-      contactPerson: 'Priya Das',
-      designation: 'Service Manager',
-      email: 'priya@maintainpro.com',
-      phone: '9876543215',
-      alternatePhone: '9123456785',
-      gstNumber: '33JKLMN9876Q1Z1',
-      panNumber: 'JKLMN9876Q',
-      companyRegistrationNumber: 'CIN623456789',
-      vendorStatus: 'Active',
-      approvalStatus: 'Approved'
-    }
-
-  ];
+  vendors: Vendor[] = [];
 
   dataSource = new MatTableDataSource<Vendor>();
-    ngAfterViewInit(): void {
 
-    this.refreshTable();
+  ngOnInit(): void {
+    this.loadVendors();
+  }
+
+  ngAfterViewInit(): void {
 
     this.dataSource.paginator = this.paginator;
-
     this.dataSource.sort = this.sort;
+
+  }
+
+  // ================= Map backend record -> view model =================
+
+  private mapVendor(record: VendorRecord): Vendor {
+    return {
+      id: record.id,
+      vendorId: record.vendor_id,
+      companyName: record.company_name,
+      category: record.vendor_category,
+      contactPerson: record.contact_person,
+      designation: record.designation,
+      email: record.email,
+      phone: record.phone,
+      alternatePhone: record.alternate_phone ?? '',
+      gstNumber: record.gst_number,
+      panNumber: record.pan_number,
+      companyRegistrationNumber: record.company_registration_number,
+      vendorStatus: record.vendor_status,
+      approvalStatus: record.approval_status
+    };
+  }
+
+  // ================= Load Vendors =================
+
+  loadVendors(): void {
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.vendorService.getVendors({
+      // A large page size keeps the existing client-side
+      // paginator/sort/filter behavior working against the
+      // full vendor list.
+      page: 1,
+      size: 1000
+    }).subscribe({
+      next: (response) => {
+        this.vendors = response.items.map(item => this.mapVendor(item));
+        this.refreshTable();
+        this.loading = false;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.detail || 'Failed to load vendors.';
+        this.loading = false;
+      }
+    });
 
   }
 
@@ -307,34 +259,6 @@ export class VendorList implements AfterViewInit {
   // ================= Search & Filters =================
 
   get filteredVendors(): Vendor[] {
-
-    /*
-    =========================================================
-
-    Future Backend API
-
-    GET /api/vendors
-
-    Query Parameters
-
-    ?page=
-    &size=
-    &search=
-    &category=
-    &vendorStatus=
-    &approvalStatus=
-
-    FastAPI will perform:
-
-    - Searching
-    - Filtering
-    - Sorting
-    - Pagination
-
-    PostgreSQL will return only the requested records.
-
-    =========================================================
-    */
 
     return this.vendors.filter(vendor => {
 
@@ -410,13 +334,13 @@ export class VendorList implements AfterViewInit {
 
   }
 
-  viewVendor(id: string): void {
+  viewVendor(id: number): void {
 
     this.router.navigate(['/vendor-details', id]);
 
   }
 
-  editVendor(id: string): void {
+  editVendor(id: number): void {
 
     this.router.navigate(['/edit-vendor', id]);
 
@@ -424,7 +348,7 @@ export class VendorList implements AfterViewInit {
 
   // ================= Delete Vendor =================
 
-  deleteVendor(id: string): void {
+  deleteVendor(id: number): void {
 
     const confirmed = confirm(
 
@@ -438,55 +362,16 @@ export class VendorList implements AfterViewInit {
 
     }
 
-    this.vendors = this.vendors.filter(
-
-      vendor => vendor.vendorId !== id
-
-    );
-
-    this.refreshTable();
-
-    /*
-    =========================================================
-
-    FastAPI Endpoint
-
-    DELETE /api/vendors/{vendorId}
-
-    =========================================================
-
-    Backend Responsibilities
-
-    - Validate Vendor ID exists
-
-    - Validate user has permission
-      to delete vendors
-
-    - Prevent deletion if
-
-        • Procurement Records exist
-
-        • Purchase Orders exist
-
-        • Contracts exist
-
-    - Remove vendor from PostgreSQL
-
-    - Return success or
-      meaningful error message
-
-    =========================================================
-
-    Procurement Integration
-
-    Deleted vendors should no longer
-    be available for Procurement.
-
-    =========================================================
-
-    */
-
-    alert('Vendor deleted successfully.');
+    this.vendorService.deleteVendor(id).subscribe({
+      next: () => {
+        this.vendors = this.vendors.filter(vendor => vendor.id !== id);
+        this.refreshTable();
+        alert('Vendor deleted successfully.');
+      },
+      error: (err) => {
+        alert(err?.error?.detail || 'Failed to delete vendor.');
+      }
+    });
 
   }
 

@@ -112,7 +112,7 @@ logout() {
       break;
 
     case 'Purchase Orders':
-      this.router.navigate(['/purchase-orders']);
+      this.router.navigate(['/purchase-order-details']);
       break;
 
     case 'Contracts':

@@ -345,6 +345,10 @@
 
     <h2>Uploaded Documents</h2>
 
+    <p *ngIf="documents.length === 0" class="no-documents">
+      No documents uploaded.
+    </p>
+
     <div
       class="document"
       *ngFor="let document of documents">
@@ -359,23 +363,13 @@
 
         <span>
 
-          {{ document }}
+          {{ document.file_name }}
 
         </span>
 
       </div>
 
       <div class="document-actions">
-
-        <button
-          mat-stroked-button
-          color="primary"
-          type="button"
-          (click)="viewDocument(document)">
-
-          View
-
-        </button>
 
         <button
           mat-flat-button

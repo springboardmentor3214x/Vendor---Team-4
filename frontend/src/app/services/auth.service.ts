@@ -7,6 +7,8 @@ import {
 
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,7 @@ import { Observable } from 'rxjs';
 
 export class AuthService {
 
-  private apiUrl = 'http://127.0.0.1:8000';
+  private apiUrl = environment.apiUrl;
 
 
   constructor(

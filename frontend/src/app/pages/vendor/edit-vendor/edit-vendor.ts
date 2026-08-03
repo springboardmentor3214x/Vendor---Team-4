@@ -4,11 +4,12 @@ import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
 
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,11 +18,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 
+import { VendorService, VendorRecord } from '../../../services/vendor.service';
+
 @Component({
   selector: 'app-edit-vendor',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -40,6 +44,8 @@ export class EditVendor implements OnInit {
 
   uploadedFiles: File[] = [];
 
+  selectedDocumentType = 'Other';
+
   readonly maxFileSize = 5 * 1024 * 1024;
 
   readonly allowedFileTypes = [
@@ -49,11 +55,27 @@ export class EditVendor implements OnInit {
     'image/png'
   ];
 
+  vendorId!: number;
+
+  // Read-only -- approval is managed via the Vendor Approval workflow,
+  // not through this form.
+  approvalStatus = 'Pending';
+
+  loading = false;
+
+  submitting = false;
+
+  errorMessage = '';
+
   constructor(
 
     private fb: FormBuilder,
 
-    private router: Router
+    private router: Router,
+
+    private route: ActivatedRoute,
+
+    private vendorService: VendorService
 
   ) {}
 
@@ -63,143 +85,123 @@ export class EditVendor implements OnInit {
 
       // ================= Company Information =================
 
-      companyName: [
-        'ABC Technologies',
-        Validators.required
-      ],
+      companyName: ['', Validators.required],
 
-      vendorCategory: [
-        'IT Vendors',
-        Validators.required
-      ],
+      vendorCategory: ['', Validators.required],
 
-      contactPerson: [
-        'John Smith',
-        Validators.required
-      ],
+      contactPerson: ['', Validators.required],
 
-      designation: [
-        'Sales Manager',
-        Validators.required
-      ],
+      designation: ['', Validators.required],
 
       // ================= Contact Information =================
 
-      email: [
-        'abc@gmail.com',
-        [
-          Validators.required,
-          Validators.email
-        ]
-      ],
+      email: ['', [Validators.required, Validators.email]],
 
-      phone: [
-        '9876543210',
-        [
-          Validators.required,
-          Validators.pattern('^[0-9]{10}$')
-        ]
-      ],
+      phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
 
-      alternatePhone: [
-        '9876543211'
-      ],
+      alternatePhone: [''],
 
       // ================= Company Details =================
 
-      gstNumber: [
-        '22ABCDE1234F1Z5',
-        Validators.required
-      ],
+      gstNumber: ['', Validators.required],
 
-      panNumber: [
-        'ABCDE1234F',
-        Validators.required
-      ],
+      panNumber: ['', Validators.required],
 
-      registrationNumber: [
-        'REG987654',
-        Validators.required
-      ],
+      registrationNumber: ['', Validators.required],
 
       // ================= Address =================
 
-      addressLine1: [
-        'Sector 5',
-        Validators.required
-      ],
+      addressLine1: ['', Validators.required],
 
-      addressLine2: [
-        'Salt Lake'
-      ],
+      addressLine2: [''],
 
-      city: [
-        'Kolkata',
-        Validators.required
-      ],
+      city: ['', Validators.required],
 
-      state: [
-        'West Bengal',
-        Validators.required
-      ],
+      state: ['', Validators.required],
 
-      country: [
-        'India',
-        Validators.required
-      ],
+      country: ['', Validators.required],
 
-      pincode: [
-        '700091',
-        [
-          Validators.required,
-          Validators.pattern('^[0-9]{6}$')
-        ]
-      ],
+      pincode: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
 
       // ================= Other Information =================
 
-      website: [
-        'https://www.abctech.com'
-      ],
+      website: [''],
 
-      description: [
-        'IT Service Provider'
-      ],
+      description: [''],
 
       // ================= Bank Details =================
 
-      accountNumber: [
-        '123456789012',
-        Validators.required
-      ],
+      accountNumber: ['', Validators.required],
 
-      ifscCode: [
-        'SBIN0001234',
-        Validators.required
-      ],
+      ifscCode: ['', Validators.required],
 
-      paymentTerms: [
-        '30 Days',
-        Validators.required
-      ],
+      paymentTerms: ['', Validators.required],
 
       // ================= Status =================
+      // Vendor Status can be adjusted here; Approval Status is
+      // managed separately through the Vendor Approval workflow.
 
-      vendorStatus: [
-        'Active',
-        Validators.required
-      ],
-
-      approvalStatus: [
-        'Approved'
-      ]
+      vendorStatus: ['Pending', Validators.required]
 
     });
 
-    // Existing uploaded documents (sample data)
-    // These would normally come from the FastAPI backend.
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('id');
+      if (idParam) {
+        this.vendorId = Number(idParam);
+        this.loadVendor();
+      }
+    });
 
-    this.uploadedFiles = [];
+  }
+
+  // ================= Load Vendor =================
+
+  private loadVendor(): void {
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.vendorService.getVendorById(this.vendorId).subscribe({
+      next: (vendor) => this.populateForm(vendor),
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err?.error?.detail || 'Failed to load vendor.';
+      }
+    });
+
+  }
+
+  private populateForm(vendor: VendorRecord): void {
+
+    this.vendorForm.patchValue({
+      companyName: vendor.company_name,
+      vendorCategory: vendor.vendor_category,
+      contactPerson: vendor.contact_person,
+      designation: vendor.designation,
+      email: vendor.email,
+      phone: vendor.phone,
+      alternatePhone: vendor.alternate_phone || '',
+      gstNumber: vendor.gst_number,
+      panNumber: vendor.pan_number,
+      registrationNumber: vendor.company_registration_number,
+      addressLine1: vendor.address_line1,
+      addressLine2: vendor.address_line2 || '',
+      city: vendor.city,
+      state: vendor.state,
+      country: vendor.country,
+      pincode: vendor.pincode,
+      website: vendor.website || '',
+      description: vendor.description || '',
+      accountNumber: vendor.bank_account_number || '',
+      ifscCode: vendor.ifsc_code || '',
+      paymentTerms: vendor.payment_terms || '',
+      vendorStatus: vendor.vendor_status
+    });
+
+    this.approvalStatus = vendor.approval_status;
+
+    this.loading = false;
 
   }
     // ================= File Upload =================
@@ -285,99 +287,82 @@ export class EditVendor implements OnInit {
 
     }
 
-    console.log('Updated Vendor Information');
+    this.submitting = true;
+    this.errorMessage = '';
 
-    console.log(this.vendorForm.value);
+    const formValue = this.vendorForm.value;
 
-    console.log('Vendor Documents');
+    const payload = {
+      company_name: formValue.companyName,
+      vendor_category: formValue.vendorCategory,
+      contact_person: formValue.contactPerson,
+      designation: formValue.designation,
+      email: formValue.email,
+      phone: formValue.phone,
+      alternate_phone: formValue.alternatePhone || null,
+      gst_number: formValue.gstNumber,
+      pan_number: formValue.panNumber,
+      company_registration_number: formValue.registrationNumber,
+      address_line1: formValue.addressLine1,
+      address_line2: formValue.addressLine2 || null,
+      city: formValue.city,
+      state: formValue.state,
+      country: formValue.country,
+      pincode: formValue.pincode,
+      website: formValue.website || null,
+      description: formValue.description || null,
+      bank_account_number: formValue.accountNumber || null,
+      ifsc_code: formValue.ifscCode || null,
+      payment_terms: formValue.paymentTerms || null,
+      vendor_status: formValue.vendorStatus
+    };
 
-    console.log(this.uploadedFiles);
+    this.vendorService.updateVendor(this.vendorId, payload).subscribe({
+      next: () => {
+        this.uploadDocumentsThenFinish();
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.errorMessage = err?.error?.detail || 'Failed to update vendor.';
+      }
+    });
 
-    /*
-    ============================================================
-    FastAPI Integration
-    ============================================================
+  }
 
-    Endpoint
+  private uploadDocumentsThenFinish(): void {
 
-    PUT /api/vendors/{vendorId}
+    if (this.uploadedFiles.length === 0) {
+      this.finishSubmit();
+      return;
+    }
 
-    Request
+    let remaining = this.uploadedFiles.length;
 
-    Multipart/Form-Data
+    this.uploadedFiles.forEach(file => {
 
-    ============================================================
-    Backend Responsibilities
-    ============================================================
+      this.vendorService.uploadDocument(this.vendorId, this.selectedDocumentType, file).subscribe({
+        next: () => {
+          remaining -= 1;
+          if (remaining === 0) {
+            this.finishSubmit();
+          }
+        },
+        error: () => {
+          remaining -= 1;
+          if (remaining === 0) {
+            this.finishSubmit();
+          }
+        }
+      });
 
-    Validate Company Name uniqueness
-    (excluding the current vendor)
+    });
 
-    Validate Email uniqueness
+  }
 
-    Validate GST Number uniqueness
-
-    Validate PAN Number uniqueness
-
-    Validate Company Registration Number uniqueness
-
-    Validate uploaded documents
-
-    Replace or store new documents
-
-    Update vendor information
-
-    Update audit information
-
-    lastUpdatedBy
-
-    lastUpdatedDate
-
-    ============================================================
-    Approval Workflow
-    ============================================================
-
-    Approval Status is managed separately
-    through the Vendor Approval Workflow.
-
-    This page should not approve or reject vendors.
-
-    ============================================================
-    Procurement Integration
-    ============================================================
-
-    Vendor will be available for Procurement only when
-
-    approvalStatus == Approved
-
-    AND
-
-    vendorStatus == Active
-
-    ============================================================
-    Future Module Integration
-    ============================================================
-
-    Purchase Orders
-
-    Procurement Records
-
-    Vendor Performance
-
-    Vendor Reliability
-
-    Reports
-
-    Contracts
-
-    All reference this Vendor record.
-
-    ============================================================
-
-    */
-
+  private finishSubmit(): void {
+    this.submitting = false;
     alert('Vendor updated successfully.');
-
+    this.router.navigate(['/vendor-list']);
   }
 
   // ================= Cancel =================

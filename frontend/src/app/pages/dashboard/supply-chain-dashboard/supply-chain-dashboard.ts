@@ -104,15 +104,11 @@ export class SupplyChainDashboard {
       break;
 
     case 'Vendor Reliability':
-      alert(
-        
-      );
+      this.router.navigate(['/vendor-reliability-dashboard']);
       break;
 
     case 'Procurement Tracking':
-      alert(
-        
-      );
+      this.router.navigate(['/procurement-status']);
       break;
 
     default:

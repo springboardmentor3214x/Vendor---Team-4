@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+
+import { VendorService } from '../../../services/vendor.service';
 
 @Component({
   selector: 'app-vendor-management',
@@ -19,36 +21,47 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './vendor-management.scss'
 })
 
-export class VendorManagement {
+export class VendorManagement implements OnInit {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private vendorService: VendorService
+  ) {}
 
-  /*
-  ===========================================================
+  // ================= Dashboard Statistics =================
+  // Retrieved from the FastAPI backend: GET /vendors/dashboard
 
-  Temporary Dashboard Data
+  totalVendors = 0;
 
-  Future Backend
+  approved = 0;
 
-  GET /api/vendors/dashboard
+  pending = 0;
 
-  FastAPI will retrieve dashboard statistics
-  from PostgreSQL.
+  active = 0;
 
-  ===========================================================
-  */
+  suspended = 0;
 
-  totalVendors = 42;
+  rejected = 0;
 
-  approved = 31;
+  errorMessage = '';
 
-  pending = 6;
+  ngOnInit(): void {
 
-  active = 28;
+    this.vendorService.getDashboard().subscribe({
+      next: (stats) => {
+        this.totalVendors = stats.total_vendors;
+        this.approved = stats.approved_vendors;
+        this.pending = stats.pending_vendors;
+        this.active = stats.active_vendors;
+        this.suspended = stats.suspended_vendors;
+        this.rejected = stats.rejected_vendors;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.detail || 'Failed to load vendor dashboard.';
+      }
+    });
 
-  suspended = 2;
-
-  rejected = 3;
+  }
 
   // ================= Vendor List =================
 
@@ -79,10 +92,6 @@ export class VendorManagement {
   documents(): void {
 
     /*
-    Future Route
-
-    /vendor-documents
-
     At present, uploaded documents are managed
     through the Add Vendor, Edit Vendor,
     and Vendor Details pages.
@@ -96,84 +105,8 @@ export class VendorManagement {
 
   details(): void {
 
-    /*
-    Future Navigation
-
-    this.router.navigate(['/vendor-details', vendorId]);
-
-    Vendor ID will be passed from the
-    selected vendor record.
-    */
-
-    this.router.navigate(['/vendor-details', 'V001']);
+    this.router.navigate(['/vendor-list']);
 
   }
-
-  /*
-  ===========================================================
-
-  Backend Responsibilities
-
-  GET /api/vendors/dashboard
-
-  Return
-
-  - Total Vendors
-
-  - Approved Vendors
-
-  - Pending Vendors
-
-  - Active Vendors
-
-  - Suspended Vendors
-
-  - Rejected Vendors
-
-  ===========================================================
-
-  Procurement Integration
-
-  Only vendors whose
-
-  Approval Status = Approved
-
-  AND
-
-  Vendor Status = Active
-
-  are available during Procurement.
-
-  ===========================================================
-
-  Database Relationships
-
-  Vendor
-
-  -> Purchase Orders
-
-  -> Procurement Records
-
-  -> Uploaded Documents
-
-  -> Contracts (Future)
-
-  ===========================================================
-
-  Future Module Integration
-
-  Procurement Management
-
-  Vendor Performance
-
-  Vendor Reliability
-
-  Reports & Dashboards
-
-  Contract Management
-
-  ===========================================================
-
-  */
 
 }

@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -18,11 +19,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 
+import { VendorService } from '../../../services/vendor.service';
+
 @Component({
   selector: 'app-add-vendor',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -41,6 +45,8 @@ export class AddVendor implements OnInit {
 
   uploadedFiles: File[] = [];
 
+  selectedDocumentType = 'Other';
+
   readonly maxFileSize = 5 * 1024 * 1024;
 
   readonly allowedFileTypes = [
@@ -50,11 +56,17 @@ export class AddVendor implements OnInit {
     'image/png'
   ];
 
+  submitting = false;
+
+  errorMessage = '';
+
   constructor(
 
     private fb: FormBuilder,
 
-    private router: Router
+    private router: Router,
+
+    private vendorService: VendorService
 
   ) {}
 
@@ -174,20 +186,10 @@ export class AddVendor implements OnInit {
       paymentTerms: [
         '',
         Validators.required
-      ],
-
-      // ================= System Managed Fields =================
-
-      // Automatically assigned during registration.
-      // Users cannot modify these values.
-
-      vendorStatus: [
-        'Pending'
-      ],
-
-      approvalStatus: [
-        'Pending'
       ]
+
+      // Vendor Status / Approval Status are system managed
+      // and assigned by the backend (Pending on creation).
 
     });
 
@@ -275,107 +277,83 @@ export class AddVendor implements OnInit {
 
     }
 
-    console.log('Vendor Information');
+    this.submitting = true;
+    this.errorMessage = '';
 
-    console.log(this.vendorForm.value);
+    const formValue = this.vendorForm.value;
 
-    console.log('Uploaded Documents');
+    const payload = {
+      company_name: formValue.companyName,
+      vendor_category: formValue.vendorCategory,
+      contact_person: formValue.contactPerson,
+      designation: formValue.designation,
+      email: formValue.email,
+      phone: formValue.phone,
+      alternate_phone: formValue.alternatePhone || null,
+      gst_number: formValue.gstNumber,
+      pan_number: formValue.panNumber,
+      company_registration_number: formValue.registrationNumber,
+      address_line1: formValue.addressLine1,
+      address_line2: formValue.addressLine2 || null,
+      city: formValue.city,
+      state: formValue.state,
+      country: formValue.country,
+      pincode: formValue.pincode,
+      website: formValue.website || null,
+      description: formValue.description || null,
+      bank_account_number: formValue.accountNumber || null,
+      ifsc_code: formValue.ifscCode || null,
+      payment_terms: formValue.paymentTerms || null
+    };
 
-    console.log(this.uploadedFiles);
+    this.vendorService.createVendor(payload).subscribe({
+      next: (vendor) => {
+        this.uploadDocumentsThenFinish(vendor.id);
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.errorMessage = err?.error?.detail || 'Failed to register vendor.';
+      }
+    });
 
-    /*
-    ============================================================
-    FastAPI Integration
-    ============================================================
+  }
 
-    Endpoint
+  // ================= Upload Documents =================
 
-    POST /api/vendors
+  private uploadDocumentsThenFinish(vendorId: number): void {
 
-    Request
+    if (this.uploadedFiles.length === 0) {
+      this.finishSubmit();
+      return;
+    }
 
-    Multipart/Form-Data
+    let remaining = this.uploadedFiles.length;
 
-    ----------------------------
-    Form Fields
-    ----------------------------
+    this.uploadedFiles.forEach(file => {
 
-    Company Information
+      this.vendorService.uploadDocument(vendorId, this.selectedDocumentType, file).subscribe({
+        next: () => {
+          remaining -= 1;
+          if (remaining === 0) {
+            this.finishSubmit();
+          }
+        },
+        error: () => {
+          remaining -= 1;
+          if (remaining === 0) {
+            this.finishSubmit();
+          }
+        }
+      });
 
-    Contact Information
+    });
 
-    Address
+  }
 
-    Banking Information
-
-    Vendor Category
-
-    Payment Terms
-
-    Vendor Documents
-
-    ----------------------------
-    System Managed Fields
-    ----------------------------
-
-    approvalStatus = Pending
-
-    vendorStatus = Pending
-
-    ----------------------------
-    Backend Responsibilities
-    ----------------------------
-
-    Validate duplicate Company Name (business rule)
-
-    Validate Email uniqueness
-
-    Validate GST uniqueness
-
-    Validate PAN uniqueness
-
-    Validate Registration Number uniqueness
-
-    Validate uploaded documents
-
-    Store files
-
-    Store vendor information
-
-    Generate Vendor ID
-
-    Generate audit fields
-
-    createdBy
-
-    createdDate
-
-    lastUpdatedBy
-
-    lastUpdatedDate
-
-    approvedBy
-
-    approvedDate
-
-    ============================================================
-    Procurement Integration
-    ============================================================
-
-    Vendor will NOT appear in Procurement until
-
-    approvalStatus == Approved
-
-    AND
-
-    vendorStatus == Active
-
-    ============================================================
-
-    */
-
+  private finishSubmit(): void {
+    this.submitting = false;
     alert('Vendor registered successfully and sent for approval.');
-
+    this.router.navigate(['/vendor-list']);
   }
 
   // ================= Cancel =================

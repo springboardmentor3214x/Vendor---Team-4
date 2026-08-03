@@ -71,6 +71,19 @@ import { ProcurementRiskDashboard } from './pages/vendor-reliability/procurement
 import { PerformanceTrendAnalysis } from './pages/vendor-reliability/performance-trend-analysis/performance-trend-analysis';
 import { ProcurementRecommendations } from './pages/vendor-reliability/procurement-recommendations/procurement-recommendations';
 
+
+
+
+import { ContractRepository } from './pages/contract-compliance/contract-repository/contract-repository';
+import { AddContract } from './pages/contract-compliance/add-contract/add-contract';
+import { ContractDetails } from './pages/contract-compliance/contract-details/contract-details';
+import { EditContract } from './pages/contract-compliance/edit-contract/edit-contract';
+import { ContractRenewalDashboard } from './pages/contract-compliance/contract-renewal-dashboard/contract-renewal-dashboard';
+import { CertificationManagement } from './pages/contract-compliance/certification-management/certification-management';
+import { VendorDocumentation } from './pages/contract-compliance/vendor-documentation/vendor-documentation';
+import { ComplianceDashboard } from './pages/contract-compliance/compliance-dashboard/compliance-dashboard';
+import { ContractNotifications } from './pages/contract-compliance/contract-notifications/contract-notifications';
+
 export const routes: Routes = [
 
   {
@@ -335,6 +348,55 @@ export const routes: Routes = [
   path: 'procurement-recommendations',
   component: ProcurementRecommendations
 },
+
+
+//
+
+{
+  path: 'contract-repository',
+  component: ContractRepository
+},
+
+{
+  path: 'add-contract',
+  component: AddContract
+},
+
+{
+  path: 'contract-details/:id',
+  component: ContractDetails
+},
+
+{
+  path: 'edit-contract/:id',
+  component: EditContract
+},
+
+{
+  path: 'contract-renewal-dashboard',
+  component: ContractRenewalDashboard
+},
+
+{
+  path: 'certification-management',
+  component: CertificationManagement
+},
+
+{
+  path: 'vendor-documentation',
+  component: VendorDocumentation
+},
+
+{
+  path: 'compliance-dashboard',
+  component: ComplianceDashboard
+},
+
+{
+  path: 'contract-notifications',
+  component: ContractNotifications
+},
+
   // Analytics
 
   {

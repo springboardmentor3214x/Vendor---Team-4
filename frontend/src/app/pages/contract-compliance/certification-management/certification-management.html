@@ -1,0 +1,343 @@
+<div class="certification-container">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Certification Management</h1>
+
+      <p>
+        Manage vendor certifications and expiry tracking.
+      </p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addCertification()">
+
+      <mat-icon>add</mat-icon>
+
+      Add Certification
+
+    </button>
+
+  </div>
+
+  <!-- Summary Cards -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h2>{{ totalCertifications }}</h2>
+
+      <p>Total Certifications</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ activeCertifications }}</h2>
+
+      <p>Active Certifications</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ expiringCertifications }}</h2>
+
+      <p>Expiring Soon</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ expiredCertifications }}</h2>
+
+      <p>Expired Certifications</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Progress Indicator -->
+
+  <mat-card class="progress-card">
+
+    <mat-card-content>
+
+      <h3>Certification Health</h3>
+
+      <mat-progress-bar
+        mode="determinate"
+        [value]="79">
+      </mat-progress-bar>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Search & Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search</mat-label>
+
+        <input
+          matInput
+          placeholder="Certification or Vendor"
+          (keyup)="applyFilter($event)">
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Status</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByStatus($event.value)">
+
+          <mat-option value="">
+            All
+          </mat-option>
+
+          <mat-option value="Active">
+            Active
+          </mat-option>
+
+          <mat-option value="Expiring">
+            Expiring
+          </mat-option>
+
+          <mat-option value="Expired">
+            Expired
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Certifications Table -->
+
+  <mat-card>
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Vendor Certifications
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort>
+
+        <!-- Certification Name -->
+
+        <ng-container matColumnDef="certificationName">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Certification
+
+          </th>
+
+          <td mat-cell *matCellDef="let cert">
+
+            {{ cert.certificationName }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Certificate Number -->
+
+        <ng-container matColumnDef="certificateNumber">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Certificate No.
+
+          </th>
+
+          <td mat-cell *matCellDef="let cert">
+
+            {{ cert.certificateNumber }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Vendor Name -->
+
+        <ng-container matColumnDef="vendorName">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Vendor
+
+          </th>
+
+          <td mat-cell *matCellDef="let cert">
+
+            {{ cert.vendorName }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Authority -->
+
+        <ng-container matColumnDef="issuingAuthority">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Authority
+
+          </th>
+
+          <td mat-cell *matCellDef="let cert">
+
+            {{ cert.issuingAuthority }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Expiry -->
+
+        <ng-container matColumnDef="expiryDate">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Expiry Date
+
+          </th>
+
+          <td mat-cell *matCellDef="let cert">
+
+            {{ cert.expiryDate }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Status -->
+
+        <ng-container matColumnDef="status">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Status
+
+          </th>
+
+          <td mat-cell *matCellDef="let cert">
+
+            <mat-chip>
+
+              {{ cert.status }}
+
+            </mat-chip>
+
+          </td>
+
+        </ng-container>
+
+        <!-- Actions -->
+
+        <ng-container matColumnDef="actions">
+
+          <th mat-header-cell *matHeaderCellDef>
+
+            Actions
+
+          </th>
+
+          <td mat-cell *matCellDef="let cert">
+
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewCertificate(cert.id)">
+
+              <mat-icon>visibility</mat-icon>
+
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="editCertificate(cert.id)">
+
+              <mat-icon>edit</mat-icon>
+
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="replaceCertificate(cert.id)">
+
+              <mat-icon>upload_file</mat-icon>
+
+            </button>
+
+          </td>
+
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns">
+        </tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns">
+        </tr>
+
+      </table>
+
+      <mat-paginator
+        [pageSize]="5"
+        [pageSizeOptions]="[5,10,20]"
+        showFirstLastButtons>
+      </mat-paginator>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

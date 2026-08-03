@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import { VendorService, VendorRecord } from '../../../services/vendor.service';
+
 interface VendorApprovalModel {
+
+  id: number;
 
   vendorId: string;
 
@@ -49,17 +53,24 @@ interface VendorApprovalModel {
   styleUrl: './vendor-approval.scss'
 })
 
-export class VendorApproval {
+export class VendorApproval implements OnInit {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private vendorService: VendorService
+  ) {}
 
   // ================= Dashboard Summary =================
 
-  pendingCount = 2;
+  pendingCount = 0;
 
-  approvedToday = 5;
+  approvedToday = 0;
 
-  rejectedToday = 1;
+  rejectedToday = 0;
+
+  loading = false;
+
+  errorMessage = '';
 
   // ================= Search & Filters =================
 
@@ -70,46 +81,63 @@ export class VendorApproval {
   selectedApprovalStatus = '';
 
   // ================= Vendor Data =================
+  // Retrieved from the FastAPI backend: GET /vendors/
 
-  vendors: VendorApprovalModel[] = [
+  vendors: VendorApprovalModel[] = [];
 
-    {
-      vendorId: 'V001',
-      companyName: 'ABC Technologies',
-      category: 'IT Vendors',
-      contactPerson: 'John Smith',
-      email: 'john@abctech.com',
-      phone: '9876543210',
-      vendorStatus: 'Pending',
-      approvalStatus: 'Pending',
-      registeredDate: '20-07-2026'
-    },
+  ngOnInit(): void {
+    this.loadVendors();
+  }
 
-    {
-      vendorId: 'V002',
-      companyName: 'Global Logistics',
-      category: 'Logistics Partners',
-      contactPerson: 'David Lee',
-      email: 'david@global.com',
-      phone: '9876543211',
-      vendorStatus: 'Pending',
-      approvalStatus: 'Pending',
-      registeredDate: '21-07-2026'
-    },
+  private mapVendor(record: VendorRecord): VendorApprovalModel {
+    return {
+      id: record.id,
+      vendorId: record.vendor_id,
+      companyName: record.company_name,
+      category: record.vendor_category,
+      contactPerson: record.contact_person,
+      email: record.email,
+      phone: record.phone,
+      vendorStatus: record.vendor_status,
+      approvalStatus: record.approval_status,
+      registeredDate: new Date(record.created_at).toLocaleDateString()
+    };
+  }
 
-    {
-      vendorId: 'V003',
-      companyName: 'Tech Solutions',
-      category: 'Service Providers',
-      contactPerson: 'Alex Brown',
-      email: 'alex@techsolutions.com',
-      phone: '9876543212',
-      vendorStatus: 'Active',
-      approvalStatus: 'Approved',
-      registeredDate: '18-07-2026'
-    }
+  loadVendors(): void {
 
-  ];
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.vendorService.getVendors({ page: 1, size: 1000 }).subscribe({
+      next: (response) => {
+        this.vendors = response.items.map(item => this.mapVendor(item));
+        this.updateSummary();
+        this.loading = false;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.detail || 'Failed to load vendors.';
+        this.loading = false;
+      }
+    });
+
+  }
+
+  private updateSummary(): void {
+
+    this.pendingCount = this.vendors.filter(
+      v => v.approvalStatus === 'Pending'
+    ).length;
+
+    this.approvedToday = this.vendors.filter(
+      v => v.approvalStatus === 'Approved'
+    ).length;
+
+    this.rejectedToday = this.vendors.filter(
+      v => v.approvalStatus === 'Rejected'
+    ).length;
+
+  }
 
   // ================= Search & Filter =================
 
@@ -150,19 +178,8 @@ export class VendorApproval {
 
   viewVendor(vendor: VendorApprovalModel): void {
 
-    /*
-    In production:
+   this.router.navigate(['/vendor-details', vendor.id]);
 
-    
-
-    */
-   this.router.navigate(['/vendor-details', vendor.vendorId]);
-   /*
-
-    console.log('View Vendor');
-
-    console.log(vendor);
-*/
   }
 
   // ================= Approve Vendor =================
@@ -181,68 +198,17 @@ export class VendorApproval {
 
     }
 
-    vendor.approvalStatus = 'Approved';
-
-    vendor.vendorStatus = 'Active';
-
-    this.pendingCount = this.vendors.filter(
-
-      v => v.approvalStatus === 'Pending'
-
-    ).length;
-
-    /*
-    ============================================================
-    FastAPI Integration
-    ============================================================
-
-    Endpoint
-
-    PUT /api/vendors/{vendorId}/approve
-
-    ============================================================
-
-    Backend Responsibilities
-
-    - Validate Vendor ID exists
-
-    - Validate logged-in user has approval permission
-
-    - Update Approval Status = Approved
-
-    - Update Vendor Status = Active
-      (according to business rules)
-
-    - Update Approved By
-
-    - Update Approved Date
-
-    - Update Last Updated By
-
-    - Update Last Updated Date
-
-    - Store audit information
-
-    - Return updated vendor details
-
-    ============================================================
-    Procurement Integration
-
-    Only vendors with
-
-    Approval Status = Approved
-
-    AND
-
-    Vendor Status = Active
-
-    should be available in Procurement.
-
-    ============================================================
-
-    */
-
-    alert(`${vendor.companyName} approved successfully.`);
+    this.vendorService.approveVendor(vendor.id).subscribe({
+      next: (response) => {
+        vendor.approvalStatus = response.approval_status;
+        vendor.vendorStatus = response.vendor_status;
+        this.updateSummary();
+        alert(`${vendor.companyName} approved successfully.`);
+      },
+      error: (err) => {
+        alert(err?.error?.detail || 'Failed to approve vendor.');
+      }
+    });
 
   }
 
@@ -250,83 +216,29 @@ export class VendorApproval {
 
   rejectVendor(vendor: VendorApprovalModel): void {
 
-    const reason = prompt(
+    const confirmed = confirm(
 
-      'Enter rejection reason:'
+      `Reject vendor "${vendor.companyName}"?`
 
     );
 
-    if (reason === null) {
+    if (!confirmed) {
 
       return;
 
     }
 
-    vendor.approvalStatus = 'Rejected';
-
-    vendor.vendorStatus = 'Rejected';
-
-    this.pendingCount = this.vendors.filter(
-
-      v => v.approvalStatus === 'Pending'
-
-    ).length;
-
-    /*
-    ============================================================
-    FastAPI Integration
-    ============================================================
-
-    Endpoint
-
-    PUT /api/vendors/{vendorId}/reject
-
-    ============================================================
-
-    Backend Responsibilities
-
-    - Validate Vendor ID exists
-
-    - Validate logged-in user has approval permission
-
-    - Store rejection reason
-
-    - Update Approval Status = Rejected
-
-    - Update Vendor Status
-      (according to business rules)
-
-    - Update Rejected By
-
-    - Update Rejected Date
-
-    - Update Last Updated By
-
-    - Update Last Updated Date
-
-    - Store audit information
-
-    ============================================================
-
-    Future Modules
-
-    Procurement
-
-    Vendor Performance
-
-    Vendor Reliability
-
-    Reports
-
-    Contracts
-
-    use this vendor information.
-
-    ============================================================
-
-    */
-
-    alert(`${vendor.companyName} rejected successfully.`);
+    this.vendorService.rejectVendor(vendor.id).subscribe({
+      next: (response) => {
+        vendor.approvalStatus = response.approval_status;
+        vendor.vendorStatus = response.vendor_status;
+        this.updateSummary();
+        alert(`${vendor.companyName} rejected successfully.`);
+      },
+      error: (err) => {
+        alert(err?.error?.detail || 'Failed to reject vendor.');
+      }
+    });
 
   }
 

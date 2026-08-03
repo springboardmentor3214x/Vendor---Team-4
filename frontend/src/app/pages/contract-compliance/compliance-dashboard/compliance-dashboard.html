@@ -1,0 +1,317 @@
+<div class="compliance-dashboard-container">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Compliance Dashboard</h1>
+
+      <p>
+        Monitor vendor compliance requirements and verification status.
+      </p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="verifyCompliance()">
+
+      <mat-icon>verified</mat-icon>
+
+      Verify Compliance
+
+    </button>
+
+  </div>
+
+  <!-- Summary Cards -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h2>{{ totalVendors }}</h2>
+
+      <p>Total Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ compliantVendors }}</h2>
+
+      <p>Compliant Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ nonCompliantVendors }}</h2>
+
+      <p>Non-Compliant Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h2>{{ compliancePercentage }}%</h2>
+
+      <p>Compliance Percentage</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Progress Indicator -->
+
+  <mat-card class="progress-card">
+
+    <mat-card-content>
+
+      <h3>Overall Compliance Health</h3>
+
+      <mat-progress-bar
+        mode="determinate"
+        [value]="compliancePercentage">
+      </mat-progress-bar>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Search & Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Vendor</mat-label>
+
+        <input
+          matInput
+          placeholder="Vendor Name"
+          (keyup)="applyFilter($event)">
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Compliance Status</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByStatus($event.value)">
+
+          <mat-option value="">
+            All Status
+          </mat-option>
+
+          <mat-option value="Compliant">
+            Compliant
+          </mat-option>
+
+          <mat-option value="Pending Verification">
+            Pending Verification
+          </mat-option>
+
+          <mat-option value="Non-Compliant">
+            Non-Compliant
+          </mat-option>
+
+          <mat-option value="Expired">
+            Expired
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Compliance Table -->
+
+  <mat-card>
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Vendor Compliance Records
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort>
+
+        <!-- Vendor -->
+
+        <ng-container matColumnDef="vendorName">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Vendor
+
+          </th>
+
+          <td mat-cell *matCellDef="let record">
+
+            {{ record.vendorName }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Requirement -->
+
+        <ng-container matColumnDef="requirement">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Requirement
+
+          </th>
+
+          <td mat-cell *matCellDef="let record">
+
+            {{ record.requirement }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Last Verified -->
+
+        <ng-container matColumnDef="lastVerified">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Last Verified
+
+          </th>
+
+          <td mat-cell *matCellDef="let record">
+
+            {{ record.lastVerified }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Expiry Date -->
+
+        <ng-container matColumnDef="expiryDate">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Expiry Date
+
+          </th>
+
+          <td mat-cell *matCellDef="let record">
+
+            {{ record.expiryDate }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Status -->
+
+        <ng-container matColumnDef="status">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            Status
+
+          </th>
+
+          <td mat-cell *matCellDef="let record">
+
+            <mat-chip>
+
+              {{ record.status }}
+
+            </mat-chip>
+
+          </td>
+
+        </ng-container>
+
+        <!-- Actions -->
+
+        <ng-container matColumnDef="actions">
+
+          <th mat-header-cell *matHeaderCellDef>
+
+            Actions
+
+          </th>
+
+          <td mat-cell *matCellDef="let record">
+
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewCompliance(record.id)">
+
+              <mat-icon>visibility</mat-icon>
+
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="updateCompliance(record.id)">
+
+              <mat-icon>edit</mat-icon>
+
+            </button>
+
+          </td>
+
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns">
+        </tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns">
+        </tr>
+
+      </table>
+
+      <mat-paginator
+        [pageSize]="5"
+        [pageSizeOptions]="[5,10,20]"
+        showFirstLastButtons>
+      </mat-paginator>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>
