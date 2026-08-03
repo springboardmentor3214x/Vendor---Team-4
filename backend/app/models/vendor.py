@@ -227,8 +227,21 @@ class Vendor(Base):
     back_populates="vendor",
     uselist=False
     )
+
     vendor_performance = relationship(
     "VendorPerformance",
     back_populates="vendor",
     uselist=False
+    )
+    
+    contracts = relationship(
+    "Contract",
+    back_populates="vendor",
+    cascade="all, delete-orphan"
+    )
+
+    certifications = relationship(
+    "Certification",
+    back_populates="vendor",
+    cascade="all, delete-orphan"
     )

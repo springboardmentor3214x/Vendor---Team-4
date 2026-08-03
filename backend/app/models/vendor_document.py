@@ -8,9 +8,18 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship
 from datetime import datetime
+from sqlalchemy import Date, Enum as SQLEnum
+from enum import Enum
 
 from app.database import Base
 
+class DocumentStatus(str, Enum):
+
+    VALID = "Valid"
+
+    EXPIRED = "Expired"
+
+    PENDING = "Pending"
 
 class VendorDocument(Base):
     __tablename__ = "vendor_documents"
@@ -32,7 +41,13 @@ class VendorDocument(Base):
     file_size = Column(Integer)
 
     file_type = Column(String(100))
+    expiry_date = Column(Date)
 
+    status = Column(
+        SQLEnum(DocumentStatus),
+        default=DocumentStatus.VALID,
+        nullable=False
+    )
     uploaded_by = Column(
         Integer,
         ForeignKey("users.id")

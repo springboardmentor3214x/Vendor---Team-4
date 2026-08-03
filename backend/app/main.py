@@ -30,6 +30,12 @@ from app.models import complaint
 from app.routers import complaint
 from app.routers import recommendation
 from app.routers import high_risk_warning
+from app.models.contract import Contract
+from app.routers import contract
+from app.routers import certification
+from app.models.certification import Certification
+from app.routers import vendor_document
+from app.routers import compliance
 
 from app.database import Base, engine
 from app.routers import auth
@@ -68,6 +74,10 @@ app.include_router(vendor_issue.router)
 app.include_router(complaint.router)
 app.include_router(recommendation.router)
 app.include_router(high_risk_warning.router)
+app.include_router(contract.router)
+app.include_router(certification.router)
+app.include_router(vendor_document.router)
+app.include_router(compliance.router)
 
 @app.get("/")
 def home():
