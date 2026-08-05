@@ -36,7 +36,16 @@ from app.routers import certification
 from app.models.certification import Certification
 from app.routers import vendor_document
 from app.routers import compliance
-
+from app.routers import notification
+from app.models import message
+from app.routers import message
+from app.routers import discussion
+from app.models.discussion import Discussion
+from app.routers import communication_history
+from app.models import file_share
+from app.routers import file_share
+from app.routers import activity_log
+from app.models.activity_log import ActivityLog
 from app.database import Base, engine
 from app.routers import auth
 from app.routers import users
@@ -78,6 +87,12 @@ app.include_router(contract.router)
 app.include_router(certification.router)
 app.include_router(vendor_document.router)
 app.include_router(compliance.router)
+app.include_router(notification.router)
+app.include_router(message.router)
+app.include_router(discussion.router)
+app.include_router(communication_history.router)
+app.include_router(file_share.router)
+app.include_router(activity_log.router)
 
 @app.get("/")
 def home():
