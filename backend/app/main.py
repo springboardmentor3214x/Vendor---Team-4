@@ -49,6 +49,7 @@ from app.models.activity_log import ActivityLog
 from app.database import Base, engine
 from app.routers import auth
 from app.routers import users
+from app.routers import dashboard
 
 Base.metadata.create_all(bind=engine)
 
@@ -93,6 +94,7 @@ app.include_router(discussion.router)
 app.include_router(communication_history.router)
 app.include_router(file_share.router)
 app.include_router(activity_log.router)
+app.include_router(dashboard.router)
 
 @app.get("/")
 def home():
