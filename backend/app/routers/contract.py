@@ -150,17 +150,18 @@ def delete_contract(
 # Expiring Contracts
 # ---------------------------------------------------
 
-@router.get("/expiring/")
+@router.get(
+    "/expiring/",
+    response_model=list[ContractResponse]
+)
 def get_expiring_contracts(
     days: int = 30,
     db: Session = Depends(get_db)
 ):
-
     return contract_service.get_expiring_contracts(
         db,
         days
     )
-
 
 # ---------------------------------------------------
 # Renew Contract

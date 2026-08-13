@@ -12,7 +12,15 @@ from app.schemas.certification import (
     CertificationCreate,
     CertificationUpdate
 )
+from app.models.notification import (
+    Notification,
+    NotificationType,
+    NotificationPriority,
+    DeliveryMethod
+)
 
+from app.models.user import User
+from app.services.email_service import send_email
 
 # ---------------------------------------------------
 # Create Certification
@@ -164,7 +172,6 @@ def get_expiring_certifications(
     db: Session,
     days: int = 30
 ):
-
     today = date.today()
 
     certifications = db.query(
@@ -181,7 +188,61 @@ def get_expiring_certifications(
 
         if 0 <= remaining <= days:
 
+            # Find the vendor
+            vendor = db.query(Vendor).filter(
+                Vendor.id == certification.vendor_id
+            ).first()
+
+            if vendor is None:
+                continue
+
+            # Check whether notification already exists
+            existing = db.query(Notification).filter(
+                Notification.user_id == vendor.created_by,
+                Notification.notification_type == NotificationType.COMPLIANCE,
+                Notification.related_record_id == certification.id,
+                Notification.title == "Certification Expiring Soon"
+            ).first()
+
+            if existing is None:
+
+                description = (
+                    f"Certification "
+                    f"{certification.certification_name} "
+                    f"will expire in {remaining} day(s)."
+                )
+
+                # Create in-app notification
+                notification = Notification(
+                    user_id=vendor.created_by,
+                    notification_type=NotificationType.COMPLIANCE,
+                    title="Certification Expiring Soon",
+                    description=description,
+                    related_module="Certification",
+                    related_record_id=certification.id,
+                    priority=NotificationPriority.HIGH,
+                    delivery_method=DeliveryMethod.IN_APP
+                )
+
+                db.add(notification)
+
+                # Find the user who created the vendor
+                user = db.query(User).filter(
+                    User.id == vendor.created_by
+                ).first()
+
+                # Send email notification
+                if user and user.email:
+
+                    send_email(
+                        to_email=user.email,
+                        subject="Certification Expiring Soon",
+                        body=description
+                    )
+
             expiring.append(certification)
+
+    db.commit()
 
     return expiring
 

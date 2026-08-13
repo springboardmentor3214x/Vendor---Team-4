@@ -6,6 +6,12 @@ from app.models.delivery_performance import (
     DeliveryPerformance,
     DeliveryStatus,
 )
+from app.models.notification import (
+    Notification,
+    NotificationType,
+    NotificationPriority,
+    DeliveryMethod
+)
 from app.models.product_quality import ProductQualityEvaluation
 from app.models.communication_log import CommunicationLog
 from app.models.service_rating import ServiceRating

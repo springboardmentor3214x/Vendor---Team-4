@@ -42,6 +42,12 @@ from app.models.vendor import (
     VendorStatus,
     ApprovalStatus as VendorApprovalStatus
 )
+from app.models.notification import (
+    Notification,
+    NotificationType,
+    NotificationPriority,
+    DeliveryMethod
+)
 
 def generate_request_number(db: Session):
     last_request = (
@@ -100,6 +106,44 @@ def create_procurement_request(
     db.add(procurement)
     db.commit()
     db.refresh(procurement)
+    # Notification for procurement request creation
+    notification = Notification(
+        user_id=current_user.id,
+        notification_type=NotificationType.PROCUREMENT,
+        title="Procurement Request Created",
+        description=(
+            f"Procurement Request "
+            f"{procurement.request_number} "
+            "has been created successfully."
+        ),
+        related_module="Procurement",
+        related_record_id=procurement.id,
+        priority=NotificationPriority.MEDIUM,
+        delivery_method=DeliveryMethod.IN_APP
+    )
+
+    db.add(notification)
+
+    # Additional notification for HIGH priority requests
+    if procurement.priority == ProcurementPriority.HIGH:
+        high_priority_notification = Notification(
+            user_id=current_user.id,
+            notification_type=NotificationType.PROCUREMENT,
+            title="High Priority Procurement Request",
+            description=(
+                f"Procurement Request "
+                f"{procurement.request_number} "
+                "has been marked as HIGH priority."
+            ),
+            related_module="Procurement",
+            related_record_id=procurement.id,
+            priority=NotificationPriority.HIGH,
+            delivery_method=DeliveryMethod.IN_APP
+        )
+
+        db.add(high_priority_notification)
+
+    db.commit()
 
     return procurement
 @router.get(
@@ -454,6 +498,31 @@ def approve_procurement_request(
 
     db.commit()
     db.refresh(procurement)
+    notification = Notification(
+
+        user_id=procurement.requested_by,
+
+        notification_type=NotificationType.PROCUREMENT,
+
+        title="Procurement Request Approved",
+
+        description=(
+            f"Your Procurement Request "
+            f"{procurement.request_number} "
+            "has been approved."
+        ),
+
+        related_module="Procurement",
+
+        related_record_id=procurement.id,
+
+        priority=NotificationPriority.HIGH,
+
+        delivery_method=DeliveryMethod.IN_APP
+    )
+
+    db.add(notification)
+    db.commit()
 
     return ProcurementApprovalResponse(
         message="Procurement request approved successfully.",
@@ -507,6 +576,31 @@ def reject_procurement_request(
 
     db.commit()
     db.refresh(procurement)
+    notification = Notification(
+
+        user_id=procurement.requested_by,
+
+        notification_type=NotificationType.PROCUREMENT,
+
+        title="Procurement Request Rejected",
+
+        description=(
+            f"Your Procurement Request "
+            f"{procurement.request_number} "
+            "has been rejected."
+        ),
+
+        related_module="Procurement",
+
+        related_record_id=procurement.id,
+
+        priority=NotificationPriority.HIGH,
+
+        delivery_method=DeliveryMethod.IN_APP
+    )
+
+    db.add(notification)
+    db.commit()
 
     return ProcurementApprovalResponse(
         message="Procurement request rejected successfully.",
@@ -628,6 +722,31 @@ def assign_vendor(
 
     db.commit()
     db.refresh(procurement)
+    notification = Notification(
+
+        user_id=current_user.id,
+
+        notification_type=NotificationType.PROCUREMENT,
+
+        title="Vendor Assigned",
+
+        description=(
+            f"Vendor {vendor.company_name} "
+            f"has been assigned to "
+            f"{procurement.request_number}."
+        ),
+
+        related_module="Procurement",
+
+        related_record_id=procurement.id,
+
+        priority=NotificationPriority.MEDIUM,
+
+        delivery_method=DeliveryMethod.IN_APP
+    )
+
+    db.add(notification)
+    db.commit()
 
     return VendorAssignmentResponse(
         message="Vendor assigned successfully.",

@@ -5,6 +5,15 @@ from app.models.vendor import Vendor
 from app.models.contract import Contract, ContractStatus
 from app.schemas.contract import ContractCreate, ContractUpdate
 
+from app.models.user import User
+from app.services.email_service import send_email
+
+from app.models.notification import (
+    Notification,
+    NotificationType,
+    NotificationPriority,
+    DeliveryMethod
+)
 
 # ---------------------------------------------------
 # Create Contract
@@ -120,7 +129,6 @@ def get_expiring_contracts(
     db: Session,
     days: int = 30
 ):
-
     today = date.today()
 
     contracts = db.query(Contract).all()
@@ -135,7 +143,59 @@ def get_expiring_contracts(
 
         if 0 <= remaining <= days:
 
+            vendor = db.query(Vendor).filter(
+                Vendor.id == contract.vendor_id
+            ).first()
+
+            if vendor is None:
+                continue
+
+            # Check whether notification already exists
+            existing = db.query(Notification).filter(
+                Notification.user_id == vendor.created_by,
+                Notification.notification_type == NotificationType.CONTRACT,
+                Notification.related_record_id == contract.id,
+                Notification.title == "Contract Expiring Soon"
+            ).first()
+
+            if existing is None:
+
+                description = (
+                    f"Contract {contract.contract_number} "
+                    f"will expire in {remaining} day(s)."
+                )
+
+                # Create in-app notification
+                notification = Notification(
+                    user_id=vendor.created_by,
+                    notification_type=NotificationType.CONTRACT,
+                    title="Contract Expiring Soon",
+                    description=description,
+                    related_module="Contract",
+                    related_record_id=contract.id,
+                    priority=NotificationPriority.HIGH,
+                    delivery_method=DeliveryMethod.IN_APP
+                )
+
+                db.add(notification)
+
+                # Find the actual user
+                user = db.query(User).filter(
+                    User.id == vendor.created_by
+                ).first()
+
+                # Send email notification
+                if user and user.email:
+
+                    send_email(
+                        to_email=user.email,
+                        subject="Contract Expiring Soon",
+                        body=description
+                    )
+
             expiring.append(contract)
+
+    db.commit()
 
     return expiring
 

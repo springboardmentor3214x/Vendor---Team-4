@@ -3,6 +3,13 @@ from uuid import uuid4
 from datetime import datetime
 from math import ceil
 
+from app.models.notification import (
+    Notification,
+    NotificationType,
+    NotificationPriority,
+    DeliveryMethod
+)
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -573,6 +580,22 @@ def approve_vendor(
 
     db.commit()
     db.refresh(vendor)
+    notification = Notification(
+        user_id=vendor.created_by,
+        notification_type=NotificationType.VENDOR,
+        title="Vendor Approved",
+        description=(
+            f"Your vendor '{vendor.company_name}' "
+            "has been approved."
+        ),
+        related_module="Vendor Management",
+        related_record_id=vendor.id,
+        priority=NotificationPriority.MEDIUM,
+        delivery_method=DeliveryMethod.IN_APP
+    )
+
+    db.add(notification)
+    db.commit()
 
     return {
         "message": "Vendor approved successfully",
@@ -621,6 +644,22 @@ def reject_vendor(
 
     db.commit()
     db.refresh(vendor)
+    notification = Notification(
+        user_id=vendor.created_by,
+        notification_type=NotificationType.VENDOR,
+        title="Vendor Rejected",
+        description=(
+            f"Your vendor '{vendor.company_name}' "
+            "has been rejected."
+        ),
+        related_module="Vendor Management",
+        related_record_id=vendor.id,
+        priority=NotificationPriority.HIGH,
+        delivery_method=DeliveryMethod.IN_APP
+    )
+
+    db.add(notification)
+    db.commit()
 
     return {
         "message": "Vendor rejected successfully",

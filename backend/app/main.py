@@ -50,11 +50,25 @@ from app.database import Base, engine
 from app.routers import auth
 from app.routers import users
 from app.routers import dashboard
+from app.scheduler.notification_scheduler import (
+    start_scheduler,
+    stop_scheduler
+)
+from app.routers import report
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Vendor Reliability Platform")
 
+
+@app.on_event("startup")
+def startup_event():
+    start_scheduler()
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    stop_scheduler()
 
 app.add_middleware(
     CORSMiddleware,
@@ -95,6 +109,7 @@ app.include_router(communication_history.router)
 app.include_router(file_share.router)
 app.include_router(activity_log.router)
 app.include_router(dashboard.router)
+app.include_router(report.router)
 
 @app.get("/")
 def home():

@@ -24,6 +24,12 @@ from app.schemas.purchase_order import (
     PurchaseOrderUpdate,
     PurchaseOrderResponse
 )
+from app.models.notification import (
+    Notification,
+    NotificationType,
+    NotificationPriority,
+    DeliveryMethod
+)
 router = APIRouter(
     prefix="/purchase-orders",
     tags=["Purchase Order Management"]
@@ -111,6 +117,31 @@ def create_purchase_order(
     db.add(purchase_order)
     db.commit()
     db.refresh(purchase_order)
+    notification = Notification(
+
+        user_id=current_user.id,
+
+        notification_type=NotificationType.PURCHASE_ORDER,
+
+        title="Purchase Order Created",
+
+        description=(
+            f"Purchase Order {purchase_order.po_number} "
+            f"has been created successfully."
+        ),
+
+        related_module="Purchase Order",
+
+        related_record_id=purchase_order.id,
+
+        priority=NotificationPriority.MEDIUM,
+
+        delivery_method=DeliveryMethod.IN_APP
+    )
+
+    db.add(notification)
+
+    db.commit()
 
     return PurchaseOrderResponse(
         id=purchase_order.id,
