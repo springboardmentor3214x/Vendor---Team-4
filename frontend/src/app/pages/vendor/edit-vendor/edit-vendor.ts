@@ -323,10 +323,29 @@ export class EditVendor implements OnInit {
       },
       error: (err) => {
         this.submitting = false;
-        this.errorMessage = err?.error?.detail || 'Failed to update vendor.';
+        this.errorMessage = this.formatError(err);
       }
     });
 
+  }
+
+  // Turns FastAPI's error response into a readable string.
+  // A 422 validation error looks like:
+  //   { detail: [ { loc: ["body","phone"], msg: "..." }, ... ] }
+  // while most other errors are just { detail: "some message" }.
+  private formatError(err: any): string {
+    const detail = err?.error?.detail;
+
+    if (Array.isArray(detail)) {
+      return detail
+        .map((item: any) => {
+          const field = Array.isArray(item?.loc) ? item.loc[item.loc.length - 1] : '';
+          return field ? `${field}: ${item.msg}` : item.msg;
+        })
+        .join('\n');
+    }
+
+    return detail || 'Failed to update vendor.';
   }
 
   private uploadDocumentsThenFinish(): void {
@@ -362,15 +381,23 @@ export class EditVendor implements OnInit {
   private finishSubmit(): void {
     this.submitting = false;
     alert('Vendor updated successfully.');
-    this.router.navigate(['/vendor-list']);
+    this.returnToListOrDashboard();
   }
 
   // ================= Cancel =================
 
   cancel(): void {
 
-    this.router.navigate(['/vendor-list']);
+    this.returnToListOrDashboard();
 
+  }
+
+  // A vendor editing their own profile belongs back on their own
+  // dashboard; anyone else (Admin, Procurement, etc.) editing a
+  // vendor record goes back to the admin vendor list.
+  private returnToListOrDashboard(): void {
+    const role = (localStorage.getItem('role') || '').trim().toLowerCase();
+    this.router.navigate([role === 'vendor' ? '/vendor-dashboard' : '/vendor-list']);
   }
 
 }

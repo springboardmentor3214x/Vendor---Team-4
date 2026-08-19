@@ -144,20 +144,10 @@
 
             <mat-label>Vendor Name</mat-label>
 
-            <mat-select formControlName="vendorName">
-
-              <mat-option value="ABC Technologies">
-                ABC Technologies
+            <mat-select formControlName="vendorId" (selectionChange)="selectVendor($event.value)">
+              <mat-option *ngFor="let vendor of vendors" [value]="vendor.id">
+                {{ vendor.company_name }}
               </mat-option>
-
-              <mat-option value="XYZ Suppliers">
-                XYZ Suppliers
-              </mat-option>
-
-              <mat-option value="Global Systems">
-                Global Systems
-              </mat-option>
-
             </mat-select>
 
             <mat-error
@@ -175,7 +165,8 @@
 
             <input
               matInput
-              formControlName="vendorId">
+              [value]="contractForm.get('vendorId')?.value || ''"
+              readonly>
 
             <mat-error
               *ngIf="contractForm.get('vendorId')?.hasError('required')">

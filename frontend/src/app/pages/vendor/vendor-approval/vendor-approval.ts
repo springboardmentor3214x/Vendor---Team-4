@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -56,9 +56,10 @@ interface VendorApprovalModel {
 export class VendorApproval implements OnInit {
 
   constructor(
-    private router: Router,
-    private vendorService: VendorService
-  ) {}
+  private router: Router,
+  private vendorService: VendorService,
+  private cdr: ChangeDetectorRef
+) {}
 
   // ================= Dashboard Summary =================
 
@@ -111,13 +112,17 @@ export class VendorApproval implements OnInit {
 
     this.vendorService.getVendors({ page: 1, size: 1000 }).subscribe({
       next: (response) => {
-        this.vendors = response.items.map(item => this.mapVendor(item));
-        this.updateSummary();
-        this.loading = false;
-      },
+  this.vendors = response.items.map(item => this.mapVendor(item));
+  this.updateSummary();
+  this.loading = false;
+
+  this.cdr.detectChanges();
+},
       error: (err) => {
         this.errorMessage = err?.error?.detail || 'Failed to load vendors.';
         this.loading = false;
+
+        this.cdr.detectChanges();
       }
     });
 
@@ -203,6 +208,7 @@ export class VendorApproval implements OnInit {
         vendor.approvalStatus = response.approval_status;
         vendor.vendorStatus = response.vendor_status;
         this.updateSummary();
+        this.cdr.detectChanges();
         alert(`${vendor.companyName} approved successfully.`);
       },
       error: (err) => {
@@ -233,6 +239,7 @@ export class VendorApproval implements OnInit {
         vendor.approvalStatus = response.approval_status;
         vendor.vendorStatus = response.vendor_status;
         this.updateSummary();
+        this.cdr.detectChanges();
         alert(`${vendor.companyName} rejected successfully.`);
       },
       error: (err) => {

@@ -95,33 +95,20 @@ export class AuditorDashboard {
 
 }
   
-openModule(name: string) {
-
-  switch (name) {
-
-    case 'Reports':
-      this.router.navigate(['/reports']);
-      break;
-
-    case 'Compliance':
-      alert(
-        
-      );
-      break;
-
-    case 'Audit Logs':
-      alert(
-        
-      );
-      break;
-
-    default:
-      alert(
-        
-      );
-
+  openModule(name: string) {
+    switch (name) {
+      case 'Reports':
+        this.router.navigate(['/reports']);
+        break;
+      case 'Compliance':
+        this.router.navigate(['/compliance-dashboard']);
+        break;
+      case 'Audit Logs':
+        this.router.navigate(['/activity-logs']);
+        break;
+      default:
+        this.router.navigate(['/reports']);
+    }
   }
-
-}
 
 }

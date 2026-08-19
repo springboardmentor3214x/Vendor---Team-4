@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -62,7 +62,8 @@ export class VendorDetails implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private vendorService: VendorService
+    private vendorService: VendorService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   loading = false;
@@ -136,6 +137,7 @@ export class VendorDetails implements OnInit {
       error: (err) => {
         this.loading = false;
         this.errorMessage = err?.error?.detail || 'Failed to load vendor.';
+        this.cdr.detectChanges();
       }
     });
 
@@ -178,14 +180,21 @@ export class VendorDetails implements OnInit {
     };
 
     this.loading = false;
+    this.cdr.detectChanges();
 
   }
 
   private loadDocuments(id: number): void {
 
     this.vendorService.getDocuments(id).subscribe({
-      next: (docs) => this.documents = docs,
-      error: () => this.documents = []
+      next: (docs) => {
+        this.documents = docs;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.documents = [];
+        this.cdr.detectChanges();
+      }
     });
 
   }

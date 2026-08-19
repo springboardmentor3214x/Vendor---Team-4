@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,137 +14,138 @@ import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-invoice-management',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule
-  ],
+  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
   templateUrl: './invoice-management.html',
   styleUrl: './invoice-management.scss'
 })
-export class InvoiceManagement {
-
+export class InvoiceManagement implements OnInit {
   searchText = '';
   statusFilter = 'All';
+  invoices: any[] = [];
+  loading = false;
+  actionInvoiceId: number | null = null;
 
-  invoices = [
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-    {
-      invoiceNo: 'INV-1001',
-      poNumber: 'PO-0001',
-      vendor: 'ABC Technologies',
-      invoiceDate: '20-07-2026',
-      invoiceAmount: '₹70,000',
-      taxAmount: '₹5,000',
-      totalAmount: '₹75,000',
-      dueDate: '30-07-2026',
-      status: 'Pending',
-      document: 'invoice_INV1001.pdf'
-    },
+  ngOnInit(): void { this.loadInvoices(); }
 
-    {
-      invoiceNo: 'INV-1002',
-      poNumber: 'PO-0002',
-      vendor: 'XYZ Suppliers',
-      invoiceDate: '22-07-2026',
-      invoiceAmount: '₹40,000',
-      taxAmount: '₹2,500',
-      totalAmount: '₹42,500',
-      dueDate: '01-08-2026',
-      status: 'Verified',
-      document: 'invoice_INV1002.pdf'
-    },
+  loadInvoices(): void {
+    this.loading = true;
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
-    {
-      invoiceNo: 'INV-1003',
-      poNumber: 'PO-0003',
-      vendor: 'Global Office Solutions',
-      invoiceDate: '24-07-2026',
-      invoiceAmount: '₹1,15,000',
-      taxAmount: '₹10,000',
-      totalAmount: '₹1,25,000',
-      dueDate: '05-08-2026',
-      status: 'Approved',
-      document: 'invoice_INV1003.pdf'
-    },
-
-    {
-      invoiceNo: 'INV-1004',
-      poNumber: 'PO-0004',
-      vendor: 'Prime Office Equipments',
-      invoiceDate: '26-07-2026',
-      invoiceAmount: '₹60,000',
-      taxAmount: '₹6,000',
-      totalAmount: '₹66,000',
-      dueDate: '08-08-2026',
-      status: 'Paid',
-      document: 'invoice_INV1004.pdf'
-    }
-
-  ];
-
-  get filteredInvoices() {
-
-    return this.invoices.filter(invoice => {
-
-      const search =
-
-        invoice.invoiceNo.toLowerCase().includes(this.searchText.toLowerCase()) ||
-
-        invoice.poNumber.toLowerCase().includes(this.searchText.toLowerCase()) ||
-
-        invoice.vendor.toLowerCase().includes(this.searchText.toLowerCase());
-
-      const status =
-
-        this.statusFilter === 'All' ||
-
-        invoice.status === this.statusFilter;
-
-      return search && status;
-
+    this.http.get<any[]>(`${environment.apiUrl}/invoices`, {
+      params: { page: 1, page_size: 100 },
+      ...(headers ? { headers } : {})
+    }).subscribe({
+      next: data => {
+        this.invoices = Array.isArray(data) ? data : [];
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: error => {
+        this.loading = false;
+        this.cdr.detectChanges();
+        alert(this.errorMessage(error, 'Failed to load invoices.'));
+      }
     });
-
   }
 
-  uploadInvoice(invoice: any) {
-
-    console.log('Upload Invoice', invoice);
-
+  get filteredInvoices(): any[] {
+    const q = this.searchText.trim().toLowerCase();
+    return this.invoices.filter(invoice => {
+      const invoiceNo = String(invoice.invoice_number || '').toLowerCase();
+      const po = String(invoice.purchase_order_id || '').toLowerCase();
+      const vendor = String(invoice.vendor_id || '').toLowerCase();
+      const status = String(invoice.status || '').toUpperCase();
+      const matchesSearch = !q || invoiceNo.includes(q) || po.includes(q) || vendor.includes(q) || `po${po}`.includes(q);
+      const matchesStatus = this.statusFilter === 'All' || status === this.statusFilter;
+      return matchesSearch && matchesStatus;
+    });
   }
 
-  verifyInvoice(invoice: any) {
-
-    console.log('Verify Invoice', invoice);
-
+  uploadInvoice(invoice: any): void {
+    const input = document.getElementById(`invoice-file-${invoice.id}`) as HTMLInputElement | null;
+    input?.click();
   }
 
-  approvePayment(invoice: any) {
-
-    console.log('Approve Payment', invoice);
-
+  onInvoiceFileSelected(event: Event, invoice: any): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) { alert('Invoice file must be 10 MB or smaller.'); input.value = ''; return; }
+    const formData = new FormData();
+    formData.append('file', file);
+    this.runAction(invoice.id, this.http.post<any>(`${environment.apiUrl}/invoices/${invoice.id}/upload`, formData, this.authOptions()), 'Invoice uploaded successfully.');
+    input.value = '';
   }
 
-  rejectInvoice(invoice: any) {
-
-    console.log('Reject Invoice', invoice);
-
+  verifyInvoice(invoice: any): void {
+    if (invoice.status === 'PAID') { alert('This invoice is already paid.'); return; }
+    this.runAction(invoice.id, this.http.patch<any>(`${environment.apiUrl}/invoices/${invoice.id}/verify`, {}, this.authOptions()), 'Invoice verified successfully.');
   }
 
-  viewDocument(invoice: any) {
-
-    console.log('View Document', invoice.document);
-
+  approvePayment(invoice: any): void {
+    if (invoice.status === 'PAID') { alert('This invoice is already paid.'); return; }
+    if (!confirm(`Approve payment for ${invoice.invoice_number}?`)) return;
+    this.runAction(invoice.id, this.http.patch<any>(`${environment.apiUrl}/invoices/${invoice.id}/mark-paid`, {}, this.authOptions()), 'Payment approved successfully.');
   }
 
-  viewInvoice(invoice: any) {
-
-    console.log('View Invoice', invoice);
-
+  rejectInvoice(invoice: any): void {
+    if (invoice.status === 'PAID') { alert('A paid invoice cannot be rejected.'); return; }
+    if (!confirm(`Reject ${invoice.invoice_number}?`)) return;
+    this.runAction(invoice.id, this.http.patch<any>(`${environment.apiUrl}/invoices/${invoice.id}/reject`, {}, this.authOptions()), 'Invoice rejected.');
   }
 
+  viewDocument(invoice: any): void {
+    if (!invoice.attachment_name) { alert('No invoice document has been uploaded yet.'); return; }
+    alert(`Uploaded document: ${invoice.attachment_name}`);
+  }
+
+  viewInvoice(invoice: any): void {
+    alert([
+      `Invoice: ${invoice.invoice_number || '-'}`,
+      `Purchase Order: PO${invoice.purchase_order_id || '-'}`,
+      `Vendor ID: ${invoice.vendor_id ?? '-'}`,
+      `Invoice Date: ${invoice.invoice_date || '-'}`,
+      `Amount: ₹${invoice.amount ?? 0}`,
+      `Status: ${invoice.status || '-'}`,
+      `Document: ${invoice.attachment_name || 'Not uploaded'}`
+    ].join('\n'));
+  }
+
+  private runAction(id: number, request: any, successMessage: string): void {
+    this.actionInvoiceId = id;
+    request.subscribe({
+      next: (updated: any) => {
+        const index = this.invoices.findIndex(i => Number(i.id) === Number(id));
+        if (index >= 0) this.invoices[index] = { ...this.invoices[index], ...updated };
+        this.actionInvoiceId = null;
+        this.cdr.detectChanges();
+        alert(successMessage);
+      },
+      error: (error: any) => {
+        this.actionInvoiceId = null;
+        this.cdr.detectChanges();
+        alert(this.errorMessage(error, 'Invoice action failed.'));
+      }
+    });
+  }
+
+  private authOptions(): { headers?: { Authorization: string } } {
+    const token = localStorage.getItem('token');
+    return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  }
+
+  private errorMessage(error: any, fallback: string): string {
+    const detail = error?.error?.detail;
+    if (typeof detail === 'string' && detail.trim()) return detail;
+    if (Array.isArray(detail)) return detail.map((x: any) => x?.msg || x?.message).filter(Boolean).join('\n') || fallback;
+    if (detail && typeof detail === 'object') return detail.message || detail.msg || JSON.stringify(detail);
+    return fallback;
+  }
 }

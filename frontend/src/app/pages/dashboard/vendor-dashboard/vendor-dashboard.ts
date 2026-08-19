@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { DashboardService, VendorDashboardData } from '../../../services/dashboard.service';
+import { VendorService } from '../../../services/vendor.service';
 
 @Component({
   selector: 'app-vendor-dashboard',
@@ -18,29 +20,21 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './vendor-dashboard.html',
   styleUrl: './vendor-dashboard.scss'
 })
-export class VendorDashboard {
+export class VendorDashboard implements OnInit {
 
-  constructor(private router: Router) {}
-
-  // Dashboard Information
+  constructor(
+    private router: Router,
+    private dashboardService: DashboardService,
+    private vendorService: VendorService
+  ) {}
 
   dashboardTitle = 'Vendor Dashboard';
-
   dashboardSubtitle = 'Manage your profile, orders, contracts, and communication.';
-
   welcomeTitle = 'Hello Vendor 👋';
-
-  welcomeMessage =
-    'Welcome to the Vendor Portal. Manage your profile, view orders, track contracts, and communicate with your procurement team from one place.';
-
-  // Search
+  welcomeMessage = 'Welcome to the Vendor Portal. Manage your profile, view orders, track contracts, and communicate with your procurement team from one place.';
 
   searchText = '';
-
   showSearch = false;
-
-  // Notifications
-
   showNotifications = false;
 
   notifications = [
@@ -49,30 +43,32 @@ export class VendorDashboard {
     'A message has been received from Procurement.'
   ];
 
-  // Sidebar & Dashboard Cards
+  vendorMetrics: VendorDashboardData | null = null;
 
   menuItems = [
-  {
-    title: 'Vendor Profile',
-    icon: 'business'
-  },
-  {
-    title: 'Orders',
-    icon: 'shopping_bag'
-  },
-  {
-    title: 'Contracts',
-    icon: 'description'
-  },
-  {
-    title: 'Communication',
-    icon: 'chat'
-  },
-  {
-    title: 'Vendor Dashboard',
-    icon: 'dashboard'
+    { title: 'Vendor Profile', icon: 'business' },
+    { title: 'Orders', icon: 'shopping_bag' },
+    { title: 'Vendor Performance', icon: 'trending_up' },
+    { title: 'Contract Repository', icon: 'description' },
+    { title: 'Vendor Documents', icon: 'folder_open' },
+    { title: 'Communication', icon: 'forum' },
+    { title: 'Vendor Analytics', icon: 'analytics' }
+  ];
+
+  ngOnInit(): void {
+    this.loadVendorMetrics();
   }
-];
+
+  loadVendorMetrics(): void {
+    this.dashboardService.getVendorDashboard().subscribe({
+      next: (data) => {
+        this.vendorMetrics = data;
+      },
+      error: (err) => {
+        console.warn('Vendor dashboard metrics fallback:', err);
+      }
+    });
+  }
 
   get filteredItems() {
     return this.menuItems.filter(item =>
@@ -83,62 +79,61 @@ export class VendorDashboard {
   toggleSearch() {
     this.showSearch = !this.showSearch;
   }
-toggleNotifications() {
 
-  this.router.navigate(['/notifications']);
-
-}
+  toggleNotifications() {
+    this.router.navigate(['/notification-center']);
+  }
 
   goToProfile() {
-    this.router.navigate(['/profile']);
+    this.vendorService.getMyVendorProfile().subscribe({
+      next: (vendor) => this.router.navigate(['/edit-vendor', vendor.id]),
+      error: (err) => {
+        console.error('Unable to load vendor profile', err);
+        alert(err?.error?.detail || 'Unable to open your vendor profile.');
+      }
+    });
   }
 
-logout() {
-
-  localStorage.removeItem('token');
-  localStorage.removeItem('role');
-
-  this.router.navigate(['/login']);
-
-}
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    this.router.navigate(['/login']);
+  }
 
   openModule(moduleName: string) {
-
-  switch (moduleName) {
-
-    case 'Vendor Profile':
-      this.router.navigate(['/profile']);
-      break;
-    
-    case 'Vendor Dashboard':
-      this.router.navigate(['/vendor-home']);
-      break;
-
-    case 'Orders':
-      alert(
-       
-      );
-      break;
-
-    case 'Contracts':
-      alert(
-      
-      );
-      break;
-
-    case 'Communication':
-      alert(
-      
-      );
-      break;
-
-    default:
-      alert(
-        
-      );
-
+    switch (moduleName) {
+      case 'Vendor Profile':
+        this.goToProfile();
+        break;
+      case 'Vendor Analytics':
+        this.router.navigate(['/vendor-analytics']);
+        break;
+      case 'Vendor Performance':
+      case 'Vendor Performance Dashboard':
+        this.router.navigate(['/vendor-ranking']);
+        break;
+      case 'Orders':
+        this.router.navigate(['/purchase-orders']);
+        break;
+      case 'Contract Repository':
+      case 'Contracts':
+        this.router.navigate(['/contract-repository']);
+        break;
+      case 'Vendor Documents':
+        this.router.navigate(['/vendor-documentation']);
+        break;
+      case 'Communication':
+      case 'Communication Dashboard':
+        this.router.navigate(['/vendor-messaging']);
+        break;
+      case 'Vendor Messaging':
+        this.router.navigate(['/vendor-messaging']);
+        break;
+      case 'File Sharing':
+        this.router.navigate(['/file-sharing']);
+        break;
+      default:
+        alert(`${moduleName} module opened.`);
+    }
   }
-
-}
-
 }

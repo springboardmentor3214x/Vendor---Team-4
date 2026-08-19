@@ -1,0 +1,821 @@
+<div class="analytics-container">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+    <div>
+      <h1>Procurement Analytics Dashboard</h1>
+      <p>
+        Centralized procurement insights and analytics
+      </p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="refreshDashboard()">
+
+      <mat-icon>refresh</mat-icon>
+      Refresh Dashboard
+
+    </button>
+  </div>
+
+  <!-- PROCUREMENT STATISTICS -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+      <mat-icon>assignment</mat-icon>
+      <h2>{{ totalProcurementRequests }}</h2>
+      <p>Total Procurement Requests</p>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-icon>hourglass_empty</mat-icon>
+      <h2>{{ pendingApprovals }}</h2>
+      <p>Pending Approvals</p>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-icon>shopping_cart</mat-icon>
+      <h2>{{ activePurchaseOrders }}</h2>
+      <p>Active Purchase Orders</p>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-icon>check_circle</mat-icon>
+      <h2>{{ completedOrders }}</h2>
+      <p>Completed Orders</p>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-icon>cancel</mat-icon>
+      <h2>{{ cancelledOrders }}</h2>
+      <p>Cancelled Orders</p>
+    </mat-card>
+
+  </div>
+
+  <!-- PROCUREMENT OVERVIEW -->
+
+  <div class="overview-grid">
+
+    <mat-card class="overview-card">
+      <h3>Today's Requests</h3>
+      <h2>{{ todayRequests }}</h2>
+    </mat-card>
+
+    <mat-card class="overview-card">
+      <h3>Weekly Completed Orders</h3>
+      <h2>{{ weeklyCompletedOrders }}</h2>
+    </mat-card>
+
+    <mat-card class="overview-card">
+      <h3>Monthly Spending</h3>
+      <h2>₹{{ monthlySpending }}</h2>
+    </mat-card>
+
+    <mat-card class="overview-card">
+      <h3>Yearly Growth</h3>
+      <h2>{{ yearlyGrowth }}%</h2>
+    </mat-card>
+
+  </div>
+
+  <!-- PROCUREMENT COST SUMMARY -->
+
+  <mat-card class="cost-summary-card">
+
+    <h2>Procurement Cost Summary</h2>
+
+    <div class="cost-summary-content">
+
+      <div>
+        <h1>₹8.5 Crore</h1>
+        <p>Quarterly Procurement Expenditure</p>
+      </div>
+
+      <mat-icon>
+        account_balance_wallet
+      </mat-icon>
+
+    </div>
+
+  </mat-card>
+
+  <!-- FILTERS -->
+
+  <mat-card class="filter-card">
+
+    <h2>Filters</h2>
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Department
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByDepartment($event.value)">
+
+          <mat-option value="IT">
+            IT
+          </mat-option>
+
+          <mat-option value="Finance">
+            Finance
+          </mat-option>
+
+          <mat-option value="Operations">
+            Operations
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Procurement Status
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByStatus($event.value)">
+
+          <mat-option value="Active">
+            Active
+          </mat-option>
+
+          <mat-option value="Pending">
+            Pending
+          </mat-option>
+
+          <mat-option value="Completed">
+            Completed
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Vendor Category
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByVendorCategory($event.value)">
+
+          <mat-option value="Software">
+            Software
+          </mat-option>
+
+          <mat-option value="Hardware">
+            Hardware
+          </mat-option>
+
+          <mat-option value="Logistics">
+            Logistics
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Select Date
+        </mat-label>
+
+        <input
+          matInput
+          [matDatepicker]="picker">
+
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker">
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #picker>
+        </mat-datepicker>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- CHARTS -->
+
+  <div class="charts-grid">
+
+    <mat-card class="chart-card">
+
+      <div class="card-header">
+        <h3>
+          Monthly Procurement Volume
+        </h3>
+      </div>
+
+      <canvas
+        id="procurementVolumeChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <div class="card-header">
+        <h3>
+          Procurement Requests by Department
+        </h3>
+      </div>
+
+      <canvas
+        id="departmentChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <div class="card-header">
+        <h3>
+          Procurement Category Distribution
+        </h3>
+      </div>
+
+      <canvas
+        id="categoryChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <div class="card-header">
+        <h3>
+          Monthly Procurement Expenses
+        </h3>
+      </div>
+
+      <canvas
+        id="expenseChart">
+      </canvas>
+
+    </mat-card>
+
+  </div>
+    <!-- ACTIVE PURCHASE ORDERS -->
+
+  <mat-card class="purchase-orders-card">
+
+    <div class="section-header">
+
+      <h2>
+        Active Purchase Orders Dashboard
+      </h2>
+
+      <mat-form-field
+        appearance="outline"
+        class="search-field">
+
+        <mat-label>
+          Search Orders
+        </mat-label>
+
+        <input
+          matInput
+          placeholder="Search PO Number, Vendor..."
+          (keyup)="applyFilter($event)">
+
+        <mat-icon matSuffix>
+          search
+        </mat-icon>
+
+      </mat-form-field>
+
+    </div>
+
+    <div class="table-container">
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort>
+
+        <!-- PO Number -->
+
+        <ng-container matColumnDef="poNumber">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header>
+
+            PO Number
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row">
+
+            {{ row.poNumber }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Vendor -->
+
+        <ng-container matColumnDef="vendorName">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
+            Vendor Name
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row">
+
+            {{ row.vendorName }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Category -->
+
+        <ng-container matColumnDef="category">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
+            Category
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row">
+
+            {{ row.category }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Status -->
+
+        <ng-container matColumnDef="status">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
+            Status
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row">
+
+            <mat-chip>
+              {{ row.status }}
+            </mat-chip>
+
+          </td>
+
+        </ng-container>
+
+        <!-- Delivery Date -->
+
+        <ng-container matColumnDef="deliveryDate">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
+            Expected Delivery
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row"
+            [ngClass]="{
+              'deadline-warning':
+              row.status === 'Deadline Near'
+            }">
+
+            {{ row.deliveryDate }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Manager -->
+
+        <ng-container matColumnDef="manager">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
+            Assigned Manager
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row">
+
+            {{ row.manager }}
+
+          </td>
+
+        </ng-container>
+
+        <!-- Actions -->
+
+        <ng-container matColumnDef="actions">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
+            Actions
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let row">
+
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewOrder(row)">
+
+              <mat-icon>
+                visibility
+              </mat-icon>
+
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="selectOrder(row)">
+
+              <mat-icon>
+                open_in_new
+              </mat-icon>
+
+            </button>
+
+          </td>
+
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns">
+        </tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns;">
+        </tr>
+
+      </table>
+
+      <mat-paginator
+        [pageSize]="5"
+        [pageSizeOptions]="[5,10,20]"
+        showFirstLastButtons>
+      </mat-paginator>
+
+    </div>
+
+  </mat-card>
+
+  <!-- DELIVERY STATUS DASHBOARD -->
+
+  <h2 class="section-title">
+    Delivery Status Dashboard
+  </h2>
+
+  <div class="delivery-grid">
+
+    <mat-card class="delivery-card">
+
+      <mat-icon>
+        local_shipping
+      </mat-icon>
+
+      <h3>
+        {{ onTimeDeliveries }}
+      </h3>
+
+      <p>
+        On-Time Deliveries
+      </p>
+
+    </mat-card>
+
+    <mat-card class="delivery-card">
+
+      <mat-icon>
+        warning
+      </mat-icon>
+
+      <h3>
+        {{ delayedDeliveries }}
+      </h3>
+
+      <p>
+        Delayed Deliveries
+      </p>
+
+    </mat-card>
+
+    <mat-card class="delivery-card">
+
+      <mat-icon>
+        inventory
+      </mat-icon>
+
+      <h3>
+        {{ deliveredOrders }}
+      </h3>
+
+      <p>
+        Delivered Orders
+      </p>
+
+    </mat-card>
+
+    <mat-card class="delivery-card">
+
+      <mat-icon>
+        inventory_2
+      </mat-icon>
+
+      <h3>
+        {{ pendingShipments }}
+      </h3>
+
+      <p>
+        Pending Shipments
+      </p>
+
+    </mat-card>
+
+    <mat-card class="delivery-card">
+
+      <mat-icon>
+        check_circle
+      </mat-icon>
+
+      <h3>
+        {{ completedDeliveries }}
+      </h3>
+
+      <p>
+        Completed Deliveries
+      </p>
+
+    </mat-card>
+
+  </div>
+    <!-- VENDOR PERFORMANCE SUMMARY -->
+
+  <mat-card class="vendor-performance-card">
+
+    <h2>
+      Vendor Performance Summary
+    </h2>
+
+    <div class="vendor-grid">
+
+      <mat-card
+        class="vendor-card"
+        *ngFor="let vendor of topVendors">
+
+        <h3>
+          {{ vendor.name }}
+        </h3>
+
+        <p>
+          <strong>
+            Overall Performance Rating:
+          </strong>
+          {{ vendor.rating }}/10
+        </p>
+
+        <p>
+          <strong>
+            Delivery Accuracy:
+          </strong>
+          {{ vendor.deliveryAccuracy }}%
+        </p>
+
+        <p>
+          <strong>
+            Product Quality Score:
+          </strong>
+          {{ vendor.productQuality }}%
+        </p>
+
+        <p>
+          <strong>
+            Communication Efficiency:
+          </strong>
+          {{ vendor.communicationEfficiency }}%
+        </p>
+
+        <p>
+          <strong>
+            Issue Resolution Performance:
+          </strong>
+          {{ vendor.issueResolution }}%
+        </p>
+
+        <p>
+          <strong>
+            Average Service Rating:
+          </strong>
+          {{ vendor.averageServiceRating }}/5
+        </p>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- PROCUREMENT COST ANALYSIS -->
+
+  <mat-card class="cost-analysis-card">
+
+    <h2>
+      Procurement Cost Analysis
+    </h2>
+
+    <div class="cost-grid">
+
+      <mat-card class="chart-card">
+
+        <h3>
+          Spending by Department
+        </h3>
+
+        <canvas id="departmentExpenseChart">
+        </canvas>
+
+      </mat-card>
+
+      <mat-card class="chart-card">
+
+        <h3>
+          Spending by Vendor
+        </h3>
+
+        <canvas id="vendorExpenseChart">
+        </canvas>
+
+      </mat-card>
+
+      <mat-card class="chart-card">
+
+        <h3>
+          Spending by Procurement Category
+        </h3>
+
+        <canvas id="categoryExpenseChart">
+        </canvas>
+
+      </mat-card>
+
+      <mat-card class="chart-card">
+
+        <h3>
+          Project-wise Expenses
+        </h3>
+
+        <canvas id="projectExpenseChart">
+        </canvas>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- BUSINESS INSIGHTS -->
+
+  <mat-card class="insights-card">
+
+    <h2>
+      Business Insights & Alerts
+    </h2>
+
+    <div class="insight-grid">
+
+      <div class="insight-item">
+
+        <mat-icon>
+          trending_up
+        </mat-icon>
+
+        <span>
+          Procurement spending increased by
+          18% compared to the previous quarter.
+        </span>
+
+      </div>
+
+      <div class="insight-item">
+
+        <mat-icon>
+          warning
+        </mat-icon>
+
+        <span>
+          15 deliveries are delayed and require
+          immediate follow-up.
+        </span>
+
+      </div>
+
+      <div class="insight-item">
+
+        <mat-icon>
+          star
+        </mat-icon>
+
+        <span>
+          ABC Technologies remains the
+          top-performing vendor this quarter.
+        </span>
+
+      </div>
+
+      <div class="insight-item">
+
+        <mat-icon>
+          description
+        </mat-icon>
+
+        <span>
+          20 contracts are approaching
+          renewal within 60 days.
+        </span>
+
+      </div>
+
+      <div class="insight-item">
+
+        <mat-icon>
+          inventory
+        </mat-icon>
+
+        <span>
+          125 active purchase orders are currently
+          being monitored.
+        </span>
+
+      </div>
+
+      <div class="insight-item">
+
+        <mat-icon>
+          notifications_active
+        </mat-icon>
+
+        <span>
+          Procurement managers should review
+          pending approvals before end of day.
+        </span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+</div>

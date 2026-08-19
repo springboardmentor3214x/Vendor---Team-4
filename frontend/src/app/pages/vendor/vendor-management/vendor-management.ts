@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -24,9 +24,10 @@ import { VendorService } from '../../../services/vendor.service';
 export class VendorManagement implements OnInit {
 
   constructor(
-    private router: Router,
-    private vendorService: VendorService
-  ) {}
+  private router: Router,
+  private vendorService: VendorService,
+  private cdr: ChangeDetectorRef
+) {}
 
   // ================= Dashboard Statistics =================
   // Retrieved from the FastAPI backend: GET /vendors/dashboard
@@ -55,6 +56,8 @@ export class VendorManagement implements OnInit {
         this.active = stats.active_vendors;
         this.suspended = stats.suspended_vendors;
         this.rejected = stats.rejected_vendors;
+
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.errorMessage = err?.error?.detail || 'Failed to load vendor dashboard.';

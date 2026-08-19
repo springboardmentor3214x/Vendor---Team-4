@@ -1,0 +1,1097 @@
+<div class="admin-analytics-container">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Admin Analytics Dashboard</h1>
+
+      <p>
+        Organization-wide visibility into users,
+        vendors, procurement operations,
+        compliance, contracts and system health.
+      </p>
+
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="refreshDashboard()">
+
+      <mat-icon>refresh</mat-icon>
+      Refresh Dashboard
+
+    </button>
+
+  </div>
+
+  <!-- SYSTEM STATISTICS -->
+
+  <h2 class="section-title">
+    System Statistics
+  </h2>
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        groups
+      </mat-icon>
+
+      <h2>
+        {{ totalUsers }}
+      </h2>
+
+      <p>
+        Total Users
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        person
+      </mat-icon>
+
+      <h2>
+        {{ activeUsers }}
+      </h2>
+
+      <p>
+        Active Users
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        business
+      </mat-icon>
+
+      <h2>
+        {{ totalVendors }}
+      </h2>
+
+      <p>
+        Total Vendors
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        activity_zone
+      </mat-icon>
+
+      <h2>
+        {{ applicationActivity }}
+      </h2>
+
+      <p>
+        Activity Log Entries
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- FILTERS -->
+
+  <mat-card class="filter-card">
+
+    <h2>
+      Dashboard Filters
+    </h2>
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Contract Status
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByContractStatus($event.value)">
+
+          <mat-option value="all">
+            All
+          </mat-option>
+
+          <mat-option value="active">
+            Active
+          </mat-option>
+
+          <mat-option value="expiring">
+            Expiring
+          </mat-option>
+
+          <mat-option value="expired">
+            Expired
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Vendor Performance
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByVendorPerformance($event.value)">
+
+          <mat-option value="excellent">
+            Excellent
+          </mat-option>
+
+          <mat-option value="good">
+            Good
+          </mat-option>
+
+          <mat-option value="average">
+            Average
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Procurement Status
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByProcurementStatus($event.value)">
+
+          <mat-option value="active">
+            Active
+          </mat-option>
+
+          <mat-option value="pending">
+            Pending
+          </mat-option>
+
+          <mat-option value="completed">
+            Completed
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Date Range
+        </mat-label>
+
+        <input
+          matInput
+          [matDatepicker]="picker">
+
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker">
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #picker>
+        </mat-datepicker>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- PROCUREMENT STATISTICS -->
+
+  <h2 class="section-title">
+    Procurement Statistics
+  </h2>
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        request_quote
+      </mat-icon>
+
+      <h2>
+        {{ totalProcurementRequests }}
+      </h2>
+
+      <p>
+        Total Procurement Requests
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        shopping_cart
+      </mat-icon>
+
+      <h2>
+        {{ activePurchaseOrders }}
+      </h2>
+
+      <p>
+        Active Purchase Orders
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        check_circle
+      </mat-icon>
+
+      <h2>
+        {{ completedOrders }}
+      </h2>
+
+      <p>
+        Completed Orders
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        warning
+      </mat-icon>
+
+      <h2>
+        {{ delayedDeliveries }}
+      </h2>
+
+      <p>
+        Delayed Deliveries
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- COMPLIANCE MONITORING -->
+
+  <mat-card class="compliance-card">
+
+    <h2>
+      Compliance Monitoring
+    </h2>
+
+    <div class="compliance-grid">
+
+      <div class="compliance-item">
+
+        <h4>
+          Compliant Vendors
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="compliantVendors">
+        </mat-progress-bar>
+
+        <span>
+          {{ compliantVendors }}%
+        </span>
+
+      </div>
+
+      <div class="compliance-item">
+
+        <h4>
+          Non-Compliant Vendors
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="nonCompliantVendors">
+        </mat-progress-bar>
+
+        <span>
+          {{ nonCompliantVendors }}%
+        </span>
+
+      </div>
+
+      <div class="compliance-item">
+
+        <h4>
+          Overall Compliance
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="overallCompliance">
+        </mat-progress-bar>
+
+        <span>
+          {{ overallCompliance }}%
+        </span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- DATABASE HEALTH -->
+
+  <mat-card class="database-health-card">
+
+    <h2>
+      Database Health Information
+    </h2>
+
+    <div class="health-grid">
+
+      <mat-card class="health-item">
+
+        <h3>
+          Database Status
+        </h3>
+
+        <h2>
+          {{ databaseStatus }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="health-item">
+
+        <h3>
+          Storage Monitoring
+        </h3>
+
+        <h2>
+          {{ storageUsage }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="health-item">
+
+        <h3>
+          API Health
+        </h3>
+
+        <h2>
+          {{ apiHealth }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="health-item">
+
+        <h3>
+          System Uptime Monitoring
+        </h3>
+
+        <h2>
+          {{ systemUptime }}
+        </h2>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+    <!-- VENDOR ANALYTICS -->
+
+  <h2 class="section-title">
+    Vendor Analytics
+  </h2>
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        star
+      </mat-icon>
+
+      <h2>
+        {{ topPerformingVendors }}
+      </h2>
+
+      <p>
+        Top Performing Vendors
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        verified
+      </mat-icon>
+
+      <h2>
+        {{ vendorReliabilityAverage }}%
+      </h2>
+
+      <p>
+        Average Reliability Score
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        trending_up
+      </mat-icon>
+
+      <h2>
+        {{ vendorGrowthRate }}%
+      </h2>
+
+      <p>
+        Vendor Growth Rate
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        analytics
+      </mat-icon>
+
+      <h2>
+        {{ vendorPerformanceIndex }}
+      </h2>
+
+      <p>
+        Performance Index
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- CONTRACT MONITORING -->
+
+  <mat-card class="contract-monitoring-card">
+
+    <h2>
+      Contract Monitoring
+    </h2>
+
+    <div class="contract-grid">
+
+      <mat-card class="contract-item">
+
+        <h3>
+          Active Contracts
+        </h3>
+
+        <h2>
+          {{ activeContracts }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="contract-item">
+
+        <h3>
+          Expiring Contracts
+        </h3>
+
+        <h2>
+          {{ expiringContracts }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="contract-item">
+
+        <h3>
+          Expired Contracts
+        </h3>
+
+        <h2>
+          {{ expiredContracts }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="contract-item">
+
+        <h3>
+          Pending Renewals
+        </h3>
+
+        <h2>
+          {{ pendingRenewals }}
+        </h2>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- SYSTEM USAGE STATISTICS -->
+
+  <mat-card class="system-usage-card">
+
+    <h2>
+      System Usage Statistics
+    </h2>
+
+    <div class="usage-grid">
+
+      <mat-card class="usage-item">
+
+        <h3>
+          Daily Logins
+        </h3>
+
+        <h2>
+          {{ dailyLogins }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="usage-item">
+
+        <h3>
+          Monthly Active Users
+        </h3>
+
+        <h2>
+          {{ monthlyUsers }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="usage-item">
+
+        <h3>
+          User Activity Score
+        </h3>
+
+        <h2>
+          {{ userActivityScore }}%
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="usage-item">
+
+        <h3>
+          System Engagement
+        </h3>
+
+        <h2>
+          {{ engagementRate }}%
+        </h2>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- CHARTS SECTION -->
+
+  <h2 class="section-title">
+    Analytics & Visualization
+  </h2>
+
+  <div class="charts-grid">
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Monthly Procurement Trend
+      </h3>
+
+      <canvas
+        id="procurementTrendChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Vendor Performance Distribution
+      </h3>
+
+      <canvas
+        id="vendorPerformanceChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Procurement Category Distribution
+      </h3>
+
+      <canvas
+        id="procurementCategoryChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Contract Status Overview
+      </h3>
+
+      <canvas
+        id="contractStatusChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h3>
+        User Activity Trend
+      </h3>
+
+      <canvas
+        id="userActivityChart">
+      </canvas>
+
+    </mat-card>
+
+  </div>
+    <!-- OVERALL APPLICATION ACTIVITY -->
+
+  <mat-card class="application-activity-card">
+
+    <h2>
+      Overall Activity Log Entries
+    </h2>
+
+    <div class="activity-grid">
+
+      <mat-card class="activity-item">
+
+        <mat-icon>
+          business
+        </mat-icon>
+
+        <h2>
+          {{ newVendors }}
+        </h2>
+
+        <p>
+          New Vendors This Month
+        </p>
+
+      </mat-card>
+
+      <mat-card class="activity-item">
+
+        <mat-icon>
+          shopping_cart
+        </mat-icon>
+
+        <h2>
+          {{ newPurchaseOrders }}
+        </h2>
+
+        <p>
+          New Purchase Orders
+        </p>
+
+      </mat-card>
+
+      <mat-card class="activity-item">
+
+        <mat-icon>
+          description
+        </mat-icon>
+
+        <h2>
+          {{ newContracts }}
+        </h2>
+
+        <p>
+          New Contracts
+        </p>
+
+      </mat-card>
+
+      <mat-card class="activity-item">
+
+        <mat-icon>
+          notifications
+        </mat-icon>
+
+        <h2>
+          {{ totalNotifications }}
+        </h2>
+
+        <p>
+          Recent Notifications
+        </p>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- RECENT NOTIFICATIONS -->
+
+  <mat-card class="notifications-card">
+
+    <h2>
+      Recent Notifications
+    </h2>
+
+    <div class="notification-list">
+
+      <div
+        class="notification-item"
+        *ngFor="let notification of notifications">
+
+        <mat-icon>
+          notifications_active
+        </mat-icon>
+
+        <span>
+          {{ notification }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- APPLICATION ACTIVITY TABLE -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>
+        Recent System Activities
+      </h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Search Activity
+        </mat-label>
+
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Search Activities">
+
+      </mat-form-field>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort>
+
+      <!-- Activity -->
+
+      <ng-container matColumnDef="activity">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Activity
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.activity }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- User -->
+
+      <ng-container matColumnDef="user">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          User
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.user }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Module -->
+
+      <ng-container matColumnDef="module">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Module
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.module }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Date -->
+
+      <ng-container matColumnDef="date">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Date
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.date }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Status -->
+
+      <ng-container matColumnDef="status">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Status
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.status }}
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+    <mat-paginator
+      [pageSize]="5"
+      [pageSizeOptions]="[5,10,20]">
+    </mat-paginator>
+
+  </mat-card>
+
+  <!-- BUSINESS INSIGHTS -->
+
+  <h2 class="section-title">
+    Business Insights
+  </h2>
+
+  <div class="insight-grid">
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        trending_up
+      </mat-icon>
+
+      <h3>
+        Vendor Growth
+      </h3>
+
+      <p>
+        Vendor registrations increased by
+        {{ vendorGrowthRate }}%
+        compared to last quarter.
+      </p>
+
+    </mat-card>
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        inventory
+      </mat-icon>
+
+      <h3>
+        Procurement Activity
+      </h3>
+
+      <p>
+        {{ activePurchaseOrders }}
+        purchase orders are currently active.
+      </p>
+
+    </mat-card>
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        verified_user
+      </mat-icon>
+
+      <h3>
+        Compliance Overview
+      </h3>
+
+      <p>
+        Overall compliance level is
+        {{ overallCompliance }}%.
+      </p>
+
+    </mat-card>
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        storage
+      </mat-icon>
+
+      <h3>
+        Database Health
+      </h3>
+
+      <p>
+        System uptime is currently
+        {{ systemUptime }}.
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- QUICK ACTIONS -->
+
+  <mat-card class="quick-actions-card">
+
+    <h2>
+      Quick Actions
+    </h2>
+
+    <div class="quick-actions-grid">
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="manageUsers()">
+
+        <mat-icon>
+          groups
+        </mat-icon>
+
+        Manage Users
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="manageVendors()">
+
+        <mat-icon>
+          business
+        </mat-icon>
+
+        Manage Vendors
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="viewReports()">
+
+        <mat-icon>
+          analytics
+        </mat-icon>
+
+        View Reports
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="openNotifications()">
+
+        <mat-icon>
+          notifications
+        </mat-icon>
+
+        Notifications
+
+      </button>
+
+    </div>
+
+  </mat-card>
+
+</div>

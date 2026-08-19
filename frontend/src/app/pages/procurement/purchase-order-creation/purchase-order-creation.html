@@ -63,13 +63,10 @@
 
           <mat-label>Purchase Order Status</mat-label>
 
-          <mat-select formControlName="status">
-
-            <mat-option value="Draft">Draft</mat-option>
-            <mat-option value="Generated">Generated</mat-option>
-            <mat-option value="Approved">Approved</mat-option>
-
-          </mat-select>
+          <input
+            matInput
+            formControlName="status"
+            readonly>
 
         </mat-form-field>
 

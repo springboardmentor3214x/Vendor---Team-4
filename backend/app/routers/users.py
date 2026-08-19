@@ -21,6 +21,8 @@ from app.schemas.user import (
     UpdatePasswordRequest
 )
 
+from app.models.user import User
+
 
 router = APIRouter(
     prefix="/users",
@@ -166,3 +168,25 @@ def auditor_access(
     return {
         "message": "Auditor access granted"
     }
+
+@router.get("/contacts")
+def get_contacts(
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    users = (
+        db.query(User)
+        .filter(User.id != current_user.id)
+        .order_by(User.full_name.asc())
+        .all()
+    )
+    return [
+        {
+            "id": user.id,
+            "name": user.full_name,
+            "email": user.email,
+            "role": user.role,
+            "company_name": user.company_name
+        }
+        for user in users
+    ]

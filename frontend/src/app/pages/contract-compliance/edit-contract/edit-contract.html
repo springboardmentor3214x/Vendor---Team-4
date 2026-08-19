@@ -138,20 +138,11 @@
         <div class="form-grid">
 
           <mat-form-field appearance="outline">
-
             <mat-label>Vendor Name *</mat-label>
-
-            <input
-              matInput
-              formControlName="vendorName">
-
-            <mat-error
-              *ngIf="contractForm.get('vendorName')?.hasError('required')">
-
-              Vendor Name is required
-
-            </mat-error>
-
+            <mat-select formControlName="vendorId" (selectionChange)="selectVendor($event.value)">
+              <mat-option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.company_name }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="contractForm.get('vendorId')?.hasError('required')">Vendor Name is required</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -160,7 +151,8 @@
 
             <input
               matInput
-              formControlName="vendorId">
+              [value]="contractForm.get('vendorId')?.value || ''"
+              readonly>
 
             <mat-error
               *ngIf="contractForm.get('vendorId')?.hasError('required')">

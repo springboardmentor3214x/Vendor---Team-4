@@ -1,0 +1,542 @@
+<div class="messaging-container">
+
+  <!-- Header -->
+  <mat-card class="page-header">
+    <div class="header-content">
+      <div>
+        <h2>Vendor Messaging System</h2>
+        <p>
+          Secure communication between organization users and vendors.
+          All messages are linked with procurement activities for complete traceability.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="refreshConversations()">
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+      <div class="summary-icon">
+        <mat-icon>forum</mat-icon>
+      </div>
+      <div>
+        <h3>{{ totalConversations }}</h3>
+        <p>Total Conversations</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <div class="summary-icon">
+        <mat-icon>mark_email_unread</mat-icon>
+      </div>
+      <div>
+        <h3>{{ unreadMessages }}</h3>
+        <p>Unread Messages</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <div class="summary-icon">
+        <mat-icon>business</mat-icon>
+      </div>
+      <div>
+        <h3>{{ activeVendors }}</h3>
+        <p>Active Vendors</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <div class="summary-icon">
+        <mat-icon>local_shipping</mat-icon>
+      </div>
+      <div>
+        <h3>{{ linkedActivities }}</h3>
+        <p>Linked Activities</p>
+      </div>
+    </mat-card>
+
+  </div>
+
+  <!-- Main Chat Layout -->
+  <div class="chat-layout">
+
+    <!-- Left Panel -->
+    <mat-card class="conversation-panel">
+
+      <div class="panel-header">
+        <div>
+          <h3>Conversations</h3>
+          <small *ngIf="!conversations.length">No existing conversations</small>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Search Conversations</mat-label>
+        <input
+          matInput
+          placeholder="Search vendor, PO, contract..."
+          (keyup)="applyConversationFilter($event)"
+        >
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <div class="conversation-list">
+
+        <div
+          class="conversation-item"
+          *ngFor="let conversation of filteredConversations"
+          [class.active]="selectedConversation?.id === conversation.id"
+          (click)="selectConversation(conversation)"
+        >
+
+          <div class="conversation-top">
+
+            <div class="vendor-info">
+              <h4>{{ conversation.vendorName }}</h4>
+              <span>{{ conversation.vendorType }}</span>
+            </div>
+
+            <div class="message-status">
+              <span class="time">
+                {{ conversation.lastMessageTime }}
+              </span>
+
+              <span
+                class="unread-badge"
+                *ngIf="conversation.unreadCount > 0"
+              >
+                {{ conversation.unreadCount }}
+              </span>
+            </div>
+
+          </div>
+
+          <div class="conversation-middle">
+            <strong>{{ conversation.relatedType }}</strong>
+            -
+            {{ conversation.relatedRecord }}
+          </div>
+
+          <div class="conversation-preview">
+            {{ conversation.lastMessage }}
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Real contacts from the backend. This also lets a user start the
+           first conversation when the database has no messages yet. -->
+      <mat-divider></mat-divider>
+
+      <div class="contacts-section" *ngIf="contacts?.length">
+        <div class="panel-header">
+          <h3>Start a Conversation</h3>
+        </div>
+
+        <div class="conversation-list contact-list">
+          <div
+            class="conversation-item contact-item"
+            *ngFor="let contact of contacts"
+            (click)="startConversation(contact)"
+          >
+            <div class="conversation-top">
+              <div class="vendor-info">
+                <h4>{{ contact.company_name || contact.name }}</h4>
+                <span>{{ contact.role }} · {{ contact.name }}</span>
+              </div>
+              <mat-icon>chat</mat-icon>
+            </div>
+            <div class="conversation-preview">{{ contact.email }}</div>
+          </div>
+        </div>
+      </div>
+
+    </mat-card>
+
+    <!-- Center Chat Area -->
+    <mat-card class="chat-panel">
+
+      <ng-container *ngIf="selectedConversation">
+
+        <div class="chat-header">
+
+          <div>
+
+            <h3>{{ selectedConversation.vendorName }}</h3>
+
+            <p>
+              {{ selectedConversation.relatedType }}
+              :
+              {{ selectedConversation.relatedRecord }}
+            </p>
+
+          </div>
+
+          <div class="chat-header-actions">
+
+            <button
+              mat-icon-button
+              matTooltip="View Related Record"
+            >
+              <mat-icon>link</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              matTooltip="Mark as Read"
+              (click)="markConversationRead()"
+            >
+              <mat-icon>done_all</mat-icon>
+            </button>
+
+          </div>
+
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Messages -->
+        <div class="message-area">
+
+          <div
+            *ngFor="let message of messages"
+            class="message-wrapper"
+            [class.sent]="message.senderType === 'Organization'"
+            [class.received]="message.senderType === 'Vendor'"
+          >
+
+            <div class="message-bubble">
+
+              <div class="message-header">
+
+                <span class="sender">
+                  {{ message.sender }}
+                </span>
+
+                <span class="timestamp">
+                  {{ message.timestamp }}
+                </span>
+
+              </div>
+
+              <div class="message-content">
+                {{ message.content }}
+              </div>
+
+              <div class="message-footer">
+
+                <span class="status-chip">
+                  {{ message.readStatus }}
+                </span>
+
+                <span class="activity-link">
+                  {{ message.relatedActivity }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- File Attachment Section -->
+        <div class="attachment-section">
+
+          <h4>Shared Documents</h4>
+
+          <div class="attachment-list">
+
+            <div
+              class="attachment-item"
+              *ngFor="let file of attachments"
+            >
+
+              <div class="file-info">
+
+                <mat-icon>description</mat-icon>
+
+                <div>
+                  <strong>{{ file.fileName }}</strong>
+                  <p>{{ file.fileType }}</p>
+                </div>
+
+              </div>
+
+              <div class="file-actions">
+
+                <button
+                  mat-icon-button
+                  (click)="previewFile(file)"
+                  matTooltip="Preview"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  (click)="downloadFile(file)"
+                  matTooltip="Download"
+                >
+                  <mat-icon>download</mat-icon>
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+                <!-- Message Composer -->
+        <div class="message-composer">
+
+          <mat-form-field appearance="outline" class="message-input">
+            <mat-label>Type your message</mat-label>
+
+            <textarea
+              matInput
+              rows="4"
+              [(ngModel)]="newMessage"
+              placeholder="Discuss quotations, deliveries, invoices, contracts, compliance requirements..."
+            ></textarea>
+          </mat-form-field>
+
+          <div class="composer-actions">
+
+            <input
+              type="file"
+              #fileInput
+              hidden
+              (change)="onFileSelected($event)"
+            >
+
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="fileInput.click()"
+            >
+              <mat-icon>attach_file</mat-icon>
+              Attach File
+            </button>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="sendMessage()"
+            >
+              <mat-icon>send</mat-icon>
+              Send Message
+            </button>
+
+          </div>
+
+          <div
+            class="selected-file"
+            *ngIf="selectedFileName"
+          >
+            <mat-icon>description</mat-icon>
+            {{ selectedFileName }}
+          </div>
+
+        </div>
+
+      </ng-container>
+
+      <!-- Empty State -->
+
+      <div
+        class="empty-chat"
+        *ngIf="!selectedConversation"
+      >
+
+        <mat-icon>forum</mat-icon>
+
+        <h3>Select a Conversation</h3>
+
+        <p>
+          Choose a vendor conversation from the left panel to
+          view messages, documents, and procurement activity details.
+        </p>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Right Side Information Panel -->
+
+    <mat-card
+      class="details-panel"
+      *ngIf="selectedConversation"
+    >
+
+      <h3>Communication Details</h3>
+
+      <mat-divider></mat-divider>
+
+      <!-- Vendor Information -->
+
+      <div class="detail-section">
+
+        <h4>Vendor Information</h4>
+
+        <div class="detail-item">
+          <strong>Vendor Name:</strong>
+          <span>{{ selectedConversation.vendorName }}</span>
+        </div>
+
+        <div class="detail-item">
+          <strong>Vendor ID:</strong>
+          <span>{{ selectedConversation.vendorId }}</span>
+        </div>
+
+        <div class="detail-item">
+          <strong>Contact Person:</strong>
+          <span>{{ selectedConversation.contactPerson }}</span>
+        </div>
+
+        <div class="detail-item">
+          <strong>Email:</strong>
+          <span>{{ selectedConversation.email }}</span>
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Linked Business Activity -->
+
+      <div class="detail-section">
+
+        <h4>Linked Procurement Activity</h4>
+
+        <div class="detail-item">
+          <strong>Activity Type:</strong>
+          <span>{{ selectedConversation.relatedType }}</span>
+        </div>
+
+        <div class="detail-item">
+          <strong>Record ID:</strong>
+          <span>{{ selectedConversation.relatedRecord }}</span>
+        </div>
+
+        <div class="detail-item">
+          <strong>Status:</strong>
+
+          <mat-chip>
+            {{ selectedConversation.activityStatus }}
+          </mat-chip>
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Communication Statistics -->
+
+      <div class="detail-section">
+
+        <h4>Communication Statistics</h4>
+
+        <div class="detail-item">
+          <strong>Total Messages:</strong>
+          <span>{{ selectedConversation.totalMessages }}</span>
+        </div>
+
+        <div class="detail-item">
+          <strong>Unread Messages:</strong>
+          <span>{{ selectedConversation.unreadCount }}</span>
+        </div>
+
+        <div class="detail-item">
+          <strong>Last Activity:</strong>
+          <span>{{ selectedConversation.lastMessageTime }}</span>
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Related Categories -->
+
+      <div class="detail-section">
+
+        <h4>Discussion Categories</h4>
+
+        <div class="category-chips">
+
+          <mat-chip-set>
+
+            <mat-chip
+              *ngFor="let category of selectedConversation.categories"
+            >
+              {{ category }}
+            </mat-chip>
+
+          </mat-chip-set>
+
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Quick Actions -->
+
+      <div class="detail-section">
+
+        <h4>Quick Actions</h4>
+
+        <div class="quick-actions">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            class="action-btn"
+            (click)="viewRecord()"
+          >
+            <mat-icon>visibility</mat-icon>
+            View Record
+          </button>
+
+          <button
+            mat-stroked-button
+            color="accent"
+            class="action-btn"
+            (click)="openHistory()"
+          >
+            <mat-icon>history</mat-icon>
+            History
+          </button>
+
+          <button
+            mat-stroked-button
+            color="warn"
+            class="action-btn"
+            (click)="flagIssue()"
+          >
+            <mat-icon>flag</mat-icon>
+            Flag Issue
+          </button>
+
+        </div>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+</div>

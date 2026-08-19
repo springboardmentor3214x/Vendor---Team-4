@@ -1,13 +1,7 @@
-import {
-  AfterViewInit,
-  Component,
-  ViewChild
-} from '@angular/core';
-
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -17,167 +11,32 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { VendorReliabilityService } from '../../../services/vendor-reliability.service';
 
-@Component({
-  selector: 'app-supplier-ranking',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    MatCardModule,
-    MatTableModule,
-    MatSortModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatButtonModule
-  ],
-  templateUrl: './supplier-ranking.html',
-  styleUrl: './supplier-ranking.scss'
-})
-export class SupplierRanking implements AfterViewInit {
-
-  @ViewChild(MatSort)
-  sort!: MatSort;
-
-  // ================= Summary Cards =================
-
-  totalSuppliers = 18;
-
-  topSupplier = 'ABC Suppliers';
-
-  averageReliability = 91;
-
-  lowRiskSuppliers = 13;
-
-  // ================= Filters =================
-
-  searchText = '';
-
-  selectedCategory = '';
-
-  selectedRisk = '';
-
-  categories: string[] = [
-    'Electronics',
-    'Office Supplies',
-    'Machinery',
-    'IT Equipment',
-    'Transportation'
-  ];
-
-  // ================= Table Columns =================
-
-  displayedColumns: string[] = [
-    'rank',
-    'vendor',
-    'category',
-    'reliability',
-    'risk',
-    'recommendation',
-    'details'
-  ];
-
-  // ================= Dummy Data =================
-
-  supplierRankings = [
-
-    {
-      rank: 1,
-      vendor: 'ABC Suppliers',
-      category: 'Electronics',
-      reliability: 98,
-      risk: 'Low',
-      recommendation: 'Highly Recommended'
-    },
-
-    {
-      rank: 2,
-      vendor: 'Global Traders',
-      category: 'Office Supplies',
-      reliability: 95,
-      risk: 'Low',
-      recommendation: 'Recommended'
-    },
-
-    {
-      rank: 3,
-      vendor: 'Vision Technologies',
-      category: 'IT Equipment',
-      reliability: 91,
-      risk: 'Low',
-      recommendation: 'Recommended'
-    },
-
-    {
-      rank: 4,
-      vendor: 'Prime Industries',
-      category: 'Machinery',
-      reliability: 84,
-      risk: 'Medium',
-      recommendation: 'Consider'
-    },
-
-    {
-      rank: 5,
-      vendor: 'Delta Logistics',
-      category: 'Transportation',
-      reliability: 67,
-      risk: 'High',
-      recommendation: 'Not Recommended'
-    }
-
-  ];
-
-  dataSource = new MatTableDataSource(this.supplierRankings);
-
-  constructor() {
-
-    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
-
-      const filters = JSON.parse(filter);
-
-      const searchMatch =
-        data.vendor.toLowerCase().includes(filters.search) ||
-        data.category.toLowerCase().includes(filters.search);
-
-      const categoryMatch =
-        !filters.category ||
-        data.category === filters.category;
-
-      const riskMatch =
-        !filters.risk ||
-        data.risk === filters.risk;
-
-      return searchMatch && categoryMatch && riskMatch;
-
-    };
-
-  }
-
-  ngAfterViewInit(): void {
-
-    this.dataSource.sort = this.sort;
-
-  }
-
-  // ================= Search & Filters =================
-
-  applyFilters(): void {
-
-    this.dataSource.filter = JSON.stringify({
-
-      search: this.searchText.trim().toLowerCase(),
-
-      category: this.selectedCategory,
-
-      risk: this.selectedRisk
-
+@Component({ selector: 'app-supplier-ranking', standalone: true, imports: [CommonModule, FormsModule, RouterModule, MatCardModule, MatTableModule, MatSortModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, MatProgressBarModule, MatButtonModule], templateUrl: './supplier-ranking.html', styleUrl: './supplier-ranking.scss' })
+export class SupplierRanking implements OnInit, AfterViewInit {
+  @ViewChild(MatSort) sort!: MatSort;
+  constructor(private reliabilityService: VendorReliabilityService, private cdr: ChangeDetectorRef) {}
+  totalSuppliers = 0; topSupplier = '-'; averageReliability = 0; lowRiskSuppliers = 0; searchText = ''; selectedCategory = ''; selectedRisk = ''; categories: string[] = [];
+  displayedColumns = ['rank', 'vendor', 'category', 'reliability', 'risk', 'recommendation', 'details']; supplierRankings: any[] = []; dataSource = new MatTableDataSource<any>([]);
+  ngOnInit(): void { this.load(); }
+  ngAfterViewInit(): void { this.dataSource.sort = this.sort; }
+  load(): void {
+    this.reliabilityService.getRankings().subscribe({
+      next: (rows: any[]) => {
+        const rankings = Array.isArray(rows) ? rows : [];
+        this.supplierRankings = rankings.map((r: any, index: number) => ({ rank: Number(r.rank ?? index + 1), vendor: r.vendor_name ?? '-', category: r.vendor_category ?? '-', reliability: Number(r.reliability_score ?? 0), risk: String(r.risk_level || '').replace(' Risk', ''), recommendation: r.recommendation ?? '-', id: r.vendor_id }));
+        this.dataSource.data = this.supplierRankings; this.totalSuppliers = rankings.length; this.topSupplier = this.supplierRankings[0]?.vendor || '-';
+        this.averageReliability = this.totalSuppliers ? Math.round((this.supplierRankings.reduce((s, r) => s + r.reliability, 0) / this.totalSuppliers) * 100) / 100 : 0;
+        this.lowRiskSuppliers = this.supplierRankings.filter(r => r.risk === 'Low').length; this.categories = [...new Set(this.supplierRankings.map(r => r.category))];
+        this.applyFilters(); this.cdr.detectChanges();
+      },
+      error: (error: unknown) => console.error('Failed to load supplier rankings:', error)
     });
-
   }
-
+  applyFilters(): void {
+    const search = this.searchText.trim().toLowerCase();
+    this.dataSource.filterPredicate = (d: any): boolean => (!search || String(d.vendor).toLowerCase().includes(search) || String(d.category).toLowerCase().includes(search)) && (!this.selectedCategory || d.category === this.selectedCategory) && (!this.selectedRisk || d.risk === this.selectedRisk);
+    this.dataSource.filter = String(Date.now());
+  }
 }

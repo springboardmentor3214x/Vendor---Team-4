@@ -1,0 +1,733 @@
+<div class="discussion-container">
+
+  <!-- Header -->
+  <mat-card class="page-header">
+
+    <div class="header-content">
+
+      <div>
+        <h2>Procurement Discussions</h2>
+        <p>
+          Collaborate with Procurement Managers, Vendors,
+          Finance Officers and Supply Chain Managers through
+          centralized procurement discussions linked to business records.
+        </p>
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openNewDiscussionModal()"
+        >
+          <mat-icon>add</mat-icon>
+          New Discussion
+        </button>
+
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="refreshDiscussions()"
+        >
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Summary Cards -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>forum</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ totalDiscussions }}</h3>
+        <p>Total Discussions</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>pending_actions</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ activeDiscussions }}</h3>
+        <p>Active Discussions</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>groups</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ totalParticipants }}</h3>
+        <p>Participants</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>description</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ linkedRecords }}</h3>
+        <p>Linked Records</p>
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Search Discussion</mat-label>
+
+        <input
+          matInput
+          placeholder="Search title, vendor, PO..."
+          (keyup)="applyFilter($event)"
+        >
+
+        <mat-icon matSuffix>
+          search
+        </mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Record Type</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByRecordType($event.value)"
+        >
+
+          <mat-option value="all">
+            All
+          </mat-option>
+
+          <mat-option value="Purchase Order">
+            Purchase Order
+          </mat-option>
+
+          <mat-option value="Contract">
+            Contract
+          </mat-option>
+
+          <mat-option value="Procurement Request">
+            Procurement Request
+          </mat-option>
+
+          <mat-option value="Invoice">
+            Invoice
+          </mat-option>
+
+          <mat-option value="Compliance">
+            Compliance
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByStatus($event.value)"
+        >
+
+          <mat-option value="all">
+            All
+          </mat-option>
+
+          <mat-option value="Open">
+            Open
+          </mat-option>
+
+          <mat-option value="In Review">
+            In Review
+          </mat-option>
+
+          <mat-option value="Resolved">
+            Resolved
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Main Layout -->
+
+  <div class="discussion-layout">
+
+    <!-- Discussion List -->
+
+    <mat-card class="discussion-list-panel">
+
+      <h3>Discussion Threads</h3>
+
+      <div class="discussion-list">
+
+        <div
+          class="discussion-item"
+          *ngFor="let discussion of filteredDiscussions"
+          [class.active]="selectedDiscussion?.id === discussion.id"
+          (click)="selectDiscussion(discussion)"
+        >
+
+          <div class="discussion-top">
+
+            <h4>
+              {{ discussion.title }}
+            </h4>
+
+            <mat-chip [ngClass]="{
+              'chip-open': discussion.status === 'Open',
+              'chip-review': discussion.status === 'In Review',
+              'chip-resolved': discussion.status === 'Resolved',
+              'chip-escalated': discussion.status === 'Escalated'
+            }">
+              {{ discussion.status }}
+            </mat-chip>
+
+          </div>
+
+          <p class="vendor-name">
+            {{ discussion.vendor }}
+          </p>
+
+          <p class="record-info">
+            {{ discussion.recordType }}
+            -
+            {{ discussion.recordId }}
+          </p>
+
+          <p class="discussion-preview">
+            {{ discussion.lastMessage }}
+          </p>
+
+          <div class="discussion-footer">
+
+            <span>
+              {{ discussion.participants }} Participants
+            </span>
+
+            <span>
+              {{ discussion.lastUpdated }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Discussion Thread -->
+
+    <mat-card class="discussion-thread-panel">
+
+      <ng-container *ngIf="selectedDiscussion">
+
+        <div class="thread-header">
+
+          <div>
+
+            <h3>
+              {{ selectedDiscussion.title }}
+            </h3>
+
+            <p>
+              {{ selectedDiscussion.recordType }}
+              :
+              {{ selectedDiscussion.recordId }}
+              <span class="status-badge" [class.resolved]="selectedDiscussion.status === 'Resolved'">
+                ({{ selectedDiscussion.status }})
+              </span>
+            </p>
+
+          </div>
+
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="closeDiscussion()"
+            [disabled]="selectedDiscussion.status === 'Resolved'"
+          >
+            <mat-icon>check_circle</mat-icon>
+            {{ selectedDiscussion.status === 'Resolved' ? 'Discussion Resolved' : 'Close Discussion' }}
+          </button>
+
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Discussion Messages -->
+
+        <div class="discussion-history">
+
+          <div
+            class="discussion-message"
+            *ngFor="let message of discussionMessages"
+          >
+
+            <div class="message-header">
+
+              <div>
+
+                <strong>
+                  {{ message.user }}
+                </strong>
+
+                <span class="role">
+                  ({{ message.role }})
+                </span>
+
+              </div>
+
+              <span class="timestamp">
+                {{ message.timestamp }}
+              </span>
+
+            </div>
+
+            <div class="message-body">
+              {{ message.message }}
+            </div>
+
+          </div>
+
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Reply Section -->
+
+        <div class="reply-section">
+
+          <h4>Add Reply</h4>
+
+          <mat-form-field appearance="outline" class="full-width">
+
+            <mat-label>Discussion Reply</mat-label>
+
+            <textarea
+              matInput
+              rows="5"
+              [(ngModel)]="newReply"
+              placeholder="Enter discussion update, delivery clarification, payment confirmation, compliance update..."
+            >
+            </textarea>
+
+          </mat-form-field>
+
+          <div class="reply-actions">
+
+            <input
+              type="file"
+              #discussionFileInput
+              hidden
+              (change)="onFileSelected($event)"
+            >
+
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="discussionFileInput.click()"
+            >
+              <mat-icon>attach_file</mat-icon>
+              Attach Document
+            </button>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="submitReply()"
+            >
+              <mat-icon>send</mat-icon>
+              Post Reply
+            </button>
+
+          </div>
+
+          <div
+            class="selected-file"
+            *ngIf="selectedFileName"
+          >
+            <mat-icon>description</mat-icon>
+            {{ selectedFileName }}
+          </div>
+
+        </div>
+
+      </ng-container>
+
+      <!-- Empty State -->
+
+      <div
+        class="empty-state"
+        *ngIf="!selectedDiscussion"
+      >
+
+        <mat-icon>
+          forum
+        </mat-icon>
+
+        <h3>
+          Select a Discussion
+        </h3>
+
+        <p>
+          Choose a procurement discussion thread to view
+          participants, discussion history, linked records
+          and shared documents.
+        </p>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Right Information Panel -->
+
+    <mat-card
+      class="details-panel"
+      *ngIf="selectedDiscussion"
+    >
+
+      <h3>Discussion Details</h3>
+
+      <mat-divider></mat-divider>
+
+      <!-- Participants -->
+
+      <div class="details-section">
+
+        <h4>Participants</h4>
+
+        <div
+          class="participant-item"
+          *ngFor="let participant of selectedDiscussion.participantList"
+        >
+
+          <mat-icon>
+            account_circle
+          </mat-icon>
+
+          <div>
+
+            <strong>
+              {{ participant.name }}
+            </strong>
+
+            <p>
+              {{ participant.role }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Linked Record -->
+
+      <div class="details-section">
+
+        <h4>Linked Business Record</h4>
+
+        <div class="detail-item">
+
+          <strong>Type:</strong>
+
+          <span>
+            {{ selectedDiscussion.recordType }}
+          </span>
+
+        </div>
+
+        <div class="detail-item">
+
+          <strong>Record ID:</strong>
+
+          <span>
+            {{ selectedDiscussion.recordId }}
+          </span>
+
+        </div>
+
+        <div class="detail-item">
+
+          <strong>Status:</strong>
+
+          <mat-chip>
+            {{ selectedDiscussion.status }}
+          </mat-chip>
+
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Discussion Metrics -->
+
+      <div class="details-section">
+
+        <h4>Discussion Metrics</h4>
+
+        <div class="detail-item">
+
+          <strong>Messages:</strong>
+
+          <span>
+            {{ selectedDiscussion.totalMessages }}
+          </span>
+
+        </div>
+
+        <div class="detail-item">
+
+          <strong>Participants:</strong>
+
+          <span>
+            {{ selectedDiscussion.participants }}
+          </span>
+
+        </div>
+
+        <div class="detail-item">
+
+          <strong>Last Updated:</strong>
+
+          <span>
+            {{ selectedDiscussion.lastUpdated }}
+          </span>
+
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Shared Documents -->
+
+      <div class="details-section">
+
+        <h4>Shared Documents</h4>
+
+        <div
+          class="document-item"
+          *ngFor="let document of linkedDocuments"
+        >
+
+          <div class="document-info">
+
+            <mat-icon>
+              description
+            </mat-icon>
+
+            <div>
+
+              <strong>
+                {{ document.fileName }}
+              </strong>
+
+              <p>
+                {{ document.fileType }}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div class="document-actions">
+
+            <button
+              mat-icon-button
+              (click)="previewDocument(document)"
+            >
+              <mat-icon>
+                visibility
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              (click)="downloadDocument(document)"
+            >
+              <mat-icon>
+                download
+              </mat-icon>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Categories -->
+
+      <div class="details-section">
+
+        <h4>Discussion Categories</h4>
+
+        <mat-chip-set>
+
+          <mat-chip
+            *ngFor="let category of selectedDiscussion.categories"
+          >
+            {{ category }}
+          </mat-chip>
+
+        </mat-chip-set>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Quick Actions -->
+
+      <div class="details-section">
+
+        <h4>Quick Actions</h4>
+
+        <div class="quick-actions">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            class="action-btn"
+            (click)="viewLinkedRecord()"
+          >
+            <mat-icon>visibility</mat-icon>
+            View Linked Record
+          </button>
+
+          <button
+            mat-stroked-button
+            color="accent"
+            class="action-btn"
+            (click)="viewDiscussionHistory()"
+          >
+            <mat-icon>history</mat-icon>
+            Discussion History
+          </button>
+
+          <button
+            mat-stroked-button
+            color="warn"
+            class="action-btn"
+            (click)="escalateIssue()"
+          >
+            <mat-icon>flag</mat-icon>
+            Escalate Issue
+          </button>
+
+        </div>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- NEW DISCUSSION MODAL -->
+  <div class="modal-overlay" *ngIf="showNewDiscussionModal" (click)="closeNewDiscussionModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <mat-icon color="primary">forum</mat-icon>
+          Create New Discussion
+        </h2>
+        <button mat-icon-button (click)="closeNewDiscussionModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <form [formGroup]="discussionForm" (ngSubmit)="submitNewDiscussion()">
+        <div class="modal-body form-grid-modal">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Discussion Title</mat-label>
+            <input matInput formControlName="title" placeholder="e.g. Delivery Delay Clarification for PO-2026-101">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Vendor Name</mat-label>
+            <mat-select formControlName="vendor">
+              <mat-option *ngFor="let vendor of vendorsList" [value]="vendor">
+                {{ vendor }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Record Type</mat-label>
+            <mat-select formControlName="recordType">
+              <mat-option value="Purchase Order">Purchase Order</mat-option>
+              <mat-option value="Contract">Contract</mat-option>
+              <mat-option value="Procurement Request">Procurement Request</mat-option>
+              <mat-option value="Invoice">Invoice</mat-option>
+              <mat-option value="Compliance">Compliance</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Record ID</mat-label>
+            <input matInput formControlName="recordId" placeholder="e.g. PO-2026-101">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Discussion Initial Message / Overview</mat-label>
+            <textarea matInput formControlName="initialMessage" rows="3" placeholder="Enter initial discussion topic details..."></textarea>
+          </mat-form-field>
+
+        </div>
+
+        <div class="modal-footer">
+          <button mat-button type="button" (click)="closeNewDiscussionModal()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="discussionForm.invalid">
+            <mat-icon>add_comment</mat-icon>
+            Create Discussion
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

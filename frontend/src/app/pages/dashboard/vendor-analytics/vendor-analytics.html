@@ -1,0 +1,1098 @@
+<div class="vendor-analytics-container">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Vendor Analytics Dashboard</h1>
+
+      <p>
+        Monitor performance, reliability, contracts,
+        orders, communications and business growth.
+      </p>
+
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="refreshDashboard()">
+
+      <mat-icon>refresh</mat-icon>
+      Refresh Dashboard
+
+    </button>
+
+  </div>
+
+  <!-- SUMMARY CARDS -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        emoji_events
+      </mat-icon>
+
+      <h2>
+        {{ overallPerformanceScore }}%
+      </h2>
+
+      <p>
+        Overall Performance Score
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        verified
+      </mat-icon>
+
+      <h2>
+        {{ vendorReliabilityScore }}
+      </h2>
+
+      <p>
+        Vendor Reliability Score
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        shopping_cart
+      </mat-icon>
+
+      <h2>
+        {{ activePurchaseOrders }}
+      </h2>
+
+      <p>
+        Active Purchase Orders
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        check_circle
+      </mat-icon>
+
+      <h2>
+        {{ completedOrders }}
+      </h2>
+
+      <p>
+        Completed Orders
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        local_shipping
+      </mat-icon>
+
+      <h2>
+        {{ pendingDeliveries }}
+      </h2>
+
+      <p>
+        Pending Deliveries
+      </p>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <mat-icon>
+        payments
+      </mat-icon>
+
+      <h2>
+        ₹{{ paymentStatus }}
+      </h2>
+
+      <p>
+        Payment Status
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- FILTERS -->
+
+  <mat-card class="filter-card">
+
+    <h2>
+      Dashboard Filters
+    </h2>
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Contract Status
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByContractStatus($event.value)">
+
+          <mat-option value="all">
+            All
+          </mat-option>
+
+          <mat-option value="active">
+            Active
+          </mat-option>
+
+          <mat-option value="expiring">
+            Near Expiry
+          </mat-option>
+
+          <mat-option value="expired">
+            Expired
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Procurement Category
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByCategory($event.value)">
+
+          <mat-option value="software">
+            Software
+          </mat-option>
+
+          <mat-option value="hardware">
+            Hardware
+          </mat-option>
+
+          <mat-option value="services">
+            Services
+          </mat-option>
+
+          <mat-option value="logistics">
+            Logistics
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Performance Rating
+        </mat-label>
+
+        <mat-select
+          (selectionChange)="filterByPerformance($event.value)">
+
+          <mat-option value="excellent">
+            Excellent
+          </mat-option>
+
+          <mat-option value="good">
+            Good
+          </mat-option>
+
+          <mat-option value="average">
+            Average
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Select Date
+        </mat-label>
+
+        <input
+          matInput
+          [matDatepicker]="picker">
+
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker">
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #picker>
+        </mat-datepicker>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- RELIABILITY SCORE SECTION -->
+
+  <mat-card class="reliability-card">
+
+    <div class="reliability-header">
+
+      <div>
+
+        <h2>
+          Reliability Score Analysis
+        </h2>
+
+        <p>
+          Performance trend based on delivery,
+          quality and communication metrics.
+        </p>
+
+      </div>
+
+      <div class="score-circle">
+
+        <h1>
+          {{ vendorReliabilityScore }}
+        </h1>
+
+      </div>
+
+    </div>
+
+    <div class="reliability-grid">
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Current Score
+        </h3>
+
+        <h2>
+          {{ currentScore }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Score Improvement
+        </h3>
+
+        <h2>
+          +{{ scoreImprovement }}%
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Score Reduction
+        </h3>
+
+        <h2>
+          {{ scoreReduction }}%
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Performance Trend
+        </h3>
+
+        <h2>
+          Upward
+        </h2>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- VENDOR PERFORMANCE VIEW -->
+
+  <mat-card class="performance-card">
+
+    <h2>
+      Vendor Performance View
+    </h2>
+
+    <div class="performance-grid">
+
+      <div class="performance-item">
+
+        <h4>
+          Delivery Accuracy
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="deliveryAccuracy">
+        </mat-progress-bar>
+
+        <span>
+          {{ deliveryAccuracy }}%
+        </span>
+
+      </div>
+
+      <div class="performance-item">
+
+        <h4>
+          Product Quality Rating
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="productQuality">
+        </mat-progress-bar>
+
+        <span>
+          {{ productQuality }}%
+        </span>
+
+      </div>
+
+      <div class="performance-item">
+
+        <h4>
+          Communication Efficiency
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="communicationEfficiency">
+        </mat-progress-bar>
+
+        <span>
+          {{ communicationEfficiency }}%
+        </span>
+
+      </div>
+
+      <div class="performance-item">
+
+        <h4>
+          Issue Resolution Performance
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="issueResolution">
+        </mat-progress-bar>
+
+        <span>
+          {{ issueResolution }}%
+        </span>
+
+      </div>
+
+      <div class="performance-item">
+
+        <h4>
+          Customer Satisfaction Score
+        </h4>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="customerSatisfaction">
+        </mat-progress-bar>
+
+        <span>
+          {{ customerSatisfaction }}%
+        </span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+    <!-- CONTRACT STATUS -->
+
+  <mat-card class="contract-status-card">
+
+    <h2>
+      Contract Status Overview
+    </h2>
+
+    <div class="contract-grid">
+
+      <mat-card class="status-card">
+
+        <mat-icon>
+          description
+        </mat-icon>
+
+        <h2>
+          {{ activeContracts }}
+        </h2>
+
+        <p>
+          Active Contracts
+        </p>
+
+      </mat-card>
+
+      <mat-card class="status-card">
+
+        <mat-icon>
+          warning
+        </mat-icon>
+
+        <h2>
+          {{ contractsNearExpiry }}
+        </h2>
+
+        <p>
+          Contracts Nearing Expiry
+        </p>
+
+      </mat-card>
+
+      <mat-card class="status-card">
+
+        <mat-icon>
+          cancel
+        </mat-icon>
+
+        <h2>
+          {{ expiredContracts }}
+        </h2>
+
+        <p>
+          Expired Contracts
+        </p>
+
+      </mat-card>
+
+      <mat-card class="status-card">
+
+        <mat-icon>
+          update
+        </mat-icon>
+
+        <h2>
+          {{ pendingRenewals }}
+        </h2>
+
+        <p>
+          Pending Renewals
+        </p>
+
+      </mat-card>
+
+      <mat-card class="status-card">
+
+        <mat-icon>
+          verified_user
+        </mat-icon>
+
+        <h2>
+          {{ complianceStatus }}%
+        </h2>
+
+        <p>
+          Compliance Status
+        </p>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- COMMUNICATION SUMMARY -->
+
+  <mat-card class="communication-card">
+
+    <h2>
+      Communication Activity Summary
+    </h2>
+
+    <div class="communication-grid">
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Unread Messages
+        </h3>
+
+        <h2>
+          {{ unreadMessages }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Recent Discussions
+        </h3>
+
+        <h2>
+          {{ recentDiscussions }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Uploaded Documents
+        </h3>
+
+        <h2>
+          {{ uploadedDocuments }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Pending Responses
+        </h3>
+
+        <h2>
+          {{ pendingResponses }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="mini-card">
+
+        <h3>
+          Notifications
+        </h3>
+
+        <h2>
+          {{ recentNotifications }}
+        </h2>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- CHARTS SECTION -->
+
+  <h2 class="section-title">
+    Vendor Analytics & Insights
+  </h2>
+
+  <div class="charts-grid">
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Reliability Score Trend
+      </h3>
+
+      <canvas
+        id="reliabilityTrendChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Vendor Performance Distribution
+      </h3>
+
+      <canvas
+        id="performanceDistributionChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Procurement Category Distribution
+      </h3>
+
+      <canvas
+        id="categoryDistributionChart">
+      </canvas>
+
+    </mat-card>
+
+    <mat-card class="chart-card">
+
+      <h3>
+        Contract Status Distribution
+      </h3>
+
+      <canvas
+        id="contractStatusChart">
+      </canvas>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ORDER HISTORY -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>
+        Order History
+      </h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>
+          Search Orders
+        </mat-label>
+
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Search Purchase Orders">
+
+      </mat-form-field>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort>
+
+      <!-- PO Number -->
+
+      <ng-container matColumnDef="poNumber">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Purchase Order
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.poNumber }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Category -->
+
+      <ng-container matColumnDef="category">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header>
+
+          Category
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.category }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Delivery History -->
+
+      <ng-container matColumnDef="deliveryStatus">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Delivery Status
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.deliveryStatus }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Invoice -->
+
+      <ng-container matColumnDef="invoiceStatus">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Invoice Status
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          {{ row.invoiceStatus }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Transaction -->
+
+      <ng-container matColumnDef="transactionValue">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Transaction Value
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          ₹{{ row.transactionValue }}
+
+        </td>
+
+      </ng-container>
+
+      <!-- Actions -->
+
+      <ng-container matColumnDef="actions">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Actions
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let row">
+
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="viewOrder(row)">
+
+            <mat-icon>
+              visibility
+            </mat-icon>
+
+          </button>
+
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+    <mat-paginator
+      [pageSize]="5"
+      [pageSizeOptions]="[5,10,20]">
+    </mat-paginator>
+
+  </mat-card>
+    <!-- RECENT NOTIFICATIONS -->
+
+  <mat-card class="notifications-card">
+
+    <h2>
+      Recent Notifications
+    </h2>
+
+    <div class="notification-list">
+
+      <div
+        class="notification-item"
+        *ngFor="let notification of notifications">
+
+        <mat-icon>
+          notifications
+        </mat-icon>
+
+        <span>
+          {{ notification }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- PENDING ACTIONS -->
+
+  <mat-card class="pending-actions-card">
+
+    <h2>
+      Pending Actions
+    </h2>
+
+    <div class="actions-grid">
+
+      <mat-card class="action-card">
+
+        <mat-icon>
+          assignment_late
+        </mat-icon>
+
+        <h3>
+          Contracts Expiring Soon
+        </h3>
+
+        <h2>
+          {{ contractsNearExpiry }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="action-card">
+
+        <mat-icon>
+          local_shipping
+        </mat-icon>
+
+        <h3>
+          Pending Deliveries
+        </h3>
+
+        <h2>
+          {{ pendingDeliveries }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="action-card">
+
+        <mat-icon>
+          chat
+        </mat-icon>
+
+        <h3>
+          Pending Responses
+        </h3>
+
+        <h2>
+          {{ pendingResponses }}
+        </h2>
+
+      </mat-card>
+
+      <mat-card class="action-card">
+
+        <mat-icon>
+          payments
+        </mat-icon>
+
+        <h3>
+          Pending Payments
+        </h3>
+
+        <h2>
+          ₹{{ paymentStatus }}
+        </h2>
+
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- BUSINESS INSIGHTS -->
+
+  <h2 class="section-title">
+    Business Insights
+  </h2>
+
+  <div class="insight-grid">
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        trending_up
+      </mat-icon>
+
+      <h3>
+        Reliability Improved
+      </h3>
+
+      <p>
+        Vendor reliability score increased by
+        {{ scoreImprovement }}%
+        compared to the previous quarter.
+      </p>
+
+    </mat-card>
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        inventory
+      </mat-icon>
+
+      <h3>
+        Active Orders
+      </h3>
+
+      <p>
+        {{ activePurchaseOrders }}
+        active purchase orders are currently being processed.
+      </p>
+
+    </mat-card>
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        verified_user
+      </mat-icon>
+
+      <h3>
+        Compliance Status
+      </h3>
+
+      <p>
+        Compliance level currently stands at
+        {{ complianceStatus }}%.
+      </p>
+
+    </mat-card>
+
+    <mat-card class="insight-card">
+
+      <mat-icon>
+        star
+      </mat-icon>
+
+      <h3>
+        Customer Satisfaction
+      </h3>
+
+      <p>
+        Customer satisfaction score remains at
+        {{ customerSatisfaction }}%.
+      </p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- QUICK ACTIONS -->
+
+  <mat-card class="quick-actions-card">
+
+    <h2>
+      Quick Actions
+    </h2>
+
+    <div class="quick-actions-grid">
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="viewOrders()">
+
+        <mat-icon>
+          shopping_cart
+        </mat-icon>
+
+        View Orders
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="viewContracts()">
+
+        <mat-icon>
+          description
+        </mat-icon>
+
+        View Contracts
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openCommunication()">
+
+        <mat-icon>
+          chat
+        </mat-icon>
+
+        Open Communication
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="viewReports()">
+
+        <mat-icon>
+          analytics
+        </mat-icon>
+
+        View Reports
+
+      </button>
+
+    </div>
+
+  </mat-card>
+
+</div>

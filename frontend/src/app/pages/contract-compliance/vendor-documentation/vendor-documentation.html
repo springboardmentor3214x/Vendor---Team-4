@@ -81,42 +81,11 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-
         <mat-label>Document Type</mat-label>
-
-        <mat-select
-          (selectionChange)="filterByDocumentType($event.value)">
-
-          <mat-option value="">
-            All Documents
-          </mat-option>
-
-          <mat-option value="GST Certificate">
-            GST Certificate
-          </mat-option>
-
-          <mat-option value="PAN Card">
-            PAN Card
-          </mat-option>
-
-          <mat-option value="Business License">
-            Business License
-          </mat-option>
-
-          <mat-option value="Insurance Document">
-            Insurance Document
-          </mat-option>
-
-          <mat-option value="NDA Document">
-            NDA Document
-          </mat-option>
-
-          <mat-option value="Quality Certificate">
-            Quality Certificate
-          </mat-option>
-
+        <mat-select (selectionChange)="filterByDocumentType($event.value)">
+          <mat-option value="">All Documents</mat-option>
+          <mat-option *ngFor="let type of documentTypes" [value]="type">{{ type }}</mat-option>
         </mat-select>
-
       </mat-form-field>
 
       <mat-form-field appearance="outline">

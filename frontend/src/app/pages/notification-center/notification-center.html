@@ -1,0 +1,1510 @@
+<div class="notification-page">
+
+  <!-- =========================
+       SIDEBAR
+  ========================== -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-content">
+
+      <!-- Logo -->
+
+      <div class="logo">
+
+        <mat-icon>
+          notifications_active
+        </mat-icon>
+
+        <h2>
+          Vendor Reliability
+        </h2>
+
+      </div>
+
+      <!-- Navigation -->
+
+      <nav class="sidebar-nav">
+
+        <ul>
+
+          <li
+            class="active"
+            (click)="goToNotificationCenter()">
+
+            <mat-icon>
+              notifications
+            </mat-icon>
+
+            <span>
+              Notification Center
+            </span>
+
+            <span
+              class="sidebar-badge"
+              *ngIf="unreadCount > 0">
+
+              {{ unreadCount }}
+
+            </span>
+
+          </li>
+
+          <li
+            (click)="goToProfile()">
+
+            <mat-icon>
+              person
+            </mat-icon>
+
+            <span>
+              Profile
+            </span>
+
+          </li>
+
+        </ul>
+
+      </nav>
+
+    </div>
+
+    <!-- Sidebar Footer -->
+
+    <div class="sidebar-footer">
+
+      <button
+        mat-stroked-button
+        (click)="goToProfile()">
+
+        <mat-icon>
+          person
+        </mat-icon>
+
+        Profile
+
+      </button>
+
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="logout()">
+
+        <mat-icon>
+          logout
+        </mat-icon>
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+
+  <main class="main-content">
+
+
+    <!-- =========================
+         TOP BAR
+    ========================== -->
+
+    <header class="topbar">
+
+      <div class="page-heading">
+
+        <h1>
+          Notification Center
+        </h1>
+
+        <p>
+          Stay informed about important procurement and business activities.
+        </p>
+
+      </div>
+
+
+      <!-- Header Actions -->
+
+      <div class="top-actions">
+
+        <!-- Notification Bell -->
+
+        <div class="notification-wrapper">
+
+          <button
+            mat-icon-button
+            class="notification-button"
+            (click)="toggleNotificationDropdown()">
+
+            <mat-icon>
+              notifications
+            </mat-icon>
+
+            <span
+              class="notification-badge"
+              *ngIf="unreadCount > 0">
+
+              {{ unreadCount }}
+
+            </span>
+
+          </button>
+
+
+          <!-- Notification Dropdown -->
+
+          <div
+            class="notification-dropdown"
+            *ngIf="showNotificationDropdown">
+
+            <div class="dropdown-header">
+
+              <div>
+
+                <h3>
+                  Notifications
+                </h3>
+
+                <span>
+                  {{ unreadCount }} unread
+                </span>
+
+              </div>
+
+              <button
+                mat-button
+                color="primary"
+                (click)="markAllAsRead()">
+
+                Mark all as read
+
+              </button>
+
+            </div>
+
+
+            <div
+              class="dropdown-list"
+              *ngIf="recentNotifications.length > 0">
+
+              <div
+                class="dropdown-item"
+                *ngFor="let notification of recentNotifications"
+                [class.unread]="!notification.read"
+                (click)="openNotification(notification)">
+
+                <div class="dropdown-icon">
+
+                  <mat-icon>
+                    {{ getNotificationIcon(notification.type) }}
+                  </mat-icon>
+
+                </div>
+
+                <div class="dropdown-content">
+
+                  <h4>
+                    {{ notification.title }}
+                  </h4>
+
+                  <p>
+                    {{ notification.description }}
+                  </p>
+
+                  <span>
+                    {{ notification.timestamp }}
+                  </span>
+
+                </div>
+
+                <span
+                  class="priority-dot"
+                  [class.high]="notification.priority === 'High'"
+                  [class.medium]="notification.priority === 'Medium'"
+                  [class.low]="notification.priority === 'Low'">
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="empty-dropdown"
+              *ngIf="recentNotifications.length === 0">
+
+              <mat-icon>
+                notifications_none
+              </mat-icon>
+
+              <p>
+                No notifications
+              </p>
+
+            </div>
+
+
+            <div class="dropdown-footer">
+
+              <button
+                mat-button
+                color="primary"
+                (click)="showNotificationDropdown = false">
+
+                View Notification History
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Profile -->
+
+        <button
+          mat-icon-button
+          (click)="goToProfile()">
+
+          <mat-icon>
+            account_circle
+          </mat-icon>
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================
+         SUMMARY CARDS
+    ========================== -->
+
+    <section class="summary-grid">
+
+
+      <!-- Total -->
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon total">
+
+          <mat-icon>
+            notifications
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Total Notifications
+          </span>
+
+          <h2>
+            {{ totalNotifications }}
+          </h2>
+
+          <p>
+            All notifications
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <!-- Unread -->
+
+      <mat-card
+        class="summary-card clickable"
+        (click)="filterByReadStatus('Unread')">
+
+        <div class="summary-icon unread">
+
+          <mat-icon>
+            mark_email_unread
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Unread
+          </span>
+
+          <h2>
+            {{ unreadCount }}
+          </h2>
+
+          <p>
+            Require attention
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <!-- High Priority -->
+
+      <mat-card
+        class="summary-card clickable"
+        (click)="filterByPriority('High')">
+
+        <div class="summary-icon high">
+
+          <mat-icon>
+            priority_high
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            High Priority
+          </span>
+
+          <h2>
+            {{ highPriorityCount }}
+          </h2>
+
+          <p>
+            Urgent alerts
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <!-- Email -->
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon email">
+
+          <mat-icon>
+            email
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Email Sent
+          </span>
+
+          <h2>
+            {{ emailNotificationCount }}
+          </h2>
+
+          <p>
+            Email notifications
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <!-- SMS -->
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon sms">
+
+          <mat-icon>
+            sms
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            SMS Sent
+          </span>
+
+          <h2>
+            {{ smsNotificationCount }}
+          </h2>
+
+          <p>
+            SMS notifications
+          </p>
+
+        </div>
+
+      </mat-card>
+
+    </section>
+
+
+    <!-- =========================
+         FILTER SECTION
+    ========================== -->
+
+    <mat-card class="filter-card">
+
+      <div class="filter-header">
+
+        <div>
+
+          <h2>
+            Notification History
+          </h2>
+
+          <p>
+            Search and filter your notifications.
+          </p>
+
+        </div>
+
+        <button
+          mat-stroked-button
+          (click)="clearFilters()">
+
+          <mat-icon>
+            filter_alt_off
+          </mat-icon>
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+
+      <div class="filter-grid">
+
+
+        <!-- Search -->
+
+        <mat-form-field
+          appearance="outline"
+          class="search-field">
+
+          <mat-label>
+            Search notifications
+          </mat-label>
+
+          <mat-icon matPrefix>
+            search
+          </mat-icon>
+
+          <input
+            matInput
+            [(ngModel)]="searchText"
+            (ngModelChange)="applyFilters()"
+            placeholder="Search title or description">
+
+        </mat-form-field>
+
+
+        <!-- Module -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Module
+          </mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedModule"
+            (selectionChange)="applyFilters()">
+
+            <mat-option value="All">
+              All Modules
+            </mat-option>
+
+            <mat-option value="Procurement">
+              Procurement
+            </mat-option>
+
+            <mat-option value="Vendor Management">
+              Vendor Management
+            </mat-option>
+
+            <mat-option value="Purchase Orders">
+              Purchase Orders
+            </mat-option>
+
+            <mat-option value="Contract & Compliance">
+              Contract & Compliance
+            </mat-option>
+
+            <mat-option value="Communication">
+              Communication
+            </mat-option>
+
+            <mat-option value="Performance">
+              Performance
+            </mat-option>
+
+            <mat-option value="Reports">
+              Reports
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Priority -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Priority
+          </mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedPriority"
+            (selectionChange)="applyFilters()">
+
+            <mat-option value="All">
+              All Priorities
+            </mat-option>
+
+            <mat-option value="High">
+              High
+            </mat-option>
+
+            <mat-option value="Medium">
+              Medium
+            </mat-option>
+
+            <mat-option value="Low">
+              Low
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Read Status -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Read Status
+          </mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedReadStatus"
+            (selectionChange)="applyFilters()">
+
+            <mat-option value="All">
+              All Notifications
+            </mat-option>
+
+            <mat-option value="Unread">
+              Unread
+            </mat-option>
+
+            <mat-option value="Read">
+              Read
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Date -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Notification Date
+          </mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="picker"
+            [(ngModel)]="selectedDate"
+            (dateChange)="applyFilters()">
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker
+            #picker>
+          </mat-datepicker>
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- =========================
+         NOTIFICATION CONTENT
+    ========================== -->
+
+    <section class="notification-layout">
+
+
+      <!-- NOTIFICATION LIST -->
+
+      <mat-card class="notification-list-card">
+
+        <div class="list-header">
+
+          <div>
+
+            <h2>
+              Notifications
+            </h2>
+
+            <span>
+              {{ filteredNotifications.length }} results
+            </span>
+
+          </div>
+
+          <button
+            mat-button
+            color="primary"
+            (click)="markAllAsRead()">
+
+            <mat-icon>
+              done_all
+            </mat-icon>
+
+            Mark all as read
+
+          </button>
+
+        </div>
+
+
+        <!-- Notification Items -->
+
+        <div
+          class="notification-list"
+          *ngIf="filteredNotifications.length > 0">
+
+          <div
+            class="notification-row"
+            *ngFor="let notification of filteredNotifications"
+            [class.unread]="!notification.read"
+            [class.selected]="selectedNotification?.id === notification.id"
+            (click)="selectNotification(notification)">
+
+
+            <!-- Icon -->
+
+            <div
+              class="notification-type-icon"
+              [class.high]="notification.priority === 'High'"
+              [class.medium]="notification.priority === 'Medium'"
+              [class.low]="notification.priority === 'Low'">
+
+              <mat-icon>
+                {{ getNotificationIcon(notification.type) }}
+              </mat-icon>
+
+            </div>
+
+
+            <!-- Main Content -->
+
+            <div class="notification-main">
+
+              <div class="notification-title-row">
+
+                <h3>
+                  {{ notification.title }}
+                </h3>
+
+                <span
+                  class="priority-badge"
+                  [class.high]="notification.priority === 'High'"
+                  [class.medium]="notification.priority === 'Medium'"
+                  [class.low]="notification.priority === 'Low'">
+
+                  {{ notification.priority }}
+
+                </span>
+
+              </div>
+
+              <p>
+                {{ notification.description }}
+              </p>
+
+              <div class="notification-meta">
+
+                <span>
+
+                  <mat-icon>
+                    extension
+                  </mat-icon>
+
+                  {{ notification.module }}
+
+                </span>
+
+                <span>
+
+                  <mat-icon>
+                    schedule
+                  </mat-icon>
+
+                  {{ notification.timestamp }}
+
+                </span>
+
+                <span>
+
+                  <mat-icon>
+                    tag
+                  </mat-icon>
+
+                  {{ notification.relatedRecordId }}
+
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- Delivery Method -->
+
+            <div class="delivery-method">
+
+              <mat-icon
+                *ngIf="notification.deliveryMethod.includes('In-App')">
+
+                notifications
+
+              </mat-icon>
+
+              <mat-icon
+                *ngIf="notification.deliveryMethod.includes('Email')">
+
+                email
+
+              </mat-icon>
+
+              <mat-icon
+                *ngIf="notification.deliveryMethod.includes('SMS')">
+
+                sms
+
+              </mat-icon>
+
+            </div>
+
+
+            <!-- Read Status -->
+
+            <div class="read-status">
+
+              <span
+                *ngIf="!notification.read"
+                class="unread-indicator">
+
+              </span>
+
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="notificationMenu"
+                (click)="$event.stopPropagation()">
+
+                <mat-icon>
+                  more_vert
+                </mat-icon>
+
+              </button>
+
+              <mat-menu #notificationMenu="matMenu">
+
+                <button
+                  mat-menu-item
+                  *ngIf="!notification.read"
+                  (click)="markAsRead(notification)">
+
+                  <mat-icon>
+                    done
+                  </mat-icon>
+
+                  <span>
+                    Mark as read
+                  </span>
+
+                </button>
+
+                <button
+                  mat-menu-item
+                  *ngIf="notification.read"
+                  (click)="markAsUnread(notification)">
+
+                  <mat-icon>
+                    mark_email_unread
+                  </mat-icon>
+
+                  <span>
+                    Mark as unread
+                  </span>
+
+                </button>
+
+                <button
+                  mat-menu-item
+                  (click)="openNotification(notification)">
+
+                  <mat-icon>
+                    open_in_new
+                  </mat-icon>
+
+                  <span>
+                    View Details
+                  </span>
+
+                </button>
+
+              </mat-menu>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Empty State -->
+
+        <div
+          class="empty-state"
+          *ngIf="filteredNotifications.length === 0">
+
+          <mat-icon>
+            notifications_none
+          </mat-icon>
+
+          <h3>
+            No notifications found
+          </h3>
+
+          <p>
+            Try changing your filters or search keyword.
+          </p>
+
+          <button
+            mat-stroked-button
+            (click)="clearFilters()">
+
+            Clear Filters
+
+          </button>
+
+        </div>
+
+      </mat-card>
+
+
+      <!-- =========================
+           NOTIFICATION DETAILS
+      ========================== -->
+
+      <mat-card
+        class="details-card"
+        *ngIf="selectedNotification">
+
+
+        <div class="details-header">
+
+          <div>
+
+            <span class="details-label">
+              Notification Details
+            </span>
+
+            <h2>
+              {{ selectedNotification.title }}
+            </h2>
+
+          </div>
+
+          <button
+            mat-icon-button
+            (click)="closeNotificationDetails()">
+
+            <mat-icon>
+              close
+            </mat-icon>
+
+          </button>
+
+        </div>
+
+
+        <!-- Priority -->
+
+        <div class="details-priority">
+
+          <span>
+            Priority
+          </span>
+
+          <strong
+            [class.high]="selectedNotification.priority === 'High'"
+            [class.medium]="selectedNotification.priority === 'Medium'"
+            [class.low]="selectedNotification.priority === 'Low'">
+
+            {{ selectedNotification.priority }}
+
+          </strong>
+
+        </div>
+
+
+        <!-- Description -->
+
+        <div class="details-section">
+
+          <h3>
+            Description
+          </h3>
+
+          <p>
+            {{ selectedNotification.description }}
+          </p>
+
+        </div>
+
+
+        <!-- Module -->
+
+        <div class="details-section">
+
+          <h3>
+            Related Module
+          </h3>
+
+          <div class="detail-value">
+
+            <mat-icon>
+              extension
+            </mat-icon>
+
+            {{ selectedNotification.module }}
+
+          </div>
+
+        </div>
+
+
+        <!-- Related Record -->
+
+        <div class="details-section">
+
+          <h3>
+            Related Record
+          </h3>
+
+          <div class="detail-value">
+
+            <mat-icon>
+              tag
+            </mat-icon>
+
+            {{ selectedNotification.relatedRecordId }}
+
+          </div>
+
+        </div>
+
+
+        <!-- Timestamp -->
+
+        <div class="details-section">
+
+          <h3>
+            Timestamp
+          </h3>
+
+          <div class="detail-value">
+
+            <mat-icon>
+              schedule
+            </mat-icon>
+
+            {{ selectedNotification.timestamp }}
+
+          </div>
+
+        </div>
+
+
+        <!-- Delivery -->
+
+        <div class="details-section">
+
+          <h3>
+            Delivery Methods
+          </h3>
+
+          <div class="delivery-tags">
+
+            <span
+              *ngFor="let method of selectedNotification.deliveryMethod">
+
+              <mat-icon>
+                {{ getDeliveryIcon(method) }}
+              </mat-icon>
+
+              {{ method }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- Read Status -->
+
+        <div class="details-section">
+
+          <h3>
+            Status
+          </h3>
+
+          <div
+            class="status-value"
+            [class.unread]="!selectedNotification.read">
+
+            <mat-icon>
+              {{
+                selectedNotification.read
+                  ? 'mark_email_read'
+                  : 'mark_email_unread'
+              }}
+            </mat-icon>
+
+            {{
+              selectedNotification.read
+                ? 'Read'
+                : 'Unread'
+            }}
+
+          </div>
+
+        </div>
+
+
+        <!-- Actions -->
+
+        <div class="details-actions">
+
+          <button
+            mat-raised-button
+            color="primary"
+            *ngIf="!selectedNotification.read"
+            (click)="markAsRead(selectedNotification)">
+
+            <mat-icon>
+              done
+            </mat-icon>
+
+            Mark as Read
+
+          </button>
+
+          <button
+            mat-stroked-button
+            *ngIf="selectedNotification.read"
+            (click)="markAsUnread(selectedNotification)">
+
+            <mat-icon>
+              mark_email_unread
+            </mat-icon>
+
+            Mark as Unread
+
+          </button>
+
+        </div>
+
+      </mat-card>
+
+    </section>
+
+
+    <!-- =========================
+         NOTIFICATION CATEGORIES
+    ========================== -->
+
+    <section class="category-section">
+
+      <div class="section-heading">
+
+        <h2>
+          Notification Categories
+        </h2>
+
+        <p>
+          Important events monitored across the platform.
+        </p>
+
+      </div>
+
+
+      <div class="category-grid">
+
+
+        <!-- Procurement -->
+        <mat-card
+          class="category-card"
+          (click)="filterByModule('Procurement')">
+          <mat-icon>shopping_cart</mat-icon>
+          <h3>Procurement Alerts</h3>
+          <p>New requests, approvals, rejections and completed procurement activities.</p>
+          <button
+            mat-flat-button
+            color="primary"
+            class="category-btn"
+            (click)="$event.stopPropagation(); filterByModule('Procurement')">
+            View Alerts
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card>
+
+        <!-- Delivery -->
+        <mat-card
+          class="category-card"
+          (click)="filterByModule('Purchase Orders')">
+          <mat-icon>local_shipping</mat-icon>
+          <h3>Delivery Delays</h3>
+          <p>Monitor delayed shipments and delivery deadline warnings.</p>
+          <button
+            mat-flat-button
+            color="primary"
+            class="category-btn"
+            (click)="$event.stopPropagation(); filterByModule('Purchase Orders')">
+            View Alerts
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card>
+
+        <!-- Vendor -->
+        <mat-card
+          class="category-card"
+          (click)="filterByModule('Vendor Management')">
+          <mat-icon>business</mat-icon>
+          <h3>Vendor Notifications</h3>
+          <p>Vendor approvals, rejections and onboarding notifications.</p>
+          <button
+            mat-flat-button
+            color="primary"
+            class="category-btn"
+            (click)="$event.stopPropagation(); filterByModule('Vendor Management')">
+            View Alerts
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card>
+
+        <!-- Contract -->
+        <mat-card
+          class="category-card"
+          (click)="filterByModule('Contract & Compliance')">
+          <mat-icon>description</mat-icon>
+          <h3>Contract Expiry</h3>
+          <p>Contract renewal reminders and expiry alerts.</p>
+          <button
+            mat-flat-button
+            color="primary"
+            class="category-btn"
+            (click)="$event.stopPropagation(); filterByModule('Contract & Compliance')">
+            View Alerts
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card>
+
+        <!-- Compliance -->
+        <mat-card
+          class="category-card"
+          (click)="filterByModule('Contract & Compliance')">
+          <mat-icon>verified_user</mat-icon>
+          <h3>Compliance Alerts</h3>
+          <p>Certification, insurance and regulatory document reminders.</p>
+          <button
+            mat-flat-button
+            color="primary"
+            class="category-btn"
+            (click)="$event.stopPropagation(); filterByModule('Contract & Compliance')">
+            View Alerts
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card>
+
+        <!-- Communication -->
+        <mat-card
+          class="category-card"
+          (click)="filterByModule('Communication')">
+          <mat-icon>chat</mat-icon>
+          <h3>Communication</h3>
+          <p>New messages and communication activity notifications.</p>
+          <button
+            mat-flat-button
+            color="primary"
+            class="category-btn"
+            (click)="$event.stopPropagation(); filterByModule('Communication')">
+            View Alerts
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         NOTIFICATION SETTINGS
+    ========================== -->
+
+    <mat-card class="settings-card">
+
+      <div class="settings-header">
+
+        <div>
+
+          <h2>
+            Notification Settings
+          </h2>
+
+          <p>
+            Choose how you want to receive important notifications.
+          </p>
+
+        </div>
+
+        <mat-icon>
+          settings
+        </mat-icon>
+
+      </div>
+
+
+      <div class="settings-grid">
+
+
+        <!-- In-App -->
+
+        <div class="setting-item">
+
+          <div class="setting-icon">
+
+            <mat-icon>
+              notifications
+            </mat-icon>
+
+          </div>
+
+          <div class="setting-content">
+
+            <h3>
+              In-App Notifications
+            </h3>
+
+            <p>
+              Receive notifications inside the application.
+            </p>
+
+          </div>
+
+          <mat-slide-toggle
+            [(ngModel)]="settings.inApp">
+
+          </mat-slide-toggle>
+
+        </div>
+
+
+        <!-- Email -->
+
+        <div class="setting-item">
+
+          <div class="setting-icon">
+
+            <mat-icon>
+              email
+            </mat-icon>
+
+          </div>
+
+          <div class="setting-content">
+
+            <h3>
+              Email Notifications
+            </h3>
+
+            <p>
+              Receive important events through email.
+            </p>
+
+          </div>
+
+          <mat-slide-toggle
+            [(ngModel)]="settings.email">
+
+          </mat-slide-toggle>
+
+        </div>
+
+
+        <!-- SMS -->
+
+        <div class="setting-item">
+
+          <div class="setting-icon">
+
+            <mat-icon>
+              sms
+            </mat-icon>
+
+          </div>
+
+          <div class="setting-content">
+
+            <h3>
+              SMS Notifications
+            </h3>
+
+            <p>
+              Receive urgent alerts through SMS.
+            </p>
+
+          </div>
+
+          <mat-slide-toggle
+            [(ngModel)]="settings.sms">
+
+          </mat-slide-toggle>
+
+        </div>
+
+
+        <!-- High Priority -->
+
+        <div class="setting-item">
+
+          <div class="setting-icon">
+
+            <mat-icon>
+              priority_high
+            </mat-icon>
+
+          </div>
+
+          <div class="setting-content">
+
+            <h3>
+              High Priority Alerts
+            </h3>
+
+            <p>
+              Always receive critical business alerts.
+            </p>
+
+          </div>
+
+          <mat-slide-toggle
+            [(ngModel)]="settings.highPriority">
+
+          </mat-slide-toggle>
+
+        </div>
+
+      </div>
+
+
+      <div class="settings-actions">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="saveNotificationSettings()">
+
+          <mat-icon>
+            save
+          </mat-icon>
+
+          Save Settings
+
+        </button>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- =========================
+         FOOTER INFORMATION
+    ========================== -->
+
+    <section class="notification-info">
+
+      <div>
+
+        <mat-icon>
+          security
+        </mat-icon>
+
+        <span>
+          Notifications are securely linked to your account.
+        </span>
+
+      </div>
+
+      <div>
+
+        <mat-icon>
+          sync
+        </mat-icon>
+
+        <span>
+          Business events are monitored automatically.
+        </span>
+
+      </div>
+
+      <div>
+
+        <mat-icon>
+          bolt
+        </mat-icon>
+
+        <span>
+          High-priority alerts require immediate attention.
+        </span>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

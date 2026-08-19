@@ -1,52 +1,53 @@
 <div class="invoice-container">
 
   <!-- Page Header -->
-
   <div class="page-header">
-
     <div>
-
       <h1>Invoice Management</h1>
-
       <p>
         Manage vendor invoices, verify payments and approve finance requests.
       </p>
-
     </div>
-
   </div>
 
   <!-- Filters -->
-
   <mat-card class="filter-card">
 
     <div class="filter-grid">
 
+      <!-- Search -->
       <mat-form-field appearance="outline">
-
         <mat-label>Search Invoice</mat-label>
 
         <input
           matInput
           placeholder="Invoice Number, PO Number or Vendor"
           [(ngModel)]="searchText">
-
       </mat-form-field>
 
+      <!-- Status Filter -->
       <mat-form-field appearance="outline">
-
         <mat-label>Payment Status</mat-label>
 
         <mat-select [(ngModel)]="statusFilter">
 
-          <mat-option value="All">All</mat-option>
-          <mat-option value="Pending">Pending</mat-option>
-          <mat-option value="Verified">Verified</mat-option>
-          <mat-option value="Approved">Approved</mat-option>
-          <mat-option value="Paid">Paid</mat-option>
+          <mat-option value="All">
+            All
+          </mat-option>
+
+          <mat-option value="PENDING">
+            Pending
+          </mat-option>
+
+          <mat-option value="VERIFIED">Verified</mat-option>
+
+          <mat-option value="PAID">
+            Paid
+          </mat-option>
+
+          <mat-option value="REJECTED">Rejected</mat-option>
 
         </mat-select>
-
       </mat-form-field>
 
     </div>
@@ -54,32 +55,36 @@
   </mat-card>
 
   <!-- Invoice Cards -->
-
   <div class="invoice-grid">
 
     <mat-card
       class="invoice-card"
       *ngFor="let invoice of filteredInvoices">
 
+      <!-- Card Header -->
       <div class="card-header">
 
         <div>
 
-          <h2>{{ invoice.invoiceNo }}</h2>
+          <h2>
+            {{ invoice.invoice_number }}
+          </h2>
 
           <p class="po-number">
-            Purchase Order : {{ invoice.poNumber }}
+            Purchase Order :
+            PO{{ invoice.purchase_order_id }}
           </p>
 
         </div>
 
+        <!-- Status -->
         <span
           class="status-badge"
           [ngClass]="{
-            'pending': invoice.status === 'Pending',
-            'verified': invoice.status === 'Verified',
-            'approved': invoice.status === 'Approved',
-            'paid': invoice.status === 'Paid'
+            'pending': invoice.status === 'PENDING',
+            'paid': invoice.status === 'PAID',
+            'verified': invoice.status === 'VERIFIED',
+            'rejected': invoice.status === 'REJECTED'
           }">
 
           {{ invoice.status }}
@@ -88,82 +93,74 @@
 
       </div>
 
+      <!-- Invoice Details -->
       <div class="details-grid">
 
+        <!-- Vendor -->
         <div>
-
-          <strong>Vendor Name</strong>
-
-          <p>{{ invoice.vendor }}</p>
-
-        </div>
-
-        <div>
-
-          <strong>Invoice Date</strong>
-
-          <p>{{ invoice.invoiceDate }}</p>
-
-        </div>
-
-        <div>
-
-          <strong>Invoice Amount</strong>
-
-          <p>{{ invoice.invoiceAmount }}</p>
-
-        </div>
-
-        <div>
-
-          <strong>Tax Amount</strong>
-
-          <p>{{ invoice.taxAmount }}</p>
-
-        </div>
-
-        <div>
-
-          <strong>Total Amount</strong>
-
-          <p>{{ invoice.totalAmount }}</p>
-
-        </div>
-
-        <div>
-
-          <strong>Due Date</strong>
-
-          <p>{{ invoice.dueDate }}</p>
-
-        </div>
-
-        <div>
-
-          <strong>Supporting Invoice</strong>
-
+          <strong>Vendor</strong>
           <p>
-
-            <a
-              href="#"
-              (click)="$event.preventDefault(); viewDocument(invoice)">
-
-              {{ invoice.document }}
-
-            </a>
-
+            Vendor ID: {{ invoice.vendor_id }}
           </p>
+        </div>
 
+        <!-- Invoice Date -->
+        <div>
+          <strong>Invoice Date</strong>
+          <p>
+            {{ invoice.invoice_date }}
+          </p>
+        </div>
+
+        <!-- Invoice Amount -->
+        <div>
+          <strong>Invoice Amount</strong>
+          <p>
+            ₹{{ invoice.amount }}
+          </p>
+        </div>
+
+        <!-- Total Amount -->
+        <div>
+          <strong>Total Amount</strong>
+          <p>
+            ₹{{ invoice.amount }}
+          </p>
+        </div>
+
+        <!-- Due Date -->
+        <div>
+          <strong>Due Date</strong>
+          <p>
+            N/A
+          </p>
+        </div>
+
+        <!-- Invoice ID -->
+        <div>
+          <strong>Invoice ID</strong>
+          <p>
+            {{ invoice.id }}
+          </p>
         </div>
 
       </div>
 
+      <!-- Action Buttons -->
       <div class="action-buttons">
+
+        <input
+          type="file"
+          hidden
+          [id]="'invoice-file-' + invoice.id"
+          accept=".pdf,.png,.jpg,.jpeg,.webp"
+          (change)="onInvoiceFileSelected($event, invoice)">
 
         <button
           mat-raised-button
           color="primary"
-          (click)="uploadInvoice(invoice)">
+          (click)="uploadInvoice(invoice)"
+          [disabled]="actionInvoiceId === invoice.id">
 
           Upload Invoice
 
@@ -172,7 +169,8 @@
         <button
           mat-raised-button
           color="accent"
-          (click)="verifyInvoice(invoice)">
+          (click)="verifyInvoice(invoice)"
+          [disabled]="actionInvoiceId === invoice.id || invoice.status === 'PAID'">
 
           Verify Invoice
 
@@ -181,7 +179,8 @@
         <button
           mat-raised-button
           color="primary"
-          (click)="approvePayment(invoice)">
+          (click)="approvePayment(invoice)"
+          [disabled]="actionInvoiceId === invoice.id || invoice.status === 'PAID'">
 
           Approve Payment
 
@@ -190,7 +189,8 @@
         <button
           mat-stroked-button
           color="warn"
-          (click)="rejectInvoice(invoice)">
+          (click)="rejectInvoice(invoice)"
+          [disabled]="actionInvoiceId === invoice.id || invoice.status === 'PAID'">
 
           Reject Invoice
 
@@ -207,6 +207,15 @@
       </div>
 
     </mat-card>
+
+  </div>
+
+  <!-- No Invoices -->
+  <div
+    *ngIf="filteredInvoices.length === 0"
+    class="no-invoices">
+
+    <p>No invoices found.</p>
 
   </div>
 

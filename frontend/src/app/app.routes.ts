@@ -60,7 +60,9 @@ import { Analytics } from './pages/analytics/analytics/analytics';
 import { Reports } from './pages/reports/reports/reports';
 
 // Notifications
+import { NotificationCenter } from './pages/notification-center/notification-center';
 import { Notifications } from './pages/notifications/notifications/notifications';
+
 
 
 
@@ -83,6 +85,27 @@ import { CertificationManagement } from './pages/contract-compliance/certificati
 import { VendorDocumentation } from './pages/contract-compliance/vendor-documentation/vendor-documentation';
 import { ComplianceDashboard } from './pages/contract-compliance/compliance-dashboard/compliance-dashboard';
 import { ContractNotifications } from './pages/contract-compliance/contract-notifications/contract-notifications';
+
+//module 7
+
+import { VendorMessaging } from './pages/communication/vendor-messaging/vendor-messaging';
+import { ProcurementDiscussions } from './pages/communication/procurement-discussions/procurement-discussions';
+import { CommunicationHistory } from './pages/communication/communication-history/communication-history';
+import { FileSharing } from './pages/communication/file-sharing/file-sharing';
+import { ActivityLogs } from './pages/communication/activity-logs/activity-logs';
+import { CommunicationNotifications } from './pages/communication/communication-notifications/communication-notifications';
+
+
+
+import { DashboardAnalytics } from './pages/dashboard/dashboard-analytics/dashboard-analytics';
+import { VendorAnalytics } from './pages/dashboard/vendor-analytics/vendor-analytics';
+import { AdminAnalytics } from './pages/dashboard/admin-analytics/admin-analytics';
+
+
+import { CommunicationDashboard } from './pages/communication/communication-dashboard/communication-dashboard';
+import { ContractDashboard } from './pages/contract-compliance/contract-dashboard/contract-dashboard';
+
+
 
 export const routes: Routes = [
 
@@ -126,20 +149,20 @@ export const routes: Routes = [
 
 {
   path: 'admin-dashboard',
-  component: AdminDashboard,
+  component: AdminDashboard /*,
   canActivate: [authGuard, roleGuard],
   data: {
     roles: ['Administrator']
-  }
+  }*/
 },
 
 {
   path: 'procurement-dashboard',
-  component: ProcurementDashboard,
+  component: ProcurementDashboard/*,
   canActivate: [authGuard, roleGuard],
   data: {
     roles: ['Procurement Manager']
-  }
+  }*/
 },
 
 {
@@ -153,11 +176,11 @@ export const routes: Routes = [
 
 {
   path: 'vendor-dashboard',
-  component: VendorDashboard,
+  component: VendorDashboard/*,
   canActivate: [authGuard, roleGuard],
   data: {
     roles: ['Vendor']
-  }
+  }*/
 },
 
 {
@@ -176,6 +199,20 @@ export const routes: Routes = [
   data: {
     roles: ['Auditor']
   }
+},
+
+{
+  path: 'dashboard-analytics',
+  component: DashboardAnalytics
+},
+
+{
+  path: 'vendor-analytics',
+  component: VendorAnalytics
+},
+{
+  path: 'admin-analytics',
+  component: AdminAnalytics
 },
 
   // Vendor Module
@@ -349,8 +386,12 @@ export const routes: Routes = [
   component: ProcurementRecommendations
 },
 
-
 //
+
+{
+  path: 'contract-dashboard',
+  component: ContractDashboard
+},
 
 {
   path: 'contract-repository',
@@ -397,6 +438,33 @@ export const routes: Routes = [
   component: ContractNotifications
 },
 
+//module 7
+
+{
+  path: 'vendor-messaging',
+  component: VendorMessaging
+},
+{
+  path: 'procurement-discussions',
+  component: ProcurementDiscussions
+},
+{
+  path: 'communication-history',
+  component: CommunicationHistory
+},
+{
+  path: 'file-sharing',
+  component: FileSharing
+},
+{
+  path: 'activity-logs',
+  component: ActivityLogs
+},
+{
+  path: 'communication-notifications',
+  component: CommunicationNotifications
+},
+
   // Analytics
 
   {
@@ -414,8 +482,18 @@ export const routes: Routes = [
   // Notifications
 
   {
+  path: 'communication-dashboard',
+  component: CommunicationDashboard
+},
+
+  {
     path: 'notifications',
-    component: Notifications
+    component: NotificationCenter
+  },
+
+  {
+    path: 'notification-center',
+    component: NotificationCenter
   },
 
   // Invalid URL

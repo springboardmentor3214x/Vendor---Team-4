@@ -326,6 +326,7 @@
             class="status-badge"
             [ngClass]="{
               'pending': request.status==='Pending',
+              'draft': request.status==='Draft',
               'approved': request.status==='Approved',
               'rejected': request.status==='Rejected',
               'completed': request.status==='Completed'
@@ -385,7 +386,7 @@
           <button
             mat-icon-button
             color="accent"
-            [disabled]="request.status !== 'Pending'"
+            [disabled]="request.status !== 'Pending' && request.status !== 'Draft'"
             (click)="editRequest(request)"
             matTooltip="Edit">
 
@@ -418,7 +419,7 @@
           <button
   mat-icon-button
   color="warn"
-  [disabled]="request.status !== 'Pending'"
+  [disabled]="request.status !== 'Pending' && request.status !== 'Draft'"
   (click)="deleteRequest(request)"
   matTooltip="Delete">
 

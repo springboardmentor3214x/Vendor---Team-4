@@ -96,32 +96,17 @@ export class FinanceDashboard {
 }
 
   openModule(moduleName: string) {
-
-  switch (moduleName) {
-
-    case 'Purchase Orders':
-      this.router.navigate(['/purchase-orders']);
-      break;
-
-    case 'Invoice Management':
-      alert(
-        
-      );
-      break;
-
-    case 'Payment Details':
-      alert(
-        
-      );
-      break;
-
-    default:
-      alert(
-        
-      );
-
+    switch (moduleName) {
+      case 'Purchase Orders':
+        this.router.navigate(['/purchase-orders']);
+        break;
+      case 'Invoice Management':
+      case 'Payment Details':
+        this.router.navigate(['/invoice-management']);
+        break;
+      default:
+        this.router.navigate(['/purchase-orders']);
+    }
   }
-
-}
 
 }

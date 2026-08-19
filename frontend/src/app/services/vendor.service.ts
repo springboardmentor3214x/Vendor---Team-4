@@ -114,6 +114,10 @@ export class VendorService {
 
   // ================= Dashboard Statistics =================
 
+  getVendorMeDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/me/dashboard`);
+  }
+
   getDashboard(): Observable<VendorDashboardResponse> {
     return this.http.get<VendorDashboardResponse>(`${this.apiUrl}/dashboard`);
   }
@@ -122,6 +126,12 @@ export class VendorService {
 
   getVendorById(id: number): Observable<VendorRecord> {
     return this.http.get<VendorRecord>(`${this.apiUrl}/${id}`);
+  }
+
+  // Returns the logged-in vendor's own record, auto-creating a
+  // blank one on the backend the first time it's requested.
+  getMyVendorProfile(): Observable<VendorRecord> {
+    return this.http.get<VendorRecord>(`${this.apiUrl}/me`);
   }
 
   // ================= Create =================

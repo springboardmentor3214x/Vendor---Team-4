@@ -312,10 +312,29 @@ export class AddVendor implements OnInit {
       },
       error: (err) => {
         this.submitting = false;
-        this.errorMessage = err?.error?.detail || 'Failed to register vendor.';
+        this.errorMessage = this.formatError(err);
       }
     });
 
+  }
+
+  // Turns FastAPI's error response into a readable string.
+  // A 422 validation error looks like:
+  //   { detail: [ { loc: ["body","phone"], msg: "..." }, ... ] }
+  // while most other errors are just { detail: "some message" }.
+  private formatError(err: any): string {
+    const detail = err?.error?.detail;
+
+    if (Array.isArray(detail)) {
+      return detail
+        .map((item: any) => {
+          const field = Array.isArray(item?.loc) ? item.loc[item.loc.length - 1] : '';
+          return field ? `${field}: ${item.msg}` : item.msg;
+        })
+        .join('\n');
+    }
+
+    return detail || 'Failed to register vendor.';
   }
 
   // ================= Upload Documents =================

@@ -87,36 +87,6 @@ mat-form-field {
   width: 100%;
 }
 
-/* ================= Charts ================= */
-
-.chart-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 24px;
-}
-
-.chart-card {
-  padding: 20px;
-
-  h2 {
-    margin-bottom: 20px;
-    font-size: 20px;
-    font-weight: 600;
-  }
-}
-
-.chart-placeholder {
-  height: 300px;
-  border: 2px dashed #bdbdbd;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fafafa;
-  color: #757575;
-  font-size: 16px;
-}
-
 /* ================= Table ================= */
 
 .table-card {
@@ -206,11 +176,7 @@ small {
 
   .filter-grid {
     grid-template-columns: 1fr;
-  }
-
-  .chart-grid {
-    grid-template-columns: 1fr;
-  }
+  } 
 
   .navigation-buttons {
     flex-direction: column;

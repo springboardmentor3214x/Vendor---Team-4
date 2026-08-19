@@ -1,13 +1,7 @@
-import {
-  AfterViewInit,
-  Component,
-  ViewChild
-} from '@angular/core';
-
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -17,159 +11,35 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { VendorReliabilityService } from '../../../services/vendor-reliability.service';
 
-@Component({
-  selector: 'app-procurement-recommendations',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    MatCardModule,
-    MatTableModule,
-    MatSortModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatProgressBarModule,
-    MatIconModule,
-    MatButtonModule
-  ],
-  templateUrl: './procurement-recommendations.html',
-  styleUrl: './procurement-recommendations.scss'
-})
-export class ProcurementRecommendations implements AfterViewInit {
-
-  @ViewChild(MatSort)
-  sort!: MatSort;
-
-  // ================= Summary Cards =================
-
-  totalVendors = 18;
-
-  recommendedVendors = 12;
-
-  notRecommended = 3;
-
-  averageReliability = 91;
-
-  // ================= Filters =================
-
-  searchText = '';
-
-  selectedCategory = '';
-
-  selectedRecommendation = '';
-
-  categories: string[] = [
-    'Electronics',
-    'Office Supplies',
-    'Machinery',
-    'IT Equipment',
-    'Transportation'
-  ];
-
-  // ================= Table =================
-
-  displayedColumns: string[] = [
-    'vendor',
-    'category',
-    'reliability',
-    'risk',
-    'recommendation',
-    'details'
-  ];
-
-  recommendations = [
-
-    {
-      vendor: 'ABC Suppliers',
-      category: 'Electronics',
-      reliability: 98,
-      risk: 'Low',
-      recommendation: 'Highly Recommended'
-    },
-
-    {
-      vendor: 'Global Traders',
-      category: 'Office Supplies',
-      reliability: 94,
-      risk: 'Low',
-      recommendation: 'Highly Recommended'
-    },
-
-    {
-      vendor: 'Vision Technologies',
-      category: 'IT Equipment',
-      reliability: 90,
-      risk: 'Low',
-      recommendation: 'Recommended'
-    },
-
-    {
-      vendor: 'Prime Industries',
-      category: 'Machinery',
-      reliability: 82,
-      risk: 'Medium',
-      recommendation: 'Recommended'
-    },
-
-    {
-      vendor: 'Delta Logistics',
-      category: 'Transportation',
-      reliability: 65,
-      risk: 'High',
-      recommendation: 'Not Recommended'
-    }
-
-  ];
-
-  dataSource = new MatTableDataSource(this.recommendations);
-
-  constructor() {
-
-    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
-
-      const filters = JSON.parse(filter);
-
-      const searchMatch =
-        data.vendor.toLowerCase().includes(filters.search) ||
-        data.category.toLowerCase().includes(filters.search);
-
-      const categoryMatch =
-        !filters.category ||
-        data.category === filters.category;
-
-      const recommendationMatch =
-        !filters.recommendation ||
-        data.recommendation === filters.recommendation;
-
-      return searchMatch && categoryMatch && recommendationMatch;
-
-    };
-
-  }
-
-  ngAfterViewInit(): void {
-
-    this.dataSource.sort = this.sort;
-
-  }
-
-  // ================= Filters =================
-
-  applyFilters(): void {
-
-    this.dataSource.filter = JSON.stringify({
-
-      search: this.searchText.trim().toLowerCase(),
-
-      category: this.selectedCategory,
-
-      recommendation: this.selectedRecommendation
-
+@Component({ selector: 'app-procurement-recommendations', standalone: true, imports: [CommonModule, FormsModule, RouterModule, MatCardModule, MatTableModule, MatSortModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule], templateUrl: './procurement-recommendations.html', styleUrl: './procurement-recommendations.scss' })
+export class ProcurementRecommendations implements OnInit, AfterViewInit {
+  @ViewChild(MatSort) sort!: MatSort;
+  constructor(private service: VendorReliabilityService, private cdr: ChangeDetectorRef) {}
+  totalVendors = 0; recommendedVendors = 0; notRecommended = 0; averageReliability = 0; searchText = ''; selectedCategory = ''; selectedRecommendation = ''; categories: string[] = [];
+  displayedColumns = ['vendor', 'category', 'reliability', 'risk', 'recommendation', 'details']; recommendations: any[] = []; dataSource = new MatTableDataSource<any>([]);
+  ngOnInit(): void { this.load(); }
+  ngAfterViewInit(): void { this.dataSource.sort = this.sort; }
+  load(): void {
+    this.service.getRankings().subscribe({
+      next: (rows: any[]) => {
+        this.recommendations = (Array.isArray(rows) ? rows : []).map((r: any) => ({ vendor: r.vendor_name ?? '-', category: r.vendor_category ?? '-', reliability: Number(r.reliability_score ?? 0), risk: String(r.risk_level || '').replace(' Risk', ''), recommendation: r.recommendation ?? '-', id: r.vendor_id }));
+        this.dataSource.data = this.recommendations;
+        this.totalVendors = this.recommendations.length;
+        this.recommendedVendors = this.recommendations.filter(r => r.recommendation !== 'Not Recommended').length;
+        this.notRecommended = this.recommendations.filter(r => r.recommendation === 'Not Recommended').length;
+        this.averageReliability = this.totalVendors ? Math.round((this.recommendations.reduce((s, r) => s + r.reliability, 0) / this.totalVendors) * 100) / 100 : 0;
+        this.categories = [...new Set(this.recommendations.map(r => r.category))];
+        this.applyFilters();
+        this.cdr.detectChanges();
+      },
+      error: (error: unknown) => console.error('Failed to load recommendations:', error)
     });
-
   }
-
+  applyFilters(): void {
+    const search = this.searchText.trim().toLowerCase();
+    this.dataSource.filterPredicate = (d: any): boolean => (!search || String(d.vendor).toLowerCase().includes(search) || String(d.category).toLowerCase().includes(search)) && (!this.selectedCategory || d.category === this.selectedCategory) && (!this.selectedRecommendation || d.recommendation === this.selectedRecommendation);
+    this.dataSource.filter = String(Date.now());
+  }
 }
