@@ -1,20 +1,33 @@
 <div class="management-container">
 
+  <!-- ================= Page Header ================= -->
+
   <div class="header">
 
-    <h1>Vendor Management</h1>
+    <div>
 
-    <p>
-      Manage vendors, approvals and vendor information from one place.
-    </p>
+      <h1>Vendor Management</h1>
+
+      <p>
+
+        Manage vendor registration, approvals, contact information,
+        documents, and vendor lifecycle from a single dashboard.
+
+      </p>
+
+    </div>
 
   </div>
 
-  <!-- Statistics -->
+  <p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
+
+  <!-- ================= Dashboard Summary ================= -->
 
   <div class="stats">
 
-    <mat-card class="stat-card">
+    <mat-card class="stat-card total">
+
+      <mat-icon>groups</mat-icon>
 
       <h2>{{ totalVendors }}</h2>
 
@@ -24,47 +37,72 @@
 
     <mat-card class="stat-card approved">
 
+      <mat-icon>verified</mat-icon>
+
       <h2>{{ approved }}</h2>
 
-      <p>Approved</p>
+      <p>Approved Vendors</p>
 
     </mat-card>
 
     <mat-card class="stat-card pending">
 
+      <mat-icon>schedule</mat-icon>
+
       <h2>{{ pending }}</h2>
 
-      <p>Pending</p>
+      <p>Pending Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card active">
+
+      <mat-icon>check_circle</mat-icon>
+
+      <h2>{{ active }}</h2>
+
+      <p>Active Vendors</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card suspended">
+
+      <mat-icon>pause_circle</mat-icon>
+
+      <h2>{{ suspended }}</h2>
+
+      <p>Suspended Vendors</p>
 
     </mat-card>
 
     <mat-card class="stat-card rejected">
 
+      <mat-icon>cancel</mat-icon>
+
       <h2>{{ rejected }}</h2>
 
-      <p>Rejected</p>
+      <p>Rejected Vendors</p>
 
     </mat-card>
 
   </div>
 
-  <!-- Menu -->
+  <!-- ================= Dashboard Menu ================= -->
 
   <div class="cards">
 
-    <mat-card>
+    <!-- Vendor List -->
 
-      <mat-icon>
+    <mat-card class="menu-card">
 
-        groups
+      <mat-icon>groups</mat-icon>
 
-      </mat-icon>
-
-      <h3>Vendor List</h3>
+      <h2>Vendor List</h2>
 
       <p>
 
-        View and manage all registered vendors.
+        View all registered vendors, search vendor records,
+        filter vendors, and manage vendor information.
 
       </p>
 
@@ -79,19 +117,18 @@
 
     </mat-card>
 
-    <mat-card>
+    <!-- Add Vendor -->
 
-      <mat-icon>
+    <mat-card class="menu-card">
 
-        person_add
+      <mat-icon>person_add</mat-icon>
 
-      </mat-icon>
-
-      <h3>Add Vendor</h3>
+      <h2>Add Vendor</h2>
 
       <p>
 
-        Register a new vendor.
+        Register new vendors, upload required documents,
+        and maintain complete company information.
 
       </p>
 
@@ -106,19 +143,19 @@
 
     </mat-card>
 
-    <mat-card>
+    <!-- Vendor Approval -->
 
-      <mat-icon>
+    <mat-card class="menu-card">
 
-        verified
+      <mat-icon>verified</mat-icon>
 
-      </mat-icon>
-
-      <h3>Vendor Approval</h3>
+      <h2>Vendor Approval</h2>
 
       <p>
 
-        Approve or reject vendors.
+        Review vendor registrations,
+        approve vendors,
+        or reject vendor requests.
 
       </p>
 
@@ -133,19 +170,22 @@
 
     </mat-card>
 
-    <mat-card>
+    <!-- Vendor Documents -->
 
-      <mat-icon>
+    <mat-card class="menu-card">
 
-        description
+      <mat-icon>description</mat-icon>
 
-      </mat-icon>
-
-      <h3>Vendor Documents</h3>
+      <h2>Vendor Documents</h2>
 
       <p>
 
-        View uploaded vendor documents.
+        View vendor documents including
+        GST Certificate,
+        PAN Card,
+        Registration Certificate,
+        ISO Certificates,
+        and supporting files.
 
       </p>
 
@@ -160,6 +200,36 @@
 
     </mat-card>
 
+    <!-- Vendor Details -->
+
+    <mat-card class="menu-card">
+
+      <mat-icon>badge</mat-icon>
+
+      <h2>Vendor Details</h2>
+
+      <p>
+
+        View complete vendor profile,
+        contact information,
+        approval status,
+        audit information,
+        and uploaded documents.
+
+      </p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="details()">
+
+        Open
+
+      </button>
+
+    </mat-card>
+
   </div>
+    
 
 </div>

@@ -1,0 +1,243 @@
+<div class="history-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+    <div>
+      <h1>Performance History</h1>
+      <p>
+        View the complete historical performance of vendors across procurement activities.
+      </p>
+    </div>
+    <button mat-stroked-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Dashboard
+    </button>
+  </div>
+
+  <!-- ================= Vendor Information ================= -->
+
+  <mat-card class="summary-card">
+
+    <h2>Vendor Information</h2>
+
+    <div class="summary-grid">
+
+      <div class="summary-item">
+        <label>Vendor Name</label>
+        <span>{{ vendorName }}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Vendor Category</label>
+        <span>{{ vendorCategory }}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Total Procurement Orders</label>
+        <span>{{ totalOrders }}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Overall Performance</label>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="overallPerformance">
+        </mat-progress-bar>
+
+        <small>{{ overallPerformance }}%</small>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Performance Summary ================= -->
+
+  <mat-card class="summary-card">
+
+    <h2>Performance Summary</h2>
+
+    <div class="metrics-grid">
+
+      <div class="metric-card">
+
+        <h3>Delivery Records</h3>
+
+        <p>{{ deliveryRecords }}</p>
+
+      </div>
+
+      <div class="metric-card">
+
+        <h3>Quality Evaluations</h3>
+
+        <p>{{ qualityEvaluations }}</p>
+
+      </div>
+
+      <div class="metric-card">
+
+        <h3>Communication Records</h3>
+
+        <p>{{ communicationRecords }}</p>
+
+      </div>
+
+      <div class="metric-card">
+
+        <h3>Service Ratings</h3>
+
+        <p>{{ serviceRatings }}</p>
+
+      </div>
+
+      <div class="metric-card">
+
+        <h3>Complaints</h3>
+
+        <p>{{ complaints }}</p>
+
+      </div>
+
+      <div class="metric-card">
+
+        <h3>Issues Resolved</h3>
+
+        <p>{{ issuesResolved }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Performance History ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header">
+
+      <h2>Performance History</h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search</mat-label>
+
+        <input
+          matInput
+          placeholder="Search History"
+          (keyup)="applyFilter($event)">
+
+        <mat-icon matSuffix>search</mat-icon>
+
+      </mat-form-field>
+
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z2">
+
+      <!-- Purchase Order -->
+
+      <ng-container matColumnDef="purchaseOrder">
+
+        <th mat-header-cell *matHeaderCellDef>
+          Purchase Order
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.purchaseOrder }}
+        </td>
+
+      </ng-container>
+
+      <!-- Delivery -->
+
+      <ng-container matColumnDef="delivery">
+
+        <th mat-header-cell *matHeaderCellDef>
+          Delivery
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.delivery }}
+        </td>
+
+      </ng-container>
+
+      <!-- Quality -->
+
+      <ng-container matColumnDef="quality">
+
+        <th mat-header-cell *matHeaderCellDef>
+          Quality
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.quality }}
+        </td>
+
+      </ng-container>
+
+      <!-- Communication -->
+
+      <ng-container matColumnDef="communication">
+
+        <th mat-header-cell *matHeaderCellDef>
+          Communication
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.communication }}
+        </td>
+
+      </ng-container>
+
+      <!-- Service -->
+
+      <ng-container matColumnDef="service">
+
+        <th mat-header-cell *matHeaderCellDef>
+          Service
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.service }}
+        </td>
+
+      </ng-container>
+
+      <!-- Date -->
+
+      <ng-container matColumnDef="date">
+
+        <th mat-header-cell *matHeaderCellDef>
+          Date
+        </th>
+
+        <td mat-cell *matCellDef="let row">
+          {{ row.date }}
+        </td>
+
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

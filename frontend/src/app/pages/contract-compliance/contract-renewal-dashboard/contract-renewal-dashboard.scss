@@ -1,0 +1,116 @@
+.renewal-dashboard-container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.page-header p {
+  margin-top: 6px;
+  color: #666;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  padding: 20px;
+  text-align: center;
+}
+
+.summary-card h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.summary-card p {
+  margin-top: 10px;
+  color: #666;
+}
+
+.filter-card {
+  margin-bottom: 24px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  padding-top: 12px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+}
+
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  padding: 12px;
+}
+
+mat-chip {
+  font-weight: 500;
+}
+
+.expired-chip {
+  background-color: #ffebee;
+}
+
+.warning-chip {
+  background-color: #fff3e0;
+}
+
+.active-chip {
+  background-color: #e8f5e9;
+}
+
+mat-paginator {
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+}

@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+
+import { VendorService } from '../../../services/vendor.service';
 
 @Component({
   selector: 'app-vendor-management',
@@ -18,29 +20,96 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './vendor-management.html',
   styleUrl: './vendor-management.scss'
 })
-export class VendorManagement {
 
-  constructor(private router: Router) {}
+export class VendorManagement implements OnInit {
+
+  constructor(
+  private router: Router,
+  private vendorService: VendorService,
+  private cdr: ChangeDetectorRef
+) {}
+
+  // ================= Dashboard Statistics =================
+  // Retrieved from the FastAPI backend: GET /vendors/dashboard
 
   totalVendors = 0;
+
   approved = 0;
+
   pending = 0;
+
+  active = 0;
+
+  suspended = 0;
+
   rejected = 0;
 
-  openVendorList() {
-    this.router.navigate(['/vendor-list']);
+  errorMessage = '';
+
+  ngOnInit(): void {
+
+    this.vendorService.getDashboard().subscribe({
+      next: (stats) => {
+        this.totalVendors = stats.total_vendors;
+        this.approved = stats.approved_vendors;
+        this.pending = stats.pending_vendors;
+        this.active = stats.active_vendors;
+        this.suspended = stats.suspended_vendors;
+        this.rejected = stats.rejected_vendors;
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.detail || 'Failed to load vendor dashboard.';
+      }
+    });
+
   }
 
-  addVendor() {
+  // ================= Vendor List =================
+
+  openVendorList(): void {
+
+    this.router.navigate(['/vendor-list']);
+
+  }
+
+  // ================= Add Vendor =================
+
+  addVendor(): void {
+
     this.router.navigate(['/add-vendor']);
+
   }
 
-  approval() {
+  // ================= Vendor Approval =================
+
+  approval(): void {
+
     this.router.navigate(['/vendor-approval']);
+
   }
 
-  documents() {
+  // ================= Vendor Documents =================
+
+  documents(): void {
+
+    /*
+    At present, uploaded documents are managed
+    through the Add Vendor, Edit Vendor,
+    and Vendor Details pages.
+    */
+
     this.router.navigate(['/vendor-list']);
+
+  }
+
+  // ================= Vendor Details =================
+
+  details(): void {
+
+    this.router.navigate(['/vendor-list']);
+
   }
 
 }

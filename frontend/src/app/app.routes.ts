@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+<<<<<<< HEAD
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
 
@@ -26,15 +27,32 @@ import { AddVendor } from './pages/vendor/add-vendor/add-vendor';
 import { VendorDetails } from './pages/vendor/vendor-details/vendor-details';
 import { EditVendor } from './pages/vendor/edit-vendor/edit-vendor';
 import { VendorApproval } from './pages/vendor/vendor-approval/vendor-approval';
+import { VendorDashboard as VendorHome } from './pages/vendor/vendor-dashboard/vendor-dashboard';
 
 // Procurement
 import { ProcurementDashboard as ProcurementModuleDashboard } from './pages/procurement/procurement-dashboard/procurement-dashboard';
+import { ProcurementRequestList } from './pages/procurement/procurement-request-list/procurement-request-list';
+import { ProcurementRequest } from './pages/procurement/procurement-request/procurement-request';
+import { ProcurementApproval } from './pages/procurement/procurement-approval/procurement-approval';
+import { VendorAssignment } from './pages/procurement/vendor-assignment/vendor-assignment';
+import { PurchaseOrderCreation } from './pages/procurement/purchase-order-creation/purchase-order-creation';
+import { PurchaseOrderDetails } from './pages/procurement/purchase-order-details/purchase-order-details';
+import { ProcurementStatus } from './pages/procurement/procurement-status/procurement-status';
+import { OrderTracking } from './pages/procurement/order-tracking/order-tracking';
+import { InvoiceManagement } from './pages/procurement/invoice-management/invoice-management';
 
 // Purchase Orders
 import { PurchaseOrders } from './pages/purchase-orders/purchase-orders/purchase-orders';
 
 // Vendor Performance
 import { VendorPerformance } from './pages/vendor-performance/vendor-performance/vendor-performance';
+import { VendorPerformanceDashboard } from './pages/vendor-performance/vendor-performance-dashboard/vendor-performance-dashboard';
+import { DeliveryPerformance } from './pages/vendor-performance/delivery-performance/delivery-performance';
+import { ProductQualityEvaluation } from './pages/vendor-performance/product-quality-evaluation/product-quality-evaluation';
+import { CommunicationTracking } from './pages/vendor-performance/communication-tracking/communication-tracking';
+import { ServiceRating } from './pages/vendor-performance/service-rating/service-rating';
+import { PerformanceHistory } from './pages/vendor-performance/performance-history/performance-history';
+import { VendorRanking } from './pages/vendor-performance/vendor-ranking/vendor-ranking';
 
 // Analytics
 import { Analytics } from './pages/analytics/analytics/analytics';
@@ -43,7 +61,52 @@ import { Analytics } from './pages/analytics/analytics/analytics';
 import { Reports } from './pages/reports/reports/reports';
 
 // Notifications
+import { NotificationCenter } from './pages/notification-center/notification-center';
 import { Notifications } from './pages/notifications/notifications/notifications';
+
+
+
+
+import { VendorReliabilityDashboard } from './pages/vendor-reliability/vendor-reliability-dashboard/vendor-reliability-dashboard';
+import { ReliabilityScore } from './pages/vendor-reliability/reliability-score/reliability-score';
+import { SupplierRanking } from './pages/vendor-reliability/supplier-ranking/supplier-ranking';
+import { ProcurementRiskDashboard } from './pages/vendor-reliability/procurement-risk-dashboard/procurement-risk-dashboard';
+import { PerformanceTrendAnalysis } from './pages/vendor-reliability/performance-trend-analysis/performance-trend-analysis';
+import { ProcurementRecommendations } from './pages/vendor-reliability/procurement-recommendations/procurement-recommendations';
+
+
+
+
+import { ContractRepository } from './pages/contract-compliance/contract-repository/contract-repository';
+import { AddContract } from './pages/contract-compliance/add-contract/add-contract';
+import { ContractDetails } from './pages/contract-compliance/contract-details/contract-details';
+import { EditContract } from './pages/contract-compliance/edit-contract/edit-contract';
+import { ContractRenewalDashboard } from './pages/contract-compliance/contract-renewal-dashboard/contract-renewal-dashboard';
+import { CertificationManagement } from './pages/contract-compliance/certification-management/certification-management';
+import { VendorDocumentation } from './pages/contract-compliance/vendor-documentation/vendor-documentation';
+import { ComplianceDashboard } from './pages/contract-compliance/compliance-dashboard/compliance-dashboard';
+import { ContractNotifications } from './pages/contract-compliance/contract-notifications/contract-notifications';
+
+//module 7
+
+import { VendorMessaging } from './pages/communication/vendor-messaging/vendor-messaging';
+import { ProcurementDiscussions } from './pages/communication/procurement-discussions/procurement-discussions';
+import { CommunicationHistory } from './pages/communication/communication-history/communication-history';
+import { FileSharing } from './pages/communication/file-sharing/file-sharing';
+import { ActivityLogs } from './pages/communication/activity-logs/activity-logs';
+import { CommunicationNotifications } from './pages/communication/communication-notifications/communication-notifications';
+
+
+
+import { DashboardAnalytics } from './pages/dashboard/dashboard-analytics/dashboard-analytics';
+import { VendorAnalytics } from './pages/dashboard/vendor-analytics/vendor-analytics';
+import { AdminAnalytics } from './pages/dashboard/admin-analytics/admin-analytics';
+
+
+import { CommunicationDashboard } from './pages/communication/communication-dashboard/communication-dashboard';
+import { ContractDashboard } from './pages/contract-compliance/contract-dashboard/contract-dashboard';
+
+
 
 export const routes: Routes = [
 
@@ -87,20 +150,20 @@ export const routes: Routes = [
 
 {
   path: 'admin-dashboard',
-  component: AdminDashboard,
+  component: AdminDashboard /*,
   canActivate: [authGuard, roleGuard],
   data: {
     roles: ['Administrator']
-  }
+  }*/
 },
 
 {
   path: 'procurement-dashboard',
-  component: ProcurementDashboard,
+  component: ProcurementDashboard/*,
   canActivate: [authGuard, roleGuard],
   data: {
     roles: ['Procurement Manager']
-  }
+  }*/
 },
 
 {
@@ -114,11 +177,11 @@ export const routes: Routes = [
 
 {
   path: 'vendor-dashboard',
-  component: VendorDashboard,
+  component: VendorDashboard/*,
   canActivate: [authGuard, roleGuard],
   data: {
     roles: ['Vendor']
-  }
+  }*/
 },
 
 {
@@ -139,7 +202,26 @@ export const routes: Routes = [
   }
 },
 
+{
+  path: 'dashboard-analytics',
+  component: DashboardAnalytics
+},
+
+{
+  path: 'vendor-analytics',
+  component: VendorAnalytics
+},
+{
+  path: 'admin-analytics',
+  component: AdminAnalytics
+},
+
   // Vendor Module
+
+  {
+    path: 'vendor-home',
+    component: VendorHome
+  },
 
   {
     path: 'vendor-management',
@@ -178,6 +260,59 @@ export const routes: Routes = [
     component: ProcurementModuleDashboard
   },
 
+  {
+  path: 'procurement-request',
+  component: ProcurementRequest
+},
+{
+  path: 'procurement-request/view/:id',
+  component: ProcurementRequest
+},
+{
+  path: 'procurement-request/edit/:id',
+  component: ProcurementRequest
+},
+
+{
+  path: 'procurement-request-list',
+  component: ProcurementRequestList
+},
+
+{
+  path: 'procurement-approval',
+  component: ProcurementApproval
+},
+
+{
+  path: 'vendor-assignment',
+  component: VendorAssignment
+},
+
+{
+  path: 'purchase-order-creation',
+  component: PurchaseOrderCreation
+},
+
+{
+  path: 'purchase-order-details',
+  component: PurchaseOrderDetails
+},
+
+{
+  path: 'procurement-status',
+  component: ProcurementStatus
+},
+
+{
+  path: 'order-tracking',
+  component: OrderTracking
+},
+
+{
+  path: 'invoice-management',
+  component: InvoiceManagement
+},
+
   // Purchase Orders
 
   {
@@ -191,6 +326,145 @@ export const routes: Routes = [
     path: 'vendor-performance',
     component: VendorPerformance
   },
+
+  {
+  path: 'vendor-performance-dashboard',
+  component: VendorPerformanceDashboard
+},
+
+{
+  path: 'delivery-performance',
+  component: DeliveryPerformance
+},
+
+{
+  path: 'product-quality-evaluation',
+  component: ProductQualityEvaluation
+},
+{
+  path: 'communication-tracking',
+  component: CommunicationTracking
+},
+{
+  path: 'service-rating',
+  component: ServiceRating
+},
+{
+  path: 'performance-history',
+  component: PerformanceHistory
+},
+{
+  path: 'vendor-ranking',
+  component: VendorRanking
+},
+
+//
+
+{
+  path: 'vendor-reliability-dashboard',
+  component: VendorReliabilityDashboard
+},
+{
+  path: 'reliability-score',
+  component: ReliabilityScore
+},
+
+{
+  path: 'supplier-ranking',
+  component: SupplierRanking
+},
+
+{
+  path: 'procurement-risk-dashboard',
+  component: ProcurementRiskDashboard
+},
+{
+  path: 'performance-trend-analysis',
+  component: PerformanceTrendAnalysis
+},
+{
+  path: 'procurement-recommendations',
+  component: ProcurementRecommendations
+},
+
+//
+
+{
+  path: 'contract-dashboard',
+  component: ContractDashboard
+},
+
+{
+  path: 'contract-repository',
+  component: ContractRepository
+},
+
+{
+  path: 'add-contract',
+  component: AddContract
+},
+
+{
+  path: 'contract-details/:id',
+  component: ContractDetails
+},
+
+{
+  path: 'edit-contract/:id',
+  component: EditContract
+},
+
+{
+  path: 'contract-renewal-dashboard',
+  component: ContractRenewalDashboard
+},
+
+{
+  path: 'certification-management',
+  component: CertificationManagement
+},
+
+{
+  path: 'vendor-documentation',
+  component: VendorDocumentation
+},
+
+{
+  path: 'compliance-dashboard',
+  component: ComplianceDashboard
+},
+
+{
+  path: 'contract-notifications',
+  component: ContractNotifications
+},
+
+//module 7
+
+{
+  path: 'vendor-messaging',
+  component: VendorMessaging
+},
+{
+  path: 'procurement-discussions',
+  component: ProcurementDiscussions
+},
+{
+  path: 'communication-history',
+  component: CommunicationHistory
+},
+{
+  path: 'file-sharing',
+  component: FileSharing
+},
+{
+  path: 'activity-logs',
+  component: ActivityLogs
+},
+{
+  path: 'communication-notifications',
+  component: CommunicationNotifications
+},
 
   // Analytics
 
@@ -209,8 +483,18 @@ export const routes: Routes = [
   // Notifications
 
   {
+  path: 'communication-dashboard',
+  component: CommunicationDashboard
+},
+
+  {
     path: 'notifications',
-    component: Notifications
+    component: NotificationCenter
+  },
+
+  {
+    path: 'notification-center',
+    component: NotificationCenter
   },
 
   // Invalid URL
@@ -221,3 +505,7 @@ export const routes: Routes = [
   }
 
 ];
+=======
+
+export const routes: Routes = [];
+>>>>>>> ab5f8e4256487e47649150361723bf6a0f40cab7

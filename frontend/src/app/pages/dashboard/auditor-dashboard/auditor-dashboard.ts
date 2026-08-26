@@ -77,20 +77,38 @@ export class AuditorDashboard {
   }
 
   toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
-  }
+
+  this.router.navigate(['/notifications']);
+
+}
 
   goToProfile() {
     this.router.navigate(['/profile']);
   }
 
   logout() {
-    // JWT removal will be added later
-    this.router.navigate(['/login']);
-  }
 
-  openModule(moduleName: string) {
-    
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+
+  this.router.navigate(['/login']);
+
+}
+  
+  openModule(name: string) {
+    switch (name) {
+      case 'Reports':
+        this.router.navigate(['/reports']);
+        break;
+      case 'Compliance':
+        this.router.navigate(['/compliance-dashboard']);
+        break;
+      case 'Audit Logs':
+        this.router.navigate(['/activity-logs']);
+        break;
+      default:
+        this.router.navigate(['/reports']);
+    }
   }
 
 }

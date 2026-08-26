@@ -1,14 +1,119 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.models import user
+from app.models import vendor
+from app.models import vendor_document
+from app.models import notification
+from app.routers import vendor
+from app.models.procurement_request import ProcurementRequest
+from app.routers import procurement
+from app.models.purchase_order import PurchaseOrder
+from app.routers import purchase_order
+from app.routers import order_tracking
+from app.models.invoice import Invoice
+from app.routers import invoice
+from app.models.delivery_performance import DeliveryPerformance
+from app.routers import delivery_performance
+from app.models.product_quality import ProductQualityEvaluation
+from app.routers import product_quality
+from app.models.communication_log import CommunicationLog
+from app.routers import communication_log
+from app.models.service_rating import ServiceRating
+from app.routers import service_rating
+from app.routers import vendor_performance
+from app.models.vendor_reliability import VendorReliability
+from app.routers.vendor_reliability import router as vendor_reliability_router
+from app.models.vendor_performance import VendorPerformance
+from app.models.vendor_reliability_history import VendorReliabilityHistory
+from app.models.vendor_issue import VendorIssue
+from app.routers import vendor_issue
+from app.models import complaint
+from app.routers import complaint
+from app.routers import recommendation
+from app.routers import high_risk_warning
+from app.models.contract import Contract
+from app.routers import contract
+from app.routers import certification
+from app.models.certification import Certification
+from app.routers import vendor_document
+from app.routers import compliance
+from app.routers import notification
+from app.models import message
+from app.routers import message
+from app.routers import discussion
+from app.routers import discussion_reply
+from app.models.discussion import Discussion
+from app.routers import communication_history
+from app.models import file_share
+from app.routers import file_share
+from app.routers import activity_log
+from app.models.activity_log import ActivityLog
 from app.database import Base, engine
+from sqlalchemy import inspect, text
 from app.routers import auth
 from app.routers import users
+from app.routers import dashboard
+from app.scheduler.notification_scheduler import (
+    start_scheduler,
+    stop_scheduler
+)
+from app.routers import report
 
 Base.metadata.create_all(bind=engine)
 
+def migrate_invoice_storage():
+    """Add invoice attachment columns and PostgreSQL enum values for existing databases."""
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        tables = inspector.get_table_names()
+        if "invoices" not in tables:
+            return
+        columns = {c["name"] for c in inspector.get_columns("invoices")}
+        if "attachment_name" not in columns:
+            conn.execute(text("ALTER TABLE invoices ADD COLUMN attachment_name VARCHAR"))
+        if "attachment_path" not in columns:
+            conn.execute(text("ALTER TABLE invoices ADD COLUMN attachment_path VARCHAR"))
+        if conn.dialect.name == "postgresql":
+            row = conn.execute(text("""
+                SELECT t.typname
+                FROM pg_type t
+                JOIN pg_enum e ON t.oid = e.enumtypid
+                WHERE e.enumlabel = 'PENDING'
+                  AND EXISTS (SELECT 1 FROM pg_enum e2 WHERE e2.enumtypid = t.oid AND e2.enumlabel = 'PAID')
+                LIMIT 1
+            """)).first()
+            if row:
+                enum_name = str(row[0]).replace('"', '""')
+                for value in ("VERIFIED", "REJECTED"):
+                    conn.execute(text(f"ALTER TYPE \"{enum_name}\" ADD VALUE IF NOT EXISTS '{value}'"))
+
+migrate_invoice_storage()
+
+def migrate_communication_storage():
+    """Add communication file-share columns to existing databases."""
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        tables = inspector.get_table_names()
+        if "file_shares" in tables:
+            columns = {c["name"] for c in inspector.get_columns("file_shares")}
+            if "contract_id" not in columns:
+                conn.execute(text(
+                    "ALTER TABLE file_shares ADD COLUMN contract_id INTEGER"
+                ))
+
+migrate_communication_storage()
+
 app = FastAPI(title="Vendor Reliability Platform")
 
+
+@app.on_event("startup")
+def startup_event():
+    start_scheduler()
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    stop_scheduler()
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,7 +128,34 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(users.router)
-
+app.include_router(vendor.router)
+app.include_router(procurement.router)
+app.include_router(purchase_order.router)
+app.include_router(order_tracking.router)
+app.include_router(invoice.router)
+app.include_router(delivery_performance.router)
+app.include_router(product_quality.router)
+app.include_router(communication_log.router)
+app.include_router(service_rating.router)
+app.include_router(vendor_performance.router)
+app.include_router(vendor_reliability_router)
+app.include_router(vendor_issue.router)
+app.include_router(complaint.router)
+app.include_router(recommendation.router)
+app.include_router(high_risk_warning.router)
+app.include_router(contract.router)
+app.include_router(certification.router)
+app.include_router(vendor_document.router)
+app.include_router(compliance.router)
+app.include_router(notification.router)
+app.include_router(message.router)
+app.include_router(discussion.router)
+app.include_router(discussion_reply.router)
+app.include_router(communication_history.router)
+app.include_router(file_share.router)
+app.include_router(activity_log.router)
+app.include_router(dashboard.router)
+app.include_router(report.router)
 
 @app.get("/")
 def home():

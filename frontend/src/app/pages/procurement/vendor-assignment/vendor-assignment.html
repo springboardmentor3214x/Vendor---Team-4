@@ -1,0 +1,262 @@
+<div class="assignment-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Vendor Assignment</h1>
+
+      <p>
+
+        Assign an approved vendor to a procurement request.
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <form
+    [formGroup]="assignmentForm"
+    (ngSubmit)="assignVendor()">
+
+    <!-- Assignment Details -->
+
+    <mat-card class="section-card">
+
+      <h2>Assignment Details</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Procurement Request</mat-label>
+
+          <mat-select formControlName="requestId">
+
+            <mat-option
+              *ngFor="let request of procurementRequests"
+              [value]="request.id">
+
+              {{ request.id }} - {{ request.title }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Assign Vendor</mat-label>
+
+          <mat-select
+            formControlName="vendor"
+            (selectionChange)="onVendorChange($event.value)">
+
+            <mat-option
+              *ngFor="let vendor of vendors"
+              [value]="vendor.id">
+
+              {{ vendor.name }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Vendor Information -->
+
+    <mat-card
+      class="section-card"
+      *ngIf="selectedVendor">
+
+      <h2>Vendor Information</h2>
+
+      <div class="form-grid">
+
+        <div>
+
+          <strong>Vendor Name</strong>
+
+          <p>{{ selectedVendor.name }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Vendor Category</strong>
+
+          <p>{{ selectedVendor.category }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Contact Person</strong>
+
+          <p>{{ selectedVendor.contactPerson }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Reliability Score</strong>
+
+          <p>{{ selectedVendor.reliabilityScore }}/100</p>
+
+        </div>
+
+        <div>
+
+          <strong>Previous Performance</strong>
+
+          <p>{{ selectedVendor.previousPerformance }}</p>
+
+        </div>
+
+        <div>
+
+          <strong>Delivery Rating</strong>
+
+          <p>{{ selectedVendor.deliveryRating }}/5</p>
+
+        </div>
+
+        <div>
+
+          <strong>Status</strong>
+
+          <p>
+
+            <span
+              class="status active">
+
+              {{ selectedVendor.status }}
+
+            </span>
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Delivery Details -->
+
+    <mat-card class="section-card">
+
+      <h2>Delivery Details</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Assignment Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="assignmentPicker"
+            formControlName="assignmentDate">
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="assignmentPicker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #assignmentPicker></mat-datepicker>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Expected Delivery Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="deliveryPicker"
+            formControlName="expectedDelivery">
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="deliveryPicker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #deliveryPicker></mat-datepicker>
+
+        </mat-form-field>
+
+      </div>
+
+    </mat-card>
+
+    <!-- Remarks -->
+
+    <mat-card class="section-card">
+
+      <h2>Remarks</h2>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Remarks</mat-label>
+
+        <textarea
+          matInput
+          rows="5"
+          formControlName="remarks">
+
+        </textarea>
+
+      </mat-form-field>
+
+    </mat-card>
+
+    <!-- Buttons -->
+
+    <div class="button-group">
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit">
+
+        <mat-icon>
+
+          assignment_turned_in
+
+        </mat-icon>
+
+        Assign Vendor
+
+      </button>
+
+      <button
+        mat-stroked-button
+        color="warn"
+        type="button"
+        (click)="resetForm()">
+
+        <mat-icon>
+
+          refresh
+
+        </mat-icon>
+
+        Reset
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>

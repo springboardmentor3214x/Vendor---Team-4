@@ -1,0 +1,326 @@
+<div class="approval-container">
+
+  <!-- Page Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Procurement Approval</h1>
+
+      <p>
+        Review procurement requests and approve or reject them before vendor assignment.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Search & Filter -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Request</mat-label>
+
+        <input
+          matInput
+          placeholder="Request Number or Title"
+          [(ngModel)]="searchText">
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Status</mat-label>
+
+        <mat-select [(ngModel)]="statusFilter">
+
+          <mat-option value="All">All</mat-option>
+          <mat-option value="Pending">Pending</mat-option>
+          <mat-option value="Approved">Approved</mat-option>
+          <mat-option value="Rejected">Rejected</mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Request Cards -->
+
+  <div class="request-grid">
+
+    <mat-card
+      class="request-card"
+      *ngFor="let request of filteredRequests"
+      (click)="selectRequest(request)">
+
+      <div class="card-header">
+
+        <h3>{{ request.requestId }}</h3>
+
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'pending': request.status==='Pending',
+            'approved': request.status==='Approved',
+            'rejected': request.status==='Rejected'
+          }">
+
+          {{ request.status }}
+
+        </span>
+
+      </div>
+
+      <p><strong>Title :</strong> {{ request.title }}</p>
+
+      <p><strong>Department :</strong> {{ request.department }}</p>
+
+      <p><strong>Requested By :</strong> {{ request.requestedBy }}</p>
+
+      <p><strong>Priority :</strong> {{ request.priority }}</p>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Selected Request -->
+
+  <mat-card
+    class="details-card"
+    *ngIf="selectedRequest">
+
+    <h2>Procurement Request Details</h2>
+
+    <div class="details-grid">
+
+      <div>
+
+        <strong>Request Number</strong>
+
+        <p>{{ selectedRequest.requestId }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Request Title</strong>
+
+        <p>{{ selectedRequest.title }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Department</strong>
+
+        <p>{{ selectedRequest.department }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Requested By</strong>
+
+        <p>{{ selectedRequest.requestedBy }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Product Name</strong>
+
+        <p>{{ selectedRequest.product }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Product Category</strong>
+
+        <p>{{ selectedRequest.category }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Quantity</strong>
+
+        <p>{{ selectedRequest.quantity }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Unit</strong>
+
+        <p>{{ selectedRequest.unit }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Estimated Budget</strong>
+
+        <p>₹ {{ selectedRequest.budget }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Required Delivery</strong>
+
+        <p>{{ selectedRequest.deliveryDate }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Priority</strong>
+
+        <p>{{ selectedRequest.priority }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Business Justification</strong>
+
+        <p>{{ selectedRequest.justification }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Additional Remarks</strong>
+
+        <p>{{ selectedRequest.additionalRemarks }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Current Status</strong>
+
+        <p>{{ selectedRequest.status }}</p>
+
+      </div>
+
+    </div>
+
+    <h3>Approval Information</h3>
+
+    <div class="details-grid">
+
+      <div>
+
+        <strong>Approved By</strong>
+
+        <p>{{ selectedRequest.approvedBy || '-' }}</p>
+
+      </div>
+
+      <div>
+
+        <strong>Approval Date</strong>
+
+        <p>{{ selectedRequest.approvalDate || '-' }}</p>
+
+      </div>
+
+    </div>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Approval Remarks</mat-label>
+
+      <textarea
+        matInput
+        rows="5"
+        [(ngModel)]="selectedRequest.remarks">
+
+      </textarea>
+
+    </mat-form-field>
+
+    <div
+      class="next-step"
+      *ngIf="selectedRequest.status==='Approved'">
+
+      <mat-icon color="primary">
+
+        check_circle
+
+      </mat-icon>
+
+      This request is now eligible for Vendor Assignment.
+
+    </div>
+
+    <div class="button-group">
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="approve()">
+
+        <mat-icon>check_circle</mat-icon>
+
+        Approve Request
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="sendBack()">
+
+        <mat-icon>undo</mat-icon>
+
+        Send Back
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="reject()">
+
+        <mat-icon>cancel</mat-icon>
+
+        Reject Request
+
+      </button>
+
+    </div>
+
+  </mat-card>
+
+  <mat-card
+    class="empty-card"
+    *ngIf="!selectedRequest">
+
+    <mat-icon>
+
+      fact_check
+
+    </mat-icon>
+
+    <h3>No Request Selected</h3>
+
+    <p>
+
+      Select a procurement request to review and approve.
+
+    </p>
+
+  </mat-card>
+
+</div>

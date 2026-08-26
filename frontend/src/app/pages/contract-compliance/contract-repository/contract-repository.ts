@@ -1,0 +1,32 @@
+import { ChangeDetectorRef, Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button'; import { MatCardModule } from '@angular/material/card'; import { MatChipsModule } from '@angular/material/chips'; import { MatFormFieldModule } from '@angular/material/form-field'; import { MatIconModule } from '@angular/material/icon'; import { MatInputModule } from '@angular/material/input'; import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator'; import { MatSelectModule } from '@angular/material/select'; import { MatSort, MatSortModule } from '@angular/material/sort'; import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { ContractComplianceService } from '../../../services/contract-compliance.service'; import { VendorService, VendorRecord } from '../../../services/vendor.service';
+@Component({selector:'app-contract-repository',standalone:true,imports:[CommonModule,ReactiveFormsModule,MatCardModule,MatButtonModule,MatIconModule,MatFormFieldModule,MatInputModule,MatSelectModule,MatTableModule,MatPaginatorModule,MatSortModule,MatChipsModule],templateUrl:'./contract-repository.html',styleUrl:'./contract-repository.scss'})
+export class ContractRepository implements OnInit,AfterViewInit{
+ constructor(private router:Router,private fb:FormBuilder,private service:ContractComplianceService,private vendorService:VendorService,private cdr:ChangeDetectorRef){}
+ totalContracts=0;activeContracts=0;expiringSoon=0;expiredContracts=0;renewedContracts=0;showAddModal=false;addContractForm!:FormGroup;vendors:VendorRecord[]=[];
+ displayedColumns=['contractNumber','title','vendor','type','startDate','endDate','value','status','actions'];contracts:any[]=[];dataSource=new MatTableDataSource<any>();
+ @ViewChild(MatPaginator)paginator!:MatPaginator;@ViewChild(MatSort)sort!:MatSort;
+ ngOnInit(){this.initForm();this.loadVendors();this.loadContracts();}
+ ngAfterViewInit(){this.dataSource.paginator=this.paginator;this.dataSource.sort=this.sort;}
+ initForm(){this.addContractForm=this.fb.group({contractNumber:[`CTR-${Date.now()}`,Validators.required],title:['',Validators.required],vendor:['',Validators.required],vendorId:[null,Validators.required],type:['Supply',Validators.required],startDate:[new Date().toISOString().split('T')[0],Validators.required],endDate:['',Validators.required],value:[null,[Validators.required,Validators.min(1)]],status:['Active',Validators.required]});}
+ loadVendors(){this.vendorService.getVendors({page:1,size:1000}).subscribe({next:r=>{this.vendors=r.items||[];this.cdr.detectChanges();},error:e=>console.error(e)});}
+ loadContracts(){this.service.getContracts().subscribe({next:data=>{this.contracts=(data||[]).map(c=>this.mapContract(c));this.updateStats();this.dataSource.data=[...this.contracts];this.cdr.detectChanges();},error:e=>{console.error(e);this.contracts=[];this.updateStats();this.dataSource.data=[];this.cdr.detectChanges();}});}
+ mapContract(c:any){const days=this.daysUntil(c.end_date);let status=String(c.status||'Active');if(days<0)status='Expired';else if(status==='Active'&&days<=90)status='Expiring Soon';return {id:c.id,contractNumber:c.contract_number||`CTR-${c.id}`,title:c.contract_title||'-',vendor:c.vendor_name||`Vendor #${c.vendor_id}`,vendorId:c.vendor_id,type:c.contract_type||'-',startDate:c.start_date||'-',endDate:c.end_date||'-',value:typeof c.contract_value==='number'?`₹${c.contract_value.toLocaleString('en-IN')}`:'-',status};}
+ daysUntil(d:string){const end=new Date(d);const today=new Date();today.setHours(0,0,0,0);return Math.ceil((end.getTime()-today.getTime())/86400000);}
+ updateStats(){this.totalContracts=this.contracts.length;this.activeContracts=this.contracts.filter(c=>c.status==='Active'||c.status==='Expiring Soon').length;this.expiringSoon=this.contracts.filter(c=>c.status==='Expiring Soon').length;this.expiredContracts=this.contracts.filter(c=>c.status==='Expired').length;this.renewedContracts=this.contracts.filter(c=>c.status==='Renewed').length;}
+ applyFilter(e:Event){this.dataSource.filter=((e.target as HTMLInputElement)?.value||'').trim().toLowerCase();}
+ filterByVendor(v:string){this.dataSource.data=v?this.contracts.filter(c=>c.vendor.toLowerCase().includes(v.toLowerCase())):[...this.contracts];}
+ filterByStatus(v:string){this.dataSource.data=v?this.contracts.filter(c=>c.status.toLowerCase().includes(v.toLowerCase())):[...this.contracts];}
+ openAddModal(){this.addContractForm.reset({contractNumber:`CTR-${Date.now()}`,title:'',vendor:'',vendorId:null,type:'Supply',startDate:new Date().toISOString().split('T')[0],endDate:'',value:null,status:'Active'});this.showAddModal=true;}
+ closeAddModal(){this.showAddModal=false;}
+ selectVendor(id:number){const v=this.vendors.find(x=>Number(x.id)===Number(id));this.addContractForm.patchValue({vendor:v?.company_name||''},{emitEvent:false});}
+ submitAddContract(){if(this.addContractForm.invalid){this.addContractForm.markAllAsTouched();return;}const v=this.addContractForm.value;const payload={contract_number:v.contractNumber,contract_title:v.title,vendor_id:Number(v.vendorId),contract_type:v.type,start_date:v.startDate,end_date:v.endDate,contract_value:Number(v.value)};this.service.createContract(payload).subscribe({next:()=>{this.showAddModal=false;this.loadContracts();alert('Contract created successfully.');this.cdr.detectChanges();},error:e=>alert(e?.error?.detail||'Unable to create contract.')});}
+ addContract(){this.openAddModal();}
+ viewContract(contractNumber:string){const t=this.contracts.find(c=>c.contractNumber===contractNumber);if(t)this.router.navigate(['/contract-details',t.id]);}
+ editContract(contractNumber:string){const t=this.contracts.find(c=>c.contractNumber===contractNumber);if(t)this.router.navigate(['/edit-contract',t.id]);}
+ renewContract(contractNumber:string){const t=this.contracts.find(c=>c.contractNumber===contractNumber);if(!t)return;const current=new Date(t.endDate);current.setFullYear(current.getFullYear()+1);const newDate=current.toISOString().split('T')[0];this.service.renewContract(t.id,newDate).subscribe({next:()=>{alert('Contract renewed successfully.');this.loadContracts();},error:e=>alert(e?.error?.detail||'Unable to renew contract.')});}
+}

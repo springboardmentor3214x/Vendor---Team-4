@@ -1,12 +1,177 @@
 <div class="approval-container">
 
+  <!-- ================= Page Header ================= -->
+
   <div class="page-header">
 
-    <h1>Vendor Approval</h1>
+    <h1>Vendor Approval Workflow</h1>
 
-    <p>Approve or reject newly registered vendors.</p>
+    <p>
+
+      Review newly registered vendors before approving them for procurement.
+
+    </p>
 
   </div>
+
+  <p *ngIf="errorMessage" class="error-text" style="color:#c62828; font-weight:600;">{{ errorMessage }}</p>
+
+  <p *ngIf="loading">Loading vendors...</p>
+
+  <!-- ================= Summary Cards ================= -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <h3>Total Pending</h3>
+
+      <h2>{{ pendingCount }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Approved</h3>
+
+      <h2>{{ approvedToday }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Rejected</h3>
+
+      <h2>{{ rejectedToday }}</h2>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <h3>Total Requests</h3>
+
+      <h2>{{ vendors.length }}</h2>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Search & Filters ================= -->
+
+  <div class="filter-section">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        Search Vendor
+
+      </mat-label>
+
+      <input
+        matInput
+        placeholder="Vendor ID, Company, Contact Person"
+        [(ngModel)]="searchText">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        Vendor Category
+
+      </mat-label>
+
+      <mat-select [(ngModel)]="selectedCategory">
+
+        <mat-option value="">
+
+          All Categories
+
+        </mat-option>
+
+        <mat-option value="Raw Material Suppliers">
+
+          Raw Material Suppliers
+
+        </mat-option>
+
+        <mat-option value="Equipment Vendors">
+
+          Equipment Vendors
+
+        </mat-option>
+
+        <mat-option value="IT Vendors">
+
+          IT Vendors
+
+        </mat-option>
+
+        <mat-option value="Service Providers">
+
+          Service Providers
+
+        </mat-option>
+
+        <mat-option value="Logistics Partners">
+
+          Logistics Partners
+
+        </mat-option>
+
+        <mat-option value="Maintenance Vendors">
+
+          Maintenance Vendors
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        Approval Status
+
+      </mat-label>
+
+      <mat-select [(ngModel)]="selectedApprovalStatus">
+
+        <mat-option value="">
+
+          All
+
+        </mat-option>
+
+        <mat-option value="Pending">
+
+          Pending
+
+        </mat-option>
+
+        <mat-option value="Approved">
+
+          Approved
+
+        </mat-option>
+
+        <mat-option value="Rejected">
+
+          Rejected
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+  </div>
+
+  <!-- ================= Vendor Approval Table ================= -->
 
   <table>
 
@@ -16,15 +181,23 @@
 
         <th>Vendor ID</th>
 
-        <th>Company</th>
+        <th>Company Name</th>
 
-        <th>Category</th>
+        <th>Vendor Category</th>
 
         <th>Contact Person</th>
 
-        <th>Status</th>
+        <th>Email</th>
 
-        <th>Action</th>
+        <th>Phone</th>
+
+        <th>Vendor Status</th>
+
+        <th>Approval Status</th>
+
+        <th>Registered On</th>
+
+        <th>Actions</th>
 
       </tr>
 
@@ -32,25 +205,60 @@
 
     <tbody>
 
-      <tr *ngFor="let vendor of vendors">
+      <tr *ngIf="!loading && filteredVendors().length === 0">
+        <td colspan="10" style="text-align:center; padding: 16px;">
+          No vendors found.
+        </td>
+      </tr>
 
-        <td>{{ vendor.vendorId }}</td>
+      <tr *ngFor="let vendor of filteredVendors()">
 
-        <td>{{ vendor.companyName }}</td>
+        <td>
 
-        <td>{{ vendor.category }}</td>
+          {{ vendor.vendorId }}
 
-        <td>{{ vendor.contactPerson }}</td>
+        </td>
+
+        <td>
+
+          {{ vendor.companyName }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.category }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.contactPerson }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.email }}
+
+        </td>
+
+        <td>
+
+          {{ vendor.phone }}
+
+        </td>
 
         <td>
 
           <span
             class="status"
-            [class.approved]="vendor.status==='Approved'"
-            [class.rejected]="vendor.status==='Rejected'"
-            [class.pending]="vendor.status==='Pending'">
+            [class.active]="vendor.vendorStatus==='Active'"
+            [class.pending]="vendor.vendorStatus==='Pending'"
+            [class.inactive]="vendor.vendorStatus==='Inactive'"
+            [class.suspended]="vendor.vendorStatus==='Suspended'">
 
-            {{ vendor.status }}
+            {{ vendor.vendorStatus }}
 
           </span>
 
@@ -58,11 +266,41 @@
 
         <td>
 
+          <span
+            class="status"
+            [class.approved]="vendor.approvalStatus==='Approved'"
+            [class.rejected]="vendor.approvalStatus==='Rejected'"
+            [class.pending]="vendor.approvalStatus==='Pending'">
+
+            {{ vendor.approvalStatus }}
+
+          </span>
+
+        </td>
+
+        <td>
+
+          {{ vendor.registeredDate }}
+
+        </td>
+
+        <td>
+                    <button
+            mat-stroked-button
+            color="primary"
+            type="button"
+            (click)="viewVendor(vendor)">
+
+            View
+
+          </button>
+
           <button
             mat-flat-button
             color="primary"
+            type="button"
             (click)="approveVendor(vendor)"
-            [disabled]="vendor.status==='Approved'">
+            [disabled]="vendor.approvalStatus === 'Approved'">
 
             Approve
 
@@ -71,8 +309,9 @@
           <button
             mat-flat-button
             color="warn"
+            type="button"
             (click)="rejectVendor(vendor)"
-            [disabled]="vendor.status==='Rejected'">
+            [disabled]="vendor.approvalStatus === 'Rejected'">
 
             Reject
 

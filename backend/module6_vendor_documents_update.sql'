@@ -1,0 +1,7 @@
+-- module6_vendor_documents_update.sql
+
+ALTER TABLE vendor_documents
+ADD COLUMN expiry_date DATE;
+
+ALTER TABLE vendor_documents
+ADD COLUMN status VARCHAR(20) DEFAULT 'VALID';

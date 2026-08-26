@@ -1,0 +1,444 @@
+<div class="contract-details-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Contract Details</h1>
+
+      <p>
+        View complete contract information and associated records.
+      </p>
+
+    </div>
+
+    <div class="header-buttons">
+
+      <button
+        mat-stroked-button
+        color="primary"
+        routerLink="/contract-repository">
+
+        <mat-icon>arrow_back</mat-icon>
+
+        Back
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="editContract()">
+
+        <mat-icon>edit</mat-icon>
+
+        Edit Contract
+
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="renewContract()">
+
+        <mat-icon>autorenew</mat-icon>
+
+        Renew Contract
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Contract Status -->
+
+  <mat-card class="status-card">
+
+    <div class="status-content">
+
+      <div>
+
+        <h2>{{ contract.contractTitle }}</h2>
+
+        <p>{{ contract.contractNumber }}</p>
+
+      </div>
+
+      <mat-chip>
+
+        {{ contract.status }}
+
+      </mat-chip>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Contract Summary -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Contract Summary
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div class="details-grid">
+
+        <div>
+
+          <label>Contract Value</label>
+
+          <p>{{ contract.contractValue }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Remaining Days</label>
+
+          <p>{{ contract.remainingDays }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Last Updated</label>
+
+          <p>{{ contract.lastUpdated }}</p>
+
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Vendor Details -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Vendor Details
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div class="details-grid">
+
+        <div>
+
+          <label>Vendor Name</label>
+
+          <p>{{ contract.vendorName }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Vendor ID</label>
+
+          <p>{{ contract.vendorId }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Responsible Manager</label>
+
+          <p>{{ contract.responsibleManager }}</p>
+
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Contract Information -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Contract Information
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div class="details-grid">
+
+        <div>
+
+          <label>Contract Type</label>
+
+          <p>{{ contract.contractType }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Procurement Category</label>
+
+          <p>{{ contract.procurementCategory }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Contract Value</label>
+
+          <p>{{ contract.contractValue }}</p>
+
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Contract Duration -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Contract Duration
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div class="details-grid">
+
+        <div>
+
+          <label>Start Date</label>
+
+          <p>{{ contract.startDate }}</p>
+
+        </div>
+
+        <div>
+
+          <label>End Date</label>
+
+          <p>{{ contract.endDate }}</p>
+
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Payment Terms -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Payment Terms & SLA
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div class="details-grid">
+
+        <div>
+
+          <label>Payment Terms</label>
+
+          <p>{{ contract.paymentTerms }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Service Level Agreement</label>
+
+          <p>{{ contract.sla }}</p>
+
+        </div>
+
+        <div>
+
+          <label>Warranty Details</label>
+
+          <p>{{ contract.warrantyDetails }}</p>
+
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Uploaded Agreement -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Uploaded Agreement
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div class="document-section">
+
+        <mat-icon>
+          description
+        </mat-icon>
+
+        <div>
+
+          <strong>
+            {{ contract.documentName }}
+          </strong>
+
+          <p>
+            Uploaded:
+            {{ contract.uploadDate }}
+          </p>
+
+        </div>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="previewDocument()">
+
+          Preview
+
+        </button>
+
+        <button
+          mat-stroked-button
+          (click)="downloadDocument()">
+
+          Download
+
+        </button>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Linked Certifications -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Linked Certifications
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <mat-chip-set>
+
+        <mat-chip>ISO 9001</mat-chip>
+
+        <mat-chip>ISO 27001</mat-chip>
+
+        <mat-chip>GST Registration</mat-chip>
+
+      </mat-chip-set>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <!-- Linked Procurement Records -->
+
+  <mat-card class="section-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Linked Procurement Records
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <table class="procurement-table">
+
+        <thead>
+
+          <tr>
+
+            <th>Request ID</th>
+
+            <th>Title</th>
+
+            <th>Status</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr>
+
+            <td>PR-1001</td>
+
+            <td>IT Hardware Procurement</td>
+
+            <td>Completed</td>
+
+          </tr>
+
+          <tr>
+
+            <td>PR-1002</td>
+
+            <td>Network Equipment Purchase</td>
+
+            <td>Approved</td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

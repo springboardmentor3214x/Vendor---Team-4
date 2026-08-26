@@ -1,0 +1,221 @@
+<div class="score-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Vendor Reliability Score</h1>
+
+      <p>
+        View the calculated reliability score and the factors contributing to the vendor's overall reliability.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- ================= Vendor Information ================= -->
+
+  <mat-card class="summary-card">
+
+    <h2>Vendor Information</h2>
+
+    <div class="summary-grid">
+
+      <div class="summary-item">
+
+        <label>Vendor Name</label>
+
+        <span>{{ vendorName }}</span>
+
+      </div>
+
+      <div class="summary-item">
+
+        <label>Vendor Category</label>
+
+        <span>{{ vendorCategory }}</span>
+
+      </div>
+
+      <div class="summary-item">
+
+        <label>Reliability Score</label>
+
+        <span>{{ reliabilityScore }}%</span>
+
+      </div>
+
+      <div class="summary-item">
+
+        <label>Risk Level</label>
+
+        <span>{{ riskLevel }}</span>
+
+      </div>
+
+      <div class="summary-item">
+
+        <label>Recommendation</label>
+
+        <span>{{ recommendation }}</span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Score Breakdown ================= -->
+
+  <mat-card class="summary-card">
+
+    <h2>Reliability Score Breakdown</h2>
+
+    <div class="metrics-grid">
+
+      <div class="metric-item">
+
+        <label>Delivery History</label>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="deliveryScore">
+        </mat-progress-bar>
+
+        <small>{{ deliveryScore }}%</small>
+
+      </div>
+
+      <div class="metric-item">
+
+        <label>Product Quality</label>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="qualityScore">
+        </mat-progress-bar>
+
+        <small>{{ qualityScore }}%</small>
+
+      </div>
+
+      <div class="metric-item">
+
+        <label>Communication Efficiency</label>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="communicationScore">
+        </mat-progress-bar>
+
+        <small>{{ communicationScore }}%</small>
+
+      </div>
+
+      <div class="metric-item">
+
+        <label>Contract Compliance</label>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="contractScore">
+        </mat-progress-bar>
+
+        <small>{{ contractScore }}%</small>
+
+      </div>
+
+      <div class="metric-item">
+
+        <label>Purchase History</label>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="purchaseHistoryScore">
+        </mat-progress-bar>
+
+        <small>{{ purchaseHistoryScore }}%</small>
+
+      </div>
+
+      <div class="metric-item">
+
+        <label>Issue Resolution</label>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="issueResolutionScore">
+        </mat-progress-bar>
+
+        <small>{{ issueResolutionScore }}%</small>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Reliability Summary ================= -->
+
+  <mat-card class="summary-card">
+
+    <h2>Reliability Summary</h2>
+
+    <table class="summary-table">
+
+      <tr>
+
+        <td>Total Completed Orders</td>
+
+        <td>{{ completedOrders }}</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Average Delivery Performance</td>
+
+        <td>{{ averageDelivery }}%</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Average Product Quality</td>
+
+        <td>{{ averageQuality }}%</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Average Communication Efficiency</td>
+
+        <td>{{ averageCommunication }}%</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Issue Resolution Rate</td>
+
+        <td>{{ issueResolutionRate }}%</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Overall Reliability Score</td>
+
+        <td>{{ reliabilityScore }}%</td>
+
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

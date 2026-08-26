@@ -77,20 +77,38 @@ export class SupplyChainDashboard {
   }
 
   toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
-  }
+
+  this.router.navigate(['/notifications']);
+
+}
 
   goToProfile() {
     this.router.navigate(['/profile']);
   }
 
   logout() {
-    // JWT removal will be added later
-    this.router.navigate(['/login']);
-  }
+
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+
+  this.router.navigate(['/login']);
+
+}
 
   openModule(moduleName: string) {
-    alert(`${moduleName}\n\nThis module will be implemented in the next milestone.`);
+    switch (moduleName) {
+      case 'Vendor Performance':
+        this.router.navigate(['/vendor-performance-dashboard']);
+        break;
+      case 'Vendor Reliability':
+        this.router.navigate(['/vendor-reliability-dashboard']);
+        break;
+      case 'Procurement Tracking':
+        this.router.navigate(['/procurement-status']);
+        break;
+      default:
+        this.router.navigate(['/procurement-status']);
+    }
   }
 
 }

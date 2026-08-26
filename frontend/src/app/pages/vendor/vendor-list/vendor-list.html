@@ -1,6 +1,6 @@
 <div class="vendor-container">
 
-  <!-- Header -->
+  <!-- ================= Page Header ================= -->
 
   <div class="page-header">
 
@@ -8,16 +8,26 @@
 
       <h1>Vendor Management</h1>
 
-      <p>Manage all registered vendors efficiently.</p>
+      <p>
+
+        Manage registered vendors, monitor approval status,
+        search vendors, and maintain vendor information.
+
+      </p>
 
     </div>
 
     <button
       mat-flat-button
       color="primary"
+      type="button"
       (click)="addVendor()">
 
-      <mat-icon>add</mat-icon>
+      <mat-icon>
+
+        add
+
+      </mat-icon>
 
       Add Vendor
 
@@ -25,13 +35,15 @@
 
   </div>
 
-  <!-- Statistics -->
+  <p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
+
+  <!-- ================= Dashboard Summary ================= -->
 
   <div class="stats-container">
 
     <div class="stat-card">
 
-      <h2>{{ vendors.length }}</h2>
+      <h2>{{ totalVendors }}</h2>
 
       <p>Total Vendors</p>
 
@@ -39,61 +51,77 @@
 
     <div class="stat-card approved">
 
-      <h2>
+      <h2>{{ approvedVendors }}</h2>
 
-        {{ vendors.filter(v => v.approvalStatus === 'Approved').length }}
-
-      </h2>
-
-      <p>Approved</p>
+      <p>Approved Vendors</p>
 
     </div>
 
     <div class="stat-card pending">
 
-      <h2>
+      <h2>{{ pendingVendors }}</h2>
 
-        {{ vendors.filter(v => v.approvalStatus === 'Pending').length }}
+      <p>Pending Vendors</p>
 
-      </h2>
+    </div>
 
-      <p>Pending</p>
+    <div class="stat-card active">
+
+      <h2>{{ activeVendors }}</h2>
+
+      <p>Active Vendors</p>
+
+    </div>
+
+    <div class="stat-card suspended">
+
+      <h2>{{ suspendedVendors }}</h2>
+
+      <p>Suspended Vendors</p>
 
     </div>
 
     <div class="stat-card rejected">
 
-      <h2>
+      <h2>{{ rejectedVendors }}</h2>
 
-        {{ vendors.filter(v => v.approvalStatus === 'Rejected').length }}
-
-      </h2>
-
-      <p>Rejected</p>
+      <p>Rejected Vendors</p>
 
     </div>
 
   </div>
 
-  <!-- Filters -->
+  <!-- ================= Search & Filters ================= -->
 
   <div class="filters">
 
+    <!-- Search -->
+
     <mat-form-field appearance="outline">
 
-      <mat-label>Search Vendor</mat-label>
+      <mat-label>
+
+        Search Vendor
+
+      </mat-label>
 
       <input
         matInput
         [(ngModel)]="searchText"
         (input)="onSearchChange()"
-        placeholder="Vendor ID / Company / Contact">
+        placeholder="Vendor ID / Company / Contact / Email / GST Number">
 
     </mat-form-field>
 
+    <!-- Vendor Category -->
+
     <mat-form-field appearance="outline">
 
-      <mat-label>Category</mat-label>
+      <mat-label>
+
+        Vendor Category
+
+      </mat-label>
 
       <mat-select
         [(ngModel)]="selectedCategory"
@@ -101,25 +129,43 @@
 
         <mat-option value="">
 
-          All
+          All Categories
 
         </mat-option>
 
-        <mat-option value="IT">
+        <mat-option value="Raw Material Suppliers">
 
-          IT
-
-        </mat-option>
-
-        <mat-option value="Manufacturing">
-
-          Manufacturing
+          Raw Material Suppliers
 
         </mat-option>
 
-        <mat-option value="Software">
+        <mat-option value="Equipment Vendors">
 
-          Software
+          Equipment Vendors
+
+        </mat-option>
+
+        <mat-option value="IT Vendors">
+
+          IT Vendors
+
+        </mat-option>
+
+        <mat-option value="Service Providers">
+
+          Service Providers
+
+        </mat-option>
+
+        <mat-option value="Logistics Partners">
+
+          Logistics Partners
+
+        </mat-option>
+
+        <mat-option value="Maintenance Vendors">
+
+          Maintenance Vendors
 
         </mat-option>
 
@@ -127,9 +173,15 @@
 
     </mat-form-field>
 
+    <!-- Vendor Status -->
+
     <mat-form-field appearance="outline">
 
-      <mat-label>Status</mat-label>
+      <mat-label>
+
+        Vendor Status
+
+      </mat-label>
 
       <mat-select
         [(ngModel)]="selectedStatus"
@@ -137,7 +189,7 @@
 
         <mat-option value="">
 
-          All
+          All Status
 
         </mat-option>
 
@@ -159,13 +211,67 @@
 
         </mat-option>
 
+        <mat-option value="Suspended">
+
+          Suspended
+
+        </mat-option>
+
+        <mat-option value="Rejected">
+
+          Rejected
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <!-- Approval Status -->
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        Approval Status
+
+      </mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedApprovalStatus"
+        (selectionChange)="onFilterChange()">
+
+        <mat-option value="">
+
+          All Approval Status
+
+        </mat-option>
+
+        <mat-option value="Approved">
+
+          Approved
+
+        </mat-option>
+
+        <mat-option value="Pending">
+
+          Pending
+
+        </mat-option>
+
+        <mat-option value="Rejected">
+
+          Rejected
+
+        </mat-option>
+
       </mat-select>
 
     </mat-form-field>
 
   </div>
 
-  <!-- Vendor Table -->
+  <!-- ================= Vendor Table ================= -->
 
   <div class="table-container">
 
@@ -173,23 +279,17 @@
       mat-table
       [dataSource]="dataSource"
       matSort>
-
-      <!-- Vendor ID -->
+            <!-- Vendor ID -->
 
       <ng-container matColumnDef="vendorId">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
           Vendor ID
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           {{ vendor.vendorId }}
 
@@ -197,22 +297,17 @@
 
       </ng-container>
 
-      <!-- Company -->
+      <!-- Company Name -->
 
       <ng-container matColumnDef="companyName">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
           Company Name
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           {{ vendor.companyName }}
 
@@ -220,22 +315,17 @@
 
       </ng-container>
 
-      <!-- Category -->
+      <!-- Vendor Category -->
 
       <ng-container matColumnDef="category">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
-          Category
+          Vendor Category
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           {{ vendor.category }}
 
@@ -247,18 +337,13 @@
 
       <ng-container matColumnDef="contactPerson">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
           Contact Person
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           {{ vendor.contactPerson }}
 
@@ -270,40 +355,31 @@
 
       <ng-container matColumnDef="email">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
-          Email
+          Email Address
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           {{ vendor.email }}
 
         </td>
 
       </ng-container>
-            <!-- Phone -->
+
+      <!-- Phone -->
 
       <ng-container matColumnDef="phone">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
-          Phone
+          Phone Number
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           {{ vendor.phone }}
 
@@ -311,32 +387,23 @@
 
       </ng-container>
 
-      <!-- Status -->
+      <!-- Vendor Status -->
 
       <ng-container matColumnDef="status">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
-          Status
+          Vendor Status
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           <span
             class="status-badge"
-            [ngClass]="{
-              'active': vendor.status === 'Active',
-              'pending': vendor.status === 'Pending',
-              'inactive': vendor.status === 'Inactive'
-            }">
+            [ngClass]="vendor.vendorStatus.toLowerCase()">
 
-            {{ vendor.status }}
+            {{ vendor.vendorStatus }}
 
           </span>
 
@@ -348,26 +415,17 @@
 
       <ng-container matColumnDef="approvalStatus">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
 
           Approval Status
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           <span
             class="approval-badge"
-            [ngClass]="{
-              'approved': vendor.approvalStatus === 'Approved',
-              'pending': vendor.approvalStatus === 'Pending',
-              'rejected': vendor.approvalStatus === 'Rejected'
-            }">
+            [ngClass]="vendor.approvalStatus.toLowerCase()">
 
             {{ vendor.approvalStatus }}
 
@@ -381,23 +439,19 @@
 
       <ng-container matColumnDef="actions">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef>
 
           Actions
 
         </th>
 
-        <td
-          mat-cell
-          *matCellDef="let vendor">
+        <td mat-cell *matCellDef="let vendor">
 
           <button
             mat-icon-button
             color="primary"
-            (click)="viewVendor(vendor.vendorId)"
-            matTooltip="View">
+            matTooltip="View Vendor"
+            (click)="viewVendor(vendor.id)">
 
             <mat-icon>
 
@@ -410,8 +464,8 @@
           <button
             mat-icon-button
             color="accent"
-            (click)="editVendor(vendor.vendorId)"
-            matTooltip="Edit">
+            matTooltip="Edit Vendor"
+            (click)="editVendor(vendor.id)">
 
             <mat-icon>
 
@@ -424,8 +478,8 @@
           <button
             mat-icon-button
             color="warn"
-            (click)="deleteVendor(vendor.vendorId)"
-            matTooltip="Delete">
+            matTooltip="Delete Vendor"
+            (click)="deleteVendor(vendor.id)">
 
             <mat-icon>
 
@@ -439,23 +493,17 @@
 
       </ng-container>
 
-      <!-- Header Row -->
-
       <tr
         mat-header-row
         *matHeaderRowDef="displayedColumns">
 
       </tr>
 
-      <!-- Data Row -->
-
       <tr
         mat-row
         *matRowDef="let row; columns: displayedColumns">
 
       </tr>
-
-      <!-- No Data -->
 
       <tr
         class="mat-row"
@@ -465,7 +513,7 @@
           class="mat-cell"
           colspan="9">
 
-          No vendors found.
+          No vendors found matching the selected filters.
 
         </td>
 
@@ -473,11 +521,9 @@
 
     </table>
 
-    <!-- Pagination -->
-
     <mat-paginator
       [pageSize]="5"
-      [pageSizeOptions]="[5, 10, 20]"
+      [pageSizeOptions]="[5,10,20]"
       showFirstLastButtons>
 
     </mat-paginator>

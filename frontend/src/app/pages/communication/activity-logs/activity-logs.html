@@ -1,0 +1,680 @@
+<div class="activity-logs-container">
+
+  <!-- Header -->
+
+  <mat-card class="page-header">
+
+    <div class="header-content">
+
+      <div>
+
+        <h2>Activity Logs Dashboard</h2>
+
+        <p>
+          Monitor, track and audit all communication-related activities
+          across vendors, procurement requests, purchase orders,
+          contracts, discussions and file sharing operations.
+        </p>
+
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="exportLogs()"
+        >
+          <mat-icon>download</mat-icon>
+          Export Logs
+        </button>
+
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="refreshLogs()"
+        >
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Summary Cards -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>history</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ totalActivities }}</h3>
+        <p>Total Activities</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>forum</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ messageActivities }}</h3>
+        <p>Message Activities</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>upload_file</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ fileActivities }}</h3>
+        <p>File Activities</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>groups</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ activeUsers }}</h3>
+        <p>Active Users</p>
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Search & Filters -->
+
+  <mat-card class="filter-card">
+
+    <h3>Search & Filter Logs</h3>
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Logs</mat-label>
+
+        <input
+          matInput
+          placeholder="Search by user, action, module..."
+          (keyup)="applyFilter($event)"
+        >
+
+        <mat-icon matSuffix>
+          search
+        </mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Activity Type</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByActivity($event.value)"
+        >
+
+          <mat-option value="all">
+            All Activities
+          </mat-option>
+
+          <mat-option value="Message Sent">
+            Message Sent
+          </mat-option>
+
+          <mat-option value="Message Viewed">
+            Message Viewed
+          </mat-option>
+
+          <mat-option value="Discussion Created">
+            Discussion Created
+          </mat-option>
+
+          <mat-option value="File Uploaded">
+            File Uploaded
+          </mat-option>
+
+          <mat-option value="File Downloaded">
+            File Downloaded
+          </mat-option>
+
+          <mat-option value="Document Accessed">
+            Document Accessed
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Module</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByModule($event.value)"
+        >
+
+          <mat-option value="all">
+            All Modules
+          </mat-option>
+
+          <mat-option value="Vendor Messaging">
+            Vendor Messaging
+          </mat-option>
+
+          <mat-option value="Procurement Discussions">
+            Procurement Discussions
+          </mat-option>
+
+          <mat-option value="Communication History">
+            Communication History
+          </mat-option>
+
+          <mat-option value="File Sharing">
+            File Sharing
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>User Role</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByRole($event.value)"
+        >
+
+          <mat-option value="all">
+            All Roles
+          </mat-option>
+
+          <mat-option value="Administrator">
+            Administrator
+          </mat-option>
+
+          <mat-option value="Procurement Manager">
+            Procurement Manager
+          </mat-option>
+
+          <mat-option value="Vendor">
+            Vendor
+          </mat-option>
+
+          <mat-option value="Finance Officer">
+            Finance Officer
+          </mat-option>
+
+          <mat-option value="Supply Chain Manager">
+            Supply Chain Manager
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+    <!-- Activity Logs Table -->
+
+  <mat-card class="logs-table-card">
+
+    <div class="table-header">
+
+      <h3>Activity Log Records</h3>
+
+      <span class="record-count">
+        Total Records: {{ dataSource.data.length }}
+      </span>
+
+    </div>
+
+    <div class="table-container">
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+      >
+
+        <!-- User ID -->
+
+        <ng-container matColumnDef="userId">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            User ID
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.userId }}
+          </td>
+
+        </ng-container>
+
+        <!-- User Name -->
+
+        <ng-container matColumnDef="userName">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            User
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.userName }}
+          </td>
+
+        </ng-container>
+
+        <!-- Role -->
+
+        <ng-container matColumnDef="role">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Role
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.role }}
+          </td>
+
+        </ng-container>
+
+        <!-- Action -->
+
+        <ng-container matColumnDef="action">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            Action Performed
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.action }}
+          </td>
+
+        </ng-container>
+
+        <!-- Module -->
+
+        <ng-container matColumnDef="module">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Module
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.module }}
+          </td>
+
+        </ng-container>
+
+        <!-- Business Record -->
+
+        <ng-container matColumnDef="businessRecord">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Related Record
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.businessRecord }}
+          </td>
+
+        </ng-container>
+
+        <!-- Timestamp -->
+
+        <ng-container matColumnDef="timestamp">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            Timestamp
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.timestamp }}
+          </td>
+
+        </ng-container>
+
+        <!-- IP Address -->
+
+        <ng-container matColumnDef="ipAddress">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            IP Address
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+            {{ log.ipAddress }}
+          </td>
+
+        </ng-container>
+
+        <!-- Status -->
+
+        <ng-container matColumnDef="status">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Status
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+
+            <mat-chip>
+              {{ log.status }}
+            </mat-chip>
+
+          </td>
+
+        </ng-container>
+
+        <!-- Actions -->
+
+        <ng-container matColumnDef="actions">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Actions
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let log"
+          >
+
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewLogDetails(log)"
+            >
+              <mat-icon>
+                visibility
+              </mat-icon>
+            </button>
+
+          </td>
+
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns;"
+          (click)="selectLog(row)"
+        ></tr>
+
+      </table>
+
+    </div>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5,10,20,50]"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+
+  </mat-card>
+
+  <!-- Activity Details Panel -->
+
+  <mat-card
+    class="details-card"
+    *ngIf="selectedLog"
+  >
+
+    <div class="details-header">
+
+      <h3>Activity Details</h3>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="viewLogDetails(selectedLog)"
+      >
+        <mat-icon>description</mat-icon>
+        View Full Details
+      </button>
+
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="details-grid">
+
+      <div class="detail-item">
+        <strong>User ID</strong>
+        <span>{{ selectedLog.userId }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>User Name</strong>
+        <span>{{ selectedLog.userName }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Role</strong>
+        <span>{{ selectedLog.role }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Action</strong>
+        <span>{{ selectedLog.action }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Module</strong>
+        <span>{{ selectedLog.module }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Business Record</strong>
+        <span>{{ selectedLog.businessRecord }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Timestamp</strong>
+        <span>{{ selectedLog.timestamp }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>IP Address</strong>
+        <span>{{ selectedLog.ipAddress }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Status</strong>
+        <span>{{ selectedLog.status }}</span>
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Security Monitoring -->
+
+  <mat-card class="security-card">
+
+    <h3>Security & Audit Monitoring</h3>
+
+    <mat-divider></mat-divider>
+
+    <div class="security-grid">
+
+      <div class="security-item">
+
+        <mat-icon>
+          verified_user
+        </mat-icon>
+
+        <h4>Authenticated Activities</h4>
+
+        <p>{{ authenticatedActivities }}</p>
+
+      </div>
+
+      <div class="security-item">
+
+        <mat-icon>
+          admin_panel_settings
+        </mat-icon>
+
+        <h4>Administrative Actions</h4>
+
+        <p>{{ adminActivities }}</p>
+
+      </div>
+
+      <div class="security-item">
+
+        <mat-icon>
+          warning
+        </mat-icon>
+
+        <h4>Flagged Events</h4>
+
+        <p>{{ flaggedEvents }}</p>
+
+      </div>
+
+      <div class="security-item">
+
+        <mat-icon>
+          lock
+        </mat-icon>
+
+        <h4>Secure Operations</h4>
+
+        <p>{{ secureOperations }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Recent Activity Timeline -->
+
+  <mat-card class="timeline-card">
+
+    <h3>Recent Activity Timeline</h3>
+
+    <mat-divider></mat-divider>
+
+    <div class="timeline">
+
+      <div
+        class="timeline-item"
+        *ngFor="let activity of recentActivities"
+      >
+
+        <div class="timeline-icon">
+
+          <mat-icon>
+            history
+          </mat-icon>
+
+        </div>
+
+        <div class="timeline-content">
+
+          <h4>{{ activity.action }}</h4>
+
+          <p>{{ activity.description }}</p>
+
+          <span>{{ activity.time }}</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+</div>

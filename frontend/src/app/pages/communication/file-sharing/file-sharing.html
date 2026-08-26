@@ -1,0 +1,755 @@
+<div class="file-sharing-container">
+
+  <!-- Header -->
+
+  <mat-card class="page-header">
+
+    <div class="header-content">
+
+      <div>
+
+        <h2>File Sharing & Document Repository</h2>
+
+        <p>
+          Securely upload, manage, preview and share procurement-related
+          documents linked to vendors, purchase orders, contracts,
+          procurement requests and discussions.
+        </p>
+
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openUploadDialog()"
+        >
+          <mat-icon>upload_file</mat-icon>
+          Upload Document
+        </button>
+
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="refreshFiles()"
+        >
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Summary Cards -->
+
+  <div class="summary-grid">
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>folder</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ totalFiles }}</h3>
+        <p>Total Files</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>picture_as_pdf</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ pdfFiles }}</h3>
+        <p>PDF Files</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>description</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ documentFiles }}</h3>
+        <p>Documents</p>
+      </div>
+
+    </mat-card>
+
+    <mat-card class="summary-card">
+
+      <div class="summary-icon">
+        <mat-icon>cloud_download</mat-icon>
+      </div>
+
+      <div>
+        <h3>{{ totalDownloads }}</h3>
+        <p>Total Downloads</p>
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- Upload Section -->
+
+  <mat-card class="upload-card">
+
+    <div class="upload-header">
+
+      <h3>Upload New File</h3>
+
+      <p>
+        Supported Formats:
+        PDF, Excel, Word, Images and ZIP Files
+      </p>
+
+    </div>
+
+    <div class="upload-form">
+
+      <input
+        #fileInput
+        type="file"
+        hidden
+        accept=".pdf,.xlsx,.xls,.doc,.docx,.png,.jpg,.jpeg,.zip"
+        (change)="onFileSelected($event)"
+      >
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="fileInput.click()"
+      >
+        <mat-icon>attach_file</mat-icon>
+        Select File
+      </button>
+
+      <span
+        class="selected-file"
+        *ngIf="selectedFileName"
+      >
+        <mat-chip color="primary" selected>{{ selectedFileName }}</mat-chip>
+      </span>
+
+    </div>
+
+    <div class="linking-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Vendor</mat-label>
+
+        <mat-select [(ngModel)]="selectedVendor">
+
+          <mat-option
+            *ngFor="let vendor of vendors"
+            [value]="vendor"
+          >
+            {{ vendor }}
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Purchase Order</mat-label>
+
+        <mat-select [(ngModel)]="selectedPurchaseOrder">
+
+          <mat-option
+            *ngFor="let po of purchaseOrders"
+            [value]="po"
+          >
+            {{ po }}
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Contract</mat-label>
+
+        <mat-select [(ngModel)]="selectedContract">
+
+          <mat-option
+            *ngFor="let contract of contracts"
+            [value]="contract"
+          >
+            {{ contract }}
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Discussion</mat-label>
+
+        <mat-select [(ngModel)]="selectedDiscussion">
+
+          <mat-option
+            *ngFor="let discussion of discussions"
+            [value]="discussion"
+          >
+            {{ discussion }}
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+    <div class="upload-actions">
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="uploadFile()"
+      >
+        <mat-icon>cloud_upload</mat-icon>
+        Upload File
+      </button>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Search & Filters -->
+
+  <mat-card class="filter-card">
+
+    <div class="filter-grid">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Search Files</mat-label>
+
+        <input
+          matInput
+          placeholder="Search by file name..."
+          (keyup)="applyFilter($event)"
+        >
+
+        <mat-icon matSuffix>
+          search
+        </mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>File Type</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByFileType($event.value)"
+        >
+
+          <mat-option value="all">
+            All Types
+          </mat-option>
+
+          <mat-option value="PDF">
+            PDF
+          </mat-option>
+
+          <mat-option value="Excel">
+            Excel
+          </mat-option>
+
+          <mat-option value="Word">
+            Word
+          </mat-option>
+
+          <mat-option value="Image">
+            Image
+          </mat-option>
+
+          <mat-option value="ZIP">
+            ZIP
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Linked Entity</mat-label>
+
+        <mat-select
+          (selectionChange)="filterByEntity($event.value)"
+        >
+
+          <mat-option value="all">
+            All Entities
+          </mat-option>
+
+          <mat-option value="Vendor">
+            Vendor
+          </mat-option>
+
+          <mat-option value="Purchase Order">
+            Purchase Order
+          </mat-option>
+
+          <mat-option value="Contract">
+            Contract
+          </mat-option>
+
+          <mat-option value="Discussion">
+            Discussion
+          </mat-option>
+
+        </mat-select>
+
+      </mat-form-field>
+
+    </div>
+
+  </mat-card>
+
+  <!-- File Repository -->
+
+  <mat-card class="repository-card">
+
+    <div class="repository-header">
+
+      <h3>Document Repository</h3>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="toggleRepositoryView()"
+      >
+        <mat-icon>{{ isGridView ? 'table_chart' : 'grid_view' }}</mat-icon>
+        {{ isGridView ? 'Table View' : 'Repository View' }}
+      </button>
+
+    </div>
+
+    <!-- TABLE VIEW -->
+    <div class="table-container" *ngIf="!isGridView">
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+      >
+
+        <!-- File Name -->
+
+        <ng-container matColumnDef="fileName">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            File Name
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+            <strong>{{ file.fileName }}</strong>
+          </td>
+
+        </ng-container>
+
+        <!-- Type -->
+
+        <ng-container matColumnDef="fileType">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            Type
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+            <mat-chip>{{ file.fileType }}</mat-chip>
+          </td>
+
+        </ng-container>
+
+        <!-- Linked Entity -->
+
+        <ng-container matColumnDef="linkedEntity">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Linked Entity
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+            {{ file.linkedEntity }}
+          </td>
+
+        </ng-container>
+
+        <!-- Uploaded By -->
+
+        <ng-container matColumnDef="uploadedBy">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            Uploaded By
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+            {{ file.uploadedBy }}
+          </td>
+
+        </ng-container>
+
+        <!-- Upload Date -->
+
+        <ng-container matColumnDef="uploadDate">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+          >
+            Upload Date
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+            {{ file.uploadDate }}
+          </td>
+
+        </ng-container>
+
+        <!-- Size -->
+
+        <ng-container matColumnDef="size">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Size
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+            {{ file.size }}
+          </td>
+
+        </ng-container>
+
+        <!-- Downloads -->
+
+        <ng-container matColumnDef="downloads">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Downloads
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+            {{ file.downloads }}
+          </td>
+
+        </ng-container>
+
+        <!-- Actions -->
+
+        <ng-container matColumnDef="actions">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Actions
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let file"
+          >
+
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="previewFile(file)"
+            >
+              <mat-icon>
+                visibility
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="downloadFile(file)"
+            >
+              <mat-icon>
+                download
+              </mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteFile(file)"
+            >
+              <mat-icon>
+                delete
+              </mat-icon>
+            </button>
+
+          </td>
+
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns;"
+          (click)="selectFile(row)"
+          [class.selected-row]="selectedFile?.id === row.id"
+        ></tr>
+
+      </table>
+
+    </div>
+
+    <!-- GRID / REPOSITORY CARDS VIEW -->
+    <div class="repository-grid-view" *ngIf="isGridView">
+      <div class="file-card-item" *ngFor="let file of dataSource.filteredData" (click)="selectFile(file)">
+        <div class="file-icon-box">
+          <mat-icon color="primary">description</mat-icon>
+        </div>
+        <h4>{{ file.fileName }}</h4>
+        <p>{{ file.fileType }} • {{ file.size }}</p>
+        <span class="entity-tag">{{ file.linkedEntity }}</span>
+
+        <div class="card-actions">
+          <button mat-icon-button color="primary" (click)="previewFile(file)"><mat-icon>visibility</mat-icon></button>
+          <button mat-icon-button color="accent" (click)="downloadFile(file)"><mat-icon>download</mat-icon></button>
+          <button mat-icon-button color="warn" (click)="deleteFile(file)"><mat-icon>delete</mat-icon></button>
+        </div>
+      </div>
+    </div>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5,10,20,50]"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+
+  </mat-card>
+
+  <!-- File Details -->
+
+  <mat-card
+    class="details-card"
+    *ngIf="selectedFile"
+  >
+
+    <div class="details-header">
+
+      <h3>File Details</h3>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="downloadFile(selectedFile)"
+      >
+        <mat-icon>download</mat-icon>
+        Download File
+      </button>
+
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="details-grid">
+
+      <div class="detail-item">
+        <strong>File Name</strong>
+        <span>{{ selectedFile.fileName }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>File Type</strong>
+        <span>{{ selectedFile.fileType }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Linked Entity</strong>
+        <span>{{ selectedFile.linkedEntity }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Uploaded By</strong>
+        <span>{{ selectedFile.uploadedBy }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>Upload Date</strong>
+        <span>{{ selectedFile.uploadDate }}</span>
+      </div>
+
+      <div class="detail-item">
+        <strong>File Size</strong>
+        <span>{{ selectedFile.size }}</span>
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Storage Statistics -->
+
+  <mat-card class="storage-card">
+
+    <h3>Repository Statistics</h3>
+
+    <mat-divider></mat-divider>
+
+    <div class="stats-grid">
+
+      <div class="stat-box">
+
+        <mat-icon>picture_as_pdf</mat-icon>
+
+        <h4>PDF Documents</h4>
+
+        <p>{{ pdfFiles }}</p>
+
+      </div>
+
+      <div class="stat-box">
+
+        <mat-icon>table_chart</mat-icon>
+
+        <h4>Excel Files</h4>
+
+        <p>{{ excelFiles }}</p>
+
+      </div>
+
+      <div class="stat-box">
+
+        <mat-icon>description</mat-icon>
+
+        <h4>Word Documents</h4>
+
+        <p>{{ wordFiles }}</p>
+
+      </div>
+
+      <div class="stat-box">
+
+        <mat-icon>image</mat-icon>
+
+        <h4>Images</h4>
+
+        <p>{{ imageFiles }}</p>
+
+      </div>
+
+      <div class="stat-box">
+
+        <mat-icon>folder_zip</mat-icon>
+
+        <h4>ZIP Files</h4>
+
+        <p>{{ zipFiles }}</p>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- FILE PREVIEW MODAL -->
+  <div class="modal-overlay" *ngIf="showPreviewModal" (click)="closePreviewModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <mat-icon color="primary">visibility</mat-icon>
+          Document Preview: {{ previewingFile?.fileName }}
+        </h2>
+        <button mat-icon-button (click)="closePreviewModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body preview-body">
+        <div class="preview-box">
+          <mat-icon class="preview-icon">description</mat-icon>
+          <h3>{{ previewingFile?.fileName }}</h3>
+          <p>Format: {{ previewingFile?.fileType }} | Size: {{ previewingFile?.size }} | Linked: {{ previewingFile?.linkedEntity }}</p>
+          <div class="sample-content">
+            <p><strong>Sample Document Stream Preview:</strong></p>
+            <p>Vendor Reliability & Document Repository Platform</p>
+            <p>Uploaded by: {{ previewingFile?.uploadedBy }} on {{ previewingFile?.uploadDate }}</p>
+            <p>Document Security Check: PASS (Verified 256-bit encryption)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button mat-button (click)="closePreviewModal()">Close</button>
+        <button mat-raised-button color="primary" (click)="downloadFile(previewingFile)">
+          <mat-icon>download</mat-icon>
+          Download Document
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,448 @@
+<div class="procurement-form-container">
+
+  <div class="page-header">
+
+  <h1 *ngIf="mode === 'create'">
+    Procurement Request
+  </h1>
+
+  <h1 *ngIf="mode === 'view'">
+    View Procurement Request
+  </h1>
+
+  <h1 *ngIf="mode === 'edit'">
+    Edit Procurement Request
+  </h1>
+
+  <p *ngIf="mode === 'create'">
+    Create a new procurement request for products or services.
+  </p>
+
+  <p *ngIf="mode === 'view'">
+    View the procurement request details.
+  </p>
+
+  <p *ngIf="mode === 'edit'">
+    Update the procurement request details.
+  </p>
+
+</div>
+
+  <form
+    [formGroup]="procurementForm"
+    (ngSubmit)="onSubmit()">
+
+    <!-- ================= Request Information ================= -->
+
+    <div class="section">
+
+      <h2>Request Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Procurement Request Number</mat-label>
+
+          <input
+            matInput
+            formControlName="requestNumber"
+            readonly>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Request Title</mat-label>
+
+          <input
+            matInput
+            formControlName="requestTitle">
+
+          <mat-error *ngIf="procurementForm.get('requestTitle')?.hasError('required')">
+
+            Request Title is required
+
+          </mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Department Name</mat-label>
+
+          <input
+            matInput
+            formControlName="departmentName">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Requested By</mat-label>
+
+          <input
+            matInput
+            formControlName="requestedBy">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Product Information ================= -->
+
+    <div class="section">
+
+      <h2>Product Information</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Item / Product Name</mat-label>
+
+          <input
+            matInput
+            formControlName="productName">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Product Category</mat-label>
+
+          <mat-select formControlName="productCategory">
+
+            <mat-option value="Raw Materials">
+              Raw Materials
+            </mat-option>
+
+            <mat-option value="Equipment">
+              Equipment
+            </mat-option>
+
+            <mat-option value="IT Hardware">
+              IT Hardware
+            </mat-option>
+
+            <mat-option value="Software">
+              Software
+            </mat-option>
+
+            <mat-option value="Office Supplies">
+              Office Supplies
+            </mat-option>
+
+            <mat-option value="Services">
+              Services
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Quantity Required</mat-label>
+
+          <input
+            matInput
+            type="number"
+            formControlName="quantity">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Unit of Measurement</mat-label>
+
+          <mat-select formControlName="unit">
+
+            <mat-option value="Pieces">
+              Pieces
+            </mat-option>
+
+            <mat-option value="Boxes">
+              Boxes
+            </mat-option>
+
+            <mat-option value="Kilograms">
+              Kilograms
+            </mat-option>
+
+            <mat-option value="Litres">
+              Litres
+            </mat-option>
+
+            <mat-option value="Meters">
+              Meters
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+        <!-- ================= Budget & Delivery ================= -->
+
+    <div class="section">
+
+      <h2>Budget & Delivery</h2>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Estimated Budget</mat-label>
+
+          <input
+            matInput
+            type="number"
+            formControlName="estimatedBudget">
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Required Delivery Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="requiredDeliveryDate">
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #picker></mat-datepicker>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Priority</mat-label>
+
+          <mat-select formControlName="priority">
+
+            <mat-option value="Low">
+              Low
+            </mat-option>
+
+            <mat-option value="Medium">
+              Medium
+            </mat-option>
+
+            <mat-option value="High">
+              High
+            </mat-option>
+
+            <mat-option value="Critical">
+              Critical
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Request Status</mat-label>
+
+          <input
+            matInput
+            formControlName="requestStatus"
+            readonly>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Additional Information ================= -->
+
+    <div class="section">
+
+      <h2>Additional Information</h2>
+
+      <div class="form-grid full-width">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Business Justification</mat-label>
+
+          <textarea
+            matInput
+            rows="5"
+            formControlName="businessJustification">
+          </textarea>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Additional Remarks</mat-label>
+
+          <textarea
+            matInput
+            rows="4"
+            formControlName="additionalRemarks">
+          </textarea>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Supporting Documents ================= -->
+
+    <div class="section">
+
+      <h2>Supporting Documents</h2>
+
+      <div
+        class="upload-box"
+        *ngIf="mode !== 'view'">
+
+        <input
+          type="file"
+          multiple
+          (change)="onFileSelected($event)"
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+        <p>
+          Upload quotations, technical specifications, approval documents,
+          or any supporting files.
+        </p>
+
+      </div>
+
+      <div
+        class="file-list"
+        *ngIf="uploadedFiles.length">
+
+        <div
+          class="file-item"
+          *ngFor="let file of uploadedFiles; let i = index">
+
+          <span>{{ file.name }}</span>
+
+          <button
+            *ngIf="mode !== 'view'"
+            mat-icon-button
+            color="warn"
+            type="button"
+            (click)="removeFile(i)">
+
+            <mat-icon>delete</mat-icon>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= Create Mode ================= -->
+
+<div
+  class="button-group"
+  *ngIf="mode === 'create'">
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit">
+
+    Submit Request
+
+  </button>
+
+  <button
+    mat-raised-button
+    color="accent"
+    type="button"
+    (click)="saveDraft()">
+
+    Save Draft
+
+  </button>
+
+  <button
+    mat-stroked-button
+    color="warn"
+    type="button"
+    (click)="cancel()">
+
+    Cancel
+
+  </button>
+
+</div>
+
+<!-- ================= Edit Mode ================= -->
+
+<div
+  class="button-group"
+  *ngIf="mode === 'edit'">
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit">
+
+    Update Request
+
+  </button>
+
+  <button
+    mat-stroked-button
+    color="warn"
+    type="button"
+    (click)="cancel()">
+
+    Cancel
+
+  </button>
+
+</div>
+
+<!-- ================= View Mode ================= -->
+
+<div
+  class="button-group"
+  *ngIf="mode === 'view'">
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="button"
+    [routerLink]="['/procurement-request/edit', requestId]">
+
+    Edit
+
+    </button>
+
+    <button
+    mat-stroked-button
+    color="accent"
+    type="button"
+    (click)="cancel()">
+
+    Back
+
+    </button>
+
+    </div>
+
+  </form>
+
+</div>

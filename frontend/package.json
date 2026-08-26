@@ -4,6 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+<<<<<<< HEAD
+    "dev": "ng serve",
+=======
+>>>>>>> ab5f8e4256487e47649150361723bf6a0f40cab7
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -11,15 +15,25 @@
   "private": true,
   "packageManager": "npm@11.16.0",
   "dependencies": {
+<<<<<<< HEAD
     "@angular/animations": "^22.0.5",
     "@angular/cdk": "^22.0.3",
+=======
+>>>>>>> ab5f8e4256487e47649150361723bf6a0f40cab7
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",
     "@angular/core": "^22.0.0",
     "@angular/forms": "^22.0.0",
+<<<<<<< HEAD
     "@angular/material": "^22.0.3",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "chart.js": "^4.5.1",
+    "ng2-charts": "^10.0.0",
+=======
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/router": "^22.0.0",
+>>>>>>> ab5f8e4256487e47649150361723bf6a0f40cab7
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -32,4 +46,8 @@
     "typescript": "~6.0.2",
     "vitest": "^4.0.8"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ab5f8e4256487e47649150361723bf6a0f40cab7

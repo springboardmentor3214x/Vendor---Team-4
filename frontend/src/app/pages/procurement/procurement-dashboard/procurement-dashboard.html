@@ -10,7 +10,7 @@
 
       <p>
 
-        Manage procurement activities and monitor purchase requests.
+        Monitor procurement activities and manage the complete procurement workflow.
 
       </p>
 
@@ -26,9 +26,9 @@
 
       <mat-icon>inventory_2</mat-icon>
 
-      <h2>{{ totalProcurements }}</h2>
+      <h2>{{ totalRequests }}</h2>
 
-      <p>Total Procurements</p>
+      <p>Total Requests</p>
 
     </mat-card>
 
@@ -52,19 +52,55 @@
 
     </mat-card>
 
+    <mat-card class="stat-card purchase-orders">
+
+      <mat-icon>shopping_cart</mat-icon>
+
+      <h2>{{ purchaseOrders }}</h2>
+
+      <p>Purchase Orders</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card delivered">
+
+      <mat-icon>local_shipping</mat-icon>
+
+      <h2>{{ delivered }}</h2>
+
+      <p>Delivered Orders</p>
+
+    </mat-card>
+
     <mat-card class="stat-card completed">
 
       <mat-icon>task_alt</mat-icon>
 
       <h2>{{ completed }}</h2>
 
-      <p>Completed Orders</p>
+      <p>Completed Procurements</p>
+
+    </mat-card>
+
+    <mat-card class="stat-card cancelled">
+
+      <mat-icon>cancel</mat-icon>
+
+      <h2>{{ cancelled }}</h2>
+
+      <p>Cancelled Requests</p>
 
     </mat-card>
 
   </div>
 
-  <!-- Quick Actions -->
+  <!-- Quick Navigation -->
+
+  <h2 class="section-title">
+
+    Quick Navigation
+
+  </h2>
 
   <div class="action-grid">
 
@@ -78,7 +114,11 @@
 
       </mat-icon>
 
-      <h3>Procurement List</h3>
+      <h3>
+
+        Procurement Requests
+
+      </h3>
 
       <p>
 
@@ -98,11 +138,15 @@
 
       </mat-icon>
 
-      <h3>Add Procurement</h3>
+      <h3>
+
+        Create Procurement
+
+      </h3>
 
       <p>
 
-        Create a new procurement request.
+        Raise a new procurement request.
 
       </p>
 
@@ -110,19 +154,23 @@
 
     <mat-card
       class="action-card"
-      (click)="purchaseOrders()">
+      (click)="purchaseOrdersPage()">
 
       <mat-icon>
 
-        shopping_cart
+        shopping_cart_checkout
 
       </mat-icon>
 
-      <h3>Purchase Orders</h3>
+      <h3>
+
+        Purchase Orders
+
+      </h3>
 
       <p>
 
-        View purchase orders.
+        View generated purchase orders.
 
       </p>
 
@@ -130,7 +178,7 @@
 
     <mat-card
       class="action-card"
-      (click)="tracking()">
+      (click)="orderTracking()">
 
       <mat-icon>
 
@@ -138,11 +186,63 @@
 
       </mat-icon>
 
-      <h3>Procurement Tracking</h3>
+      <h3>
+
+        Order Tracking
+
+      </h3>
 
       <p>
 
-        Track procurement progress.
+        Track vendor deliveries.
+
+      </p>
+
+    </mat-card>
+
+    <mat-card
+      class="action-card"
+      (click)="invoiceManagement()">
+
+      <mat-icon>
+
+        receipt_long
+
+      </mat-icon>
+
+      <h3>
+
+        Invoice Management
+
+      </h3>
+
+      <p>
+
+        Verify invoices and approve payments.
+
+      </p>
+
+    </mat-card>
+
+    <mat-card
+      class="action-card"
+      (click)="vendorAssignment()">
+
+      <mat-icon>
+
+        assignment_ind
+
+      </mat-icon>
+
+      <h3>
+
+        Vendor Assignment
+
+      </h3>
+
+      <p>
+
+        Assign approved vendors.
 
       </p>
 
@@ -150,13 +250,13 @@
 
   </div>
 
-  <!-- Recent Activity -->
+  <!-- Recent Activities -->
 
   <mat-card class="activity-card">
 
     <h2>
 
-      Recent Procurement Activity
+      Recent Procurement Activities
 
     </h2>
 
@@ -168,9 +268,13 @@
 
           <th>Request ID</th>
 
-          <th>Item</th>
+          <th>Title</th>
+
+          <th>Vendor</th>
 
           <th>Status</th>
+
+          <th>Date</th>
 
         </tr>
 
@@ -178,7 +282,8 @@
 
       <tbody>
 
-        <tr *ngFor="let activity of recentActivities">
+        <tr
+          *ngFor="let activity of recentActivities">
 
           <td>
 
@@ -188,7 +293,13 @@
 
           <td>
 
-            {{ activity.item }}
+            {{ activity.title }}
+
+          </td>
+
+          <td>
+
+            {{ activity.vendor }}
 
           </td>
 
@@ -196,13 +307,17 @@
 
             <span
               class="status"
-              [class.pending]="activity.status==='Pending'"
-              [class.approved]="activity.status==='Approved'"
-              [class.completed]="activity.status==='Completed'">
+              [ngClass]="activity.status.toLowerCase()">
 
               {{ activity.status }}
 
             </span>
+
+          </td>
+
+          <td>
+
+            {{ activity.date }}
 
           </td>
 

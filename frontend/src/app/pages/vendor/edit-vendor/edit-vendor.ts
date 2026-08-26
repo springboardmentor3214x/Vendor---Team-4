@@ -1,130 +1,283 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
 import {
   FormBuilder,
+  FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
+
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+
+import { VendorService, VendorRecord } from '../../../services/vendor.service';
 
 @Component({
   selector: 'app-edit-vendor',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   templateUrl: './edit-vendor.html',
   styleUrl: './edit-vendor.scss'
 })
-export class EditVendor {
 
-  vendorForm: any;
+export class EditVendor implements OnInit {
 
-  uploadedFiles = [
-    'GST Certificate.pdf',
-    'PAN Card.pdf',
-    'Registration Certificate.pdf'
+  vendorForm!: FormGroup;
+
+  uploadedFiles: File[] = [];
+
+  selectedDocumentType = 'Other';
+
+  readonly maxFileSize = 5 * 1024 * 1024;
+
+  readonly allowedFileTypes = [
+    'application/pdf',
+    'image/jpeg',
+    'image/jpg',
+    'image/png'
   ];
 
+  vendorId!: number;
+
+  // Read-only -- approval is managed via the Vendor Approval workflow,
+  // not through this form.
+  approvalStatus = 'Pending';
+
+  loading = false;
+
+  submitting = false;
+
+  errorMessage = '';
+
   constructor(
+
     private fb: FormBuilder,
-    private router: Router
-  ) {
+
+    private router: Router,
+
+    private route: ActivatedRoute,
+
+    private vendorService: VendorService
+
+  ) {}
+
+  ngOnInit(): void {
 
     this.vendorForm = this.fb.group({
 
-      companyName: ['ABC Technologies', Validators.required],
+      // ================= Company Information =================
 
-      vendorCategory: ['IT', Validators.required],
+      companyName: ['', Validators.required],
 
-      contactPerson: ['John Smith', Validators.required],
+      vendorCategory: ['', Validators.required],
 
-      designation: ['Sales Manager', Validators.required],
+      contactPerson: ['', Validators.required],
 
-      email: [
-        'abc@gmail.com',
-        [
-          Validators.required,
-          Validators.email
-        ]
-      ],
+      designation: ['', Validators.required],
 
-      phone: [
-        '9876543210',
-        Validators.required
-      ],
+      // ================= Contact Information =================
 
-      alternatePhone: ['9876543211'],
+      email: ['', [Validators.required, Validators.email]],
 
-      gstNumber: ['22ABCDE1234F1Z5', Validators.required],
+      phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
 
-      panNumber: ['ABCDE1234F', Validators.required],
+      alternatePhone: [''],
 
-      registrationNumber: ['REG987654', Validators.required],
+      // ================= Company Details =================
 
-      addressLine1: ['Sector 5', Validators.required],
+      gstNumber: ['', Validators.required],
 
-      addressLine2: ['Salt Lake'],
+      panNumber: ['', Validators.required],
 
-      city: ['Kolkata', Validators.required],
+      registrationNumber: ['', Validators.required],
 
-      state: ['West Bengal', Validators.required],
+      // ================= Address =================
 
-      country: ['India', Validators.required],
+      addressLine1: ['', Validators.required],
 
-      pincode: ['700091', Validators.required],
+      addressLine2: [''],
 
-      website: ['www.abctech.com'],
+      city: ['', Validators.required],
 
-      description: ['IT Service Provider'],
+      state: ['', Validators.required],
 
-      accountNumber: ['123456789012', Validators.required],
+      country: ['', Validators.required],
 
-      ifscCode: ['SBIN0001234', Validators.required],
+      pincode: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
 
-      paymentTerms: ['30 Days', Validators.required],
+      // ================= Other Information =================
 
-      vendorStatus: ['Active', Validators.required]
+      website: [''],
 
+      description: [''],
+
+      // ================= Bank Details =================
+
+      accountNumber: ['', Validators.required],
+
+      ifscCode: ['', Validators.required],
+
+      paymentTerms: ['', Validators.required],
+
+      // ================= Status =================
+      // Vendor Status can be adjusted here; Approval Status is
+      // managed separately through the Vendor Approval workflow.
+
+      vendorStatus: ['Pending', Validators.required]
+
+    });
+
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('id');
+      if (idParam) {
+        this.vendorId = Number(idParam);
+        this.loadVendor();
+      }
     });
 
   }
 
-  onFileSelected(event: Event) {
+  // ================= Load Vendor =================
 
-    const input = event.target as HTMLInputElement;
+  private loadVendor(): void {
 
-    if (input.files) {
+    this.loading = true;
+    this.errorMessage = '';
 
-      for (let i = 0; i < input.files.length; i++) {
-
-        this.uploadedFiles.push(input.files[i].name);
-
+    this.vendorService.getVendorById(this.vendorId).subscribe({
+      next: (vendor) => this.populateForm(vendor),
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err?.error?.detail || 'Failed to load vendor.';
       }
-
-    }
+    });
 
   }
 
-  removeFile(index: number) {
+  private populateForm(vendor: VendorRecord): void {
+
+    this.vendorForm.patchValue({
+      companyName: vendor.company_name,
+      vendorCategory: vendor.vendor_category,
+      contactPerson: vendor.contact_person,
+      designation: vendor.designation,
+      email: vendor.email,
+      phone: vendor.phone,
+      alternatePhone: vendor.alternate_phone || '',
+      gstNumber: vendor.gst_number,
+      panNumber: vendor.pan_number,
+      registrationNumber: vendor.company_registration_number,
+      addressLine1: vendor.address_line1,
+      addressLine2: vendor.address_line2 || '',
+      city: vendor.city,
+      state: vendor.state,
+      country: vendor.country,
+      pincode: vendor.pincode,
+      website: vendor.website || '',
+      description: vendor.description || '',
+      accountNumber: vendor.bank_account_number || '',
+      ifscCode: vendor.ifsc_code || '',
+      paymentTerms: vendor.payment_terms || '',
+      vendorStatus: vendor.vendor_status
+    });
+
+    this.approvalStatus = vendor.approval_status;
+
+    this.loading = false;
+
+  }
+    // ================= File Upload =================
+
+  onFileSelected(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files) {
+      return;
+    }
+
+    for (const file of Array.from(input.files)) {
+
+      // ---------- File Type Validation ----------
+
+      if (!this.allowedFileTypes.includes(file.type)) {
+
+        alert(
+          `${file.name} is not a supported file type.\n\nAllowed formats: PDF, JPG, JPEG, PNG.`
+        );
+
+        continue;
+
+      }
+
+      // ---------- File Size Validation ----------
+
+      if (file.size > this.maxFileSize) {
+
+        alert(
+          `${file.name} exceeds the maximum file size of 5 MB.`
+        );
+
+        continue;
+
+      }
+
+      // ---------- Duplicate File Validation ----------
+
+      const alreadyExists = this.uploadedFiles.some(existing =>
+
+        existing.name === file.name &&
+        existing.size === file.size
+
+      );
+
+      if (alreadyExists) {
+
+        alert(`${file.name} has already been selected.`);
+
+        continue;
+
+      }
+
+      this.uploadedFiles.push(file);
+
+    }
+
+    // Reset file input
+
+    input.value = '';
+
+  }
+
+  // ================= Remove File =================
+
+  removeFile(index: number): void {
 
     this.uploadedFiles.splice(index, 1);
 
   }
 
-  updateVendor() {
+  // ================= Update Vendor =================
+
+  updateVendor(): void {
 
     if (this.vendorForm.invalid) {
 
@@ -134,16 +287,117 @@ export class EditVendor {
 
     }
 
-    console.log(this.vendorForm.value);
+    this.submitting = true;
+    this.errorMessage = '';
 
-    alert('Vendor updated successfully.');
+    const formValue = this.vendorForm.value;
+
+    const payload = {
+      company_name: formValue.companyName,
+      vendor_category: formValue.vendorCategory,
+      contact_person: formValue.contactPerson,
+      designation: formValue.designation,
+      email: formValue.email,
+      phone: formValue.phone,
+      alternate_phone: formValue.alternatePhone || null,
+      gst_number: formValue.gstNumber,
+      pan_number: formValue.panNumber,
+      company_registration_number: formValue.registrationNumber,
+      address_line1: formValue.addressLine1,
+      address_line2: formValue.addressLine2 || null,
+      city: formValue.city,
+      state: formValue.state,
+      country: formValue.country,
+      pincode: formValue.pincode,
+      website: formValue.website || null,
+      description: formValue.description || null,
+      bank_account_number: formValue.accountNumber || null,
+      ifsc_code: formValue.ifscCode || null,
+      payment_terms: formValue.paymentTerms || null,
+      vendor_status: formValue.vendorStatus
+    };
+
+    this.vendorService.updateVendor(this.vendorId, payload).subscribe({
+      next: () => {
+        this.uploadDocumentsThenFinish();
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.errorMessage = this.formatError(err);
+      }
+    });
 
   }
 
-  cancel() {
+  // Turns FastAPI's error response into a readable string.
+  // A 422 validation error looks like:
+  //   { detail: [ { loc: ["body","phone"], msg: "..." }, ... ] }
+  // while most other errors are just { detail: "some message" }.
+  private formatError(err: any): string {
+    const detail = err?.error?.detail;
 
-    this.router.navigate(['/vendor-list']);
+    if (Array.isArray(detail)) {
+      return detail
+        .map((item: any) => {
+          const field = Array.isArray(item?.loc) ? item.loc[item.loc.length - 1] : '';
+          return field ? `${field}: ${item.msg}` : item.msg;
+        })
+        .join('\n');
+    }
 
+    return detail || 'Failed to update vendor.';
+  }
+
+  private uploadDocumentsThenFinish(): void {
+
+    if (this.uploadedFiles.length === 0) {
+      this.finishSubmit();
+      return;
+    }
+
+    let remaining = this.uploadedFiles.length;
+
+    this.uploadedFiles.forEach(file => {
+
+      this.vendorService.uploadDocument(this.vendorId, this.selectedDocumentType, file).subscribe({
+        next: () => {
+          remaining -= 1;
+          if (remaining === 0) {
+            this.finishSubmit();
+          }
+        },
+        error: () => {
+          remaining -= 1;
+          if (remaining === 0) {
+            this.finishSubmit();
+          }
+        }
+      });
+
+    });
+
+  }
+
+  private finishSubmit(): void {
+    this.submitting = false;
+    alert('Vendor updated successfully.');
+    this.returnToListOrDashboard();
+  }
+
+  // ================= Cancel =================
+
+  cancel(): void {
+
+    this.returnToListOrDashboard();
+
+  }
+
+  // A vendor editing their own profile belongs back on their own
+  // dashboard; anyone else (Admin, Procurement, etc.) editing a
+  // vendor record goes back to the admin vendor list.
+  private returnToListOrDashboard(): void {
+    const role = (localStorage.getItem('role') || '').trim().toLowerCase();
+    this.router.navigate([role === 'vendor' ? '/vendor-dashboard' : '/vendor-list']);
   }
 
 }

@@ -37,25 +37,17 @@
 
     </div>
 
-    <div class="stat-card approved">
+    <div class="stat-card generated">
 
-      <h2>
+      <h2>{{ purchaseOrders.filter(o => o.rawStatus === 'GENERATED').length }}</h2>
 
-        {{ purchaseOrders.filter(o => o.status === 'Approved').length }}
-
-      </h2>
-
-      <p>Approved</p>
+      <p>Generated</p>
 
     </div>
 
     <div class="stat-card pending">
 
-      <h2>
-
-        {{ purchaseOrders.filter(o => o.status === 'Pending').length }}
-
-      </h2>
+      <h2>{{ pendingOrders }}</h2>
 
       <p>Pending</p>
 
@@ -65,11 +57,19 @@
 
       <h2>
 
-        {{ purchaseOrders.filter(o => o.status === 'Completed').length }}
+        {{ completedOrders }}
 
       </h2>
 
       <p>Completed</p>
+
+    </div>
+
+    <div class="stat-card cancelled">
+
+      <h2>{{ cancelledOrders }}</h2>
+
+      <p>Cancelled</p>
 
     </div>
 
@@ -97,27 +97,27 @@
       <mat-select [(ngModel)]="selectedStatus">
 
         <mat-option value="">
-
           All
-
         </mat-option>
 
         <mat-option value="Pending">
-
           Pending
-
         </mat-option>
 
-        <mat-option value="Approved">
+        <mat-option value="Generated">
+          Generated
+        </mat-option>
 
-          Approved
-
+        <mat-option value="Sent">
+          Sent
         </mat-option>
 
         <mat-option value="Completed">
-
           Completed
+        </mat-option>
 
+        <mat-option value="Cancelled">
+          Cancelled
         </mat-option>
 
       </mat-select>
@@ -176,317 +176,7 @@
 
         <th mat-header-cell *matHeaderCellDef>
 
-          Item
-
-        </th>
-
-        <td mat-cell *matCellDef="let order">
-
-          {{ order.item }}
-
-        </td>
-
-      </ng-container>
-
-      <!-- Amount -->
-
-      <ng-container matColumnDef="amount">
-
-        <th mat-header-cell *matHeaderCellDef>
-
-          Amount
-
-        </th>
-
-        <td mat-cell *matCellDef="let order">
-
-          {{ order.amount }}
-
-        </td>
-
-      </ng-container>
-
-      <!-- Order Date -->
-
-      <ng-container matColumnDef="orderDate">
-
-        <th mat-header-cell *matHeaderCellDef>
-
-          Order Date
-
-        </th>
-
-        <td mat-cell *matCellDef="let order">
-
-          {{ order.orderDate }}
-
-        </td>
-
-      </ng-container>
-
-      <!-- Status -->
-
-      <ng-container matColumnDef="status">
-
-        <th mat-header-cell *matHeaderCellDef>
-
-          Status
-
-        </th>
-
-        <td mat-cell *matCellDef="let order">
-
-          <span
-            class="status"
-            [class.pending]="order.status === 'Pending'"
-            [class.approved]="order.status === 'Approved'"
-            [class.completed]="order.status === 'Completed'">
-
-            {{ order.status }}
-
-          </span>
-
-        </td>
-
-      </ng-container>
-
-      <!-- Actions -->
-
-      <ng-container matColumnDef="actions">
-
-        <th mat-header-cell *matHeaderCellDef>
-
-          Actions
-
-        </th>
-
-        <td mat-cell *matCellDef="let order">
-
-          <button
-            mat-icon-button
-            color="primary"
-            (click)="viewOrder(order.poId)">
-
-            <mat-icon>
-
-              visibility
-
-            </mat-icon>
-
-          </button>
-
-          <button
-            mat-icon-button
-            color="accent"
-            (click)="editOrder(order.poId)">
-
-            <mat-icon>
-
-              edit
-
-            </mat-icon>
-
-          </button>
-
-        </td>
-
-      </ng-container>
-
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns">
-
-      </tr>
-
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns">
-
-      </tr>
-
-    </table>
-
-  </div>
-
-</div><div class="purchase-orders-container">
-
-  <!-- Header -->
-
-  <div class="page-header">
-
-    <div>
-
-      <h1>Purchase Orders</h1>
-
-      <p>Manage and track all purchase orders.</p>
-
-    </div>
-
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="createPurchaseOrder()">
-
-      <mat-icon>add</mat-icon>
-
-      Create Purchase Order
-
-    </button>
-
-  </div>
-
-  <!-- Statistics -->
-
-  <div class="stats-container">
-
-    <div class="stat-card">
-
-      <h2>{{ purchaseOrders.length }}</h2>
-
-      <p>Total Orders</p>
-
-    </div>
-
-    <div class="stat-card approved">
-
-      <h2>
-
-        {{ purchaseOrders.filter(o => o.status === 'Approved').length }}
-
-      </h2>
-
-      <p>Approved</p>
-
-    </div>
-
-    <div class="stat-card pending">
-
-      <h2>
-
-        {{ purchaseOrders.filter(o => o.status === 'Pending').length }}
-
-      </h2>
-
-      <p>Pending</p>
-
-    </div>
-
-    <div class="stat-card completed">
-
-      <h2>
-
-        {{ purchaseOrders.filter(o => o.status === 'Completed').length }}
-
-      </h2>
-
-      <p>Completed</p>
-
-    </div>
-
-  </div>
-
-  <!-- Filters -->
-
-  <div class="filters">
-
-    <mat-form-field appearance="outline">
-
-      <mat-label>Search</mat-label>
-
-      <input
-        matInput
-        placeholder="PO ID or Vendor"
-        [(ngModel)]="searchText">
-
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-
-      <mat-label>Status</mat-label>
-
-      <mat-select [(ngModel)]="selectedStatus">
-
-        <mat-option value="">
-
-          All
-
-        </mat-option>
-
-        <mat-option value="Pending">
-
-          Pending
-
-        </mat-option>
-
-        <mat-option value="Approved">
-
-          Approved
-
-        </mat-option>
-
-        <mat-option value="Completed">
-
-          Completed
-
-        </mat-option>
-
-      </mat-select>
-
-    </mat-form-field>
-
-  </div>
-
-  <!-- Table -->
-
-  <div class="table-container">
-
-    <table
-      mat-table
-      [dataSource]="filteredOrders">
-
-      <!-- PO ID -->
-
-      <ng-container matColumnDef="poId">
-
-        <th mat-header-cell *matHeaderCellDef>
-
-          PO ID
-
-        </th>
-
-        <td mat-cell *matCellDef="let order">
-
-          {{ order.poId }}
-
-        </td>
-
-      </ng-container>
-
-      <!-- Vendor -->
-
-      <ng-container matColumnDef="vendor">
-
-        <th mat-header-cell *matHeaderCellDef>
-
-          Vendor
-
-        </th>
-
-        <td mat-cell *matCellDef="let order">
-
-          {{ order.vendor }}
-
-        </td>
-
-      </ng-container>
-
-      <!-- Item -->
-
-      <ng-container matColumnDef="item">
-
-        <th mat-header-cell *matHeaderCellDef>
-
-          Item
+          Procurement Request
 
         </th>
 

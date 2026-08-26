@@ -1,0 +1,194 @@
+.contract-dashboard-container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.page-header p {
+  color: #666;
+  margin-top: 8px;
+}
+
+.section-title {
+  margin-bottom: 16px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.summary-card mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+.navigation-card {
+  margin-bottom: 24px;
+  padding: 20px;
+}
+
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.module-card {
+  text-align: center;
+  padding: 24px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-5px);
+}
+
+.module-card mat-icon {
+  font-size: 45px;
+  width: 45px;
+  height: 45px;
+  margin-bottom: 12px;
+}
+
+.status-card,
+.compliance-card,
+.repository-card,
+.notifications-card,
+.pending-actions-card,
+.table-card,
+.quick-actions-card {
+  margin-bottom: 24px;
+  padding: 20px;
+}
+
+.status-grid,
+.repository-grid,
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.status-item,
+.repository-item,
+.action-item {
+  text-align: center;
+  padding: 20px;
+}
+
+.repository-item mat-icon,
+.action-item mat-icon {
+  font-size: 35px;
+  width: 35px;
+  height: 35px;
+  margin-bottom: 10px;
+}
+
+.compliance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.compliance-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compliance-item span {
+  font-weight: 600;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  padding: 20px;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  max-height: 350px;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+}
+
+.quick-actions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+mat-paginator {
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions-grid {
+    flex-direction: column;
+  }
+
+}

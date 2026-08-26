@@ -1,0 +1,257 @@
+<div class="dashboard-container">
+
+  <!-- ================= Header ================= -->
+
+  <div class="page-header">
+    <div>
+      <h1>Vendor Performance Dashboard</h1>
+      <p>
+        Monitor vendor performance, rankings, delivery efficiency, quality,
+        communication and service metrics.
+      </p>
+    </div>
+  </div>
+
+  <!-- ================= Statistics ================= -->
+
+  <div class="stats-container">
+
+    <mat-card class="stat-card vendors">
+      <mat-icon>groups</mat-icon>
+      <h2>{{ totalVendors }}</h2>
+      <p>Total Vendors Evaluated</p>
+    </mat-card>
+
+    <mat-card class="stat-card delivery">
+      <mat-icon>local_shipping</mat-icon>
+      <h2>{{ averageDelivery }}%</h2>
+      <p>Average Delivery Performance</p>
+    </mat-card>
+
+    <mat-card class="stat-card quality">
+      <mat-icon>verified</mat-icon>
+      <h2>{{ averageQuality }}/5</h2>
+      <p>Average Product Quality</p>
+    </mat-card>
+
+    <mat-card class="stat-card response">
+      <mat-icon>schedule</mat-icon>
+      <h2>{{ averageResponse }} hrs</h2>
+      <p>Average Response Time</p>
+    </mat-card>
+
+    <mat-card class="stat-card completed">
+      <mat-icon>assignment_turned_in</mat-icon>
+      <h2>{{ completedOrders }}</h2>
+      <p>Completed Orders</p>
+    </mat-card>
+
+    <mat-card class="stat-card delayed">
+      <mat-icon>warning</mat-icon>
+      <h2>{{ delayedDeliveries }}</h2>
+      <p>Delayed Deliveries</p>
+    </mat-card>
+
+    <mat-card class="stat-card ranking">
+      <mat-icon>emoji_events</mat-icon>
+      <h2>{{ rankedVendors }}</h2>
+      <p>Vendor Rankings</p>
+    </mat-card>
+
+  </div>
+
+  <!-- ================= Quick Navigation ================= -->
+
+  <mat-card class="navigation-card">
+
+    <div class="card-header-bar">
+      <h2>Quick Navigation</h2>
+      <span class="sub-tag">Click any module card or button below to view detailed analytics</span>
+    </div>
+
+    <div class="navigation-grid">
+
+      <mat-card
+        class="nav-item delivery-item"
+        (click)="deliveryPerformance()">
+        <div class="icon-badge">
+          <mat-icon>local_shipping</mat-icon>
+        </div>
+        <h3>Delivery Performance</h3>
+        <p>Monitor delivery performance and delays.</p>
+        <button
+          mat-flat-button
+          color="primary"
+          class="nav-btn"
+          (click)="$event.stopPropagation(); deliveryPerformance()">
+          View Details
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+
+      <mat-card
+        class="nav-item quality-item"
+        (click)="productQualityEvaluation()">
+        <div class="icon-badge">
+          <mat-icon>fact_check</mat-icon>
+        </div>
+        <h3>Product Quality</h3>
+        <p>Evaluate delivered products.</p>
+        <button
+          mat-flat-button
+          color="primary"
+          class="nav-btn"
+          (click)="$event.stopPropagation(); productQualityEvaluation()">
+          View Details
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+
+      <mat-card
+        class="nav-item comm-item"
+        (click)="communicationTracking()">
+        <div class="icon-badge">
+          <mat-icon>forum</mat-icon>
+        </div>
+        <h3>Communication Tracking</h3>
+        <p>Track vendor response performance.</p>
+        <button
+          mat-flat-button
+          color="primary"
+          class="nav-btn"
+          (click)="$event.stopPropagation(); communicationTracking()">
+          View Details
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+
+      <mat-card
+        class="nav-item service-item"
+        (click)="serviceRating()">
+        <div class="icon-badge">
+          <mat-icon>support_agent</mat-icon>
+        </div>
+        <h3>Service Rating</h3>
+        <p>Rate vendor services.</p>
+        <button
+          mat-flat-button
+          color="primary"
+          class="nav-btn"
+          (click)="$event.stopPropagation(); serviceRating()">
+          View Details
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+
+      <mat-card
+        class="nav-item history-item"
+        (click)="performanceHistory()">
+        <div class="icon-badge">
+          <mat-icon>history</mat-icon>
+        </div>
+        <h3>Performance History</h3>
+        <p>Review historical performance records.</p>
+        <button
+          mat-flat-button
+          color="primary"
+          class="nav-btn"
+          (click)="$event.stopPropagation(); performanceHistory()">
+          View Details
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+
+      <mat-card
+        class="nav-item ranking-item"
+        (click)="vendorRanking()">
+        <div class="icon-badge">
+          <mat-icon>leaderboard</mat-icon>
+        </div>
+        <h3>Vendor Ranking</h3>
+        <p>View vendor rankings.</p>
+        <button
+          mat-flat-button
+          color="primary"
+          class="nav-btn"
+          (click)="$event.stopPropagation(); vendorRanking()">
+          View Details
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= Recent Activities ================= -->
+
+  <mat-card class="table-card">
+
+    <div class="table-header-bar">
+      <h2>Recent Vendor Performance Activities</h2>
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="activities"
+      class="mat-elevation-z2">
+
+      <!-- Vendor -->
+      <ng-container matColumnDef="vendor">
+        <th mat-header-cell *matHeaderCellDef>Vendor</th>
+        <td mat-cell *matCellDef="let activity" class="vendor-name-cell">
+          <strong>{{ activity.vendor }}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Purchase Order -->
+      <ng-container matColumnDef="purchaseOrder">
+        <th mat-header-cell *matHeaderCellDef>Purchase Order</th>
+        <td mat-cell *matCellDef="let activity">
+          <span class="po-chip">{{ activity.purchaseOrder }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Activity -->
+      <ng-container matColumnDef="activity">
+        <th mat-header-cell *matHeaderCellDef>Activity</th>
+        <td mat-cell *matCellDef="let activity">
+          {{ activity.activity }}
+        </td>
+      </ng-container>
+
+      <!-- Date -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let activity">
+          {{ activity.date }}
+        </td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let activity">
+          <span
+            class="status-badge"
+            [ngClass]="activity.status.toLowerCase()">
+            {{ activity.status }}
+          </span>
+        </td>
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns">
+      </tr>
+
+    </table>
+
+  </mat-card>
+
+</div>

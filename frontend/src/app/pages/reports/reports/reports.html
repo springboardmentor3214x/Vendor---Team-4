@@ -1,73 +1,555 @@
-<div class="reports-container">
+<div class="reports-page">
 
-  <!-- Header -->
+  <!-- =========================================================
+       SIDEBAR
+       ========================================================= -->
 
-  <div class="page-header">
+  <aside class="sidebar">
 
-    <div>
+    <div class="sidebar-content">
 
-      <h1>Reports</h1>
+      <!-- Logo -->
 
-      <p>
+      <div class="logo">
 
-        Generate and download system reports.
+        <mat-icon>assessment</mat-icon>
 
-      </p>
+        <div>
+          <h2>Vendor Intelligence</h2>
+        </div>
+
+      </div>
+
+
+      <!-- Navigation -->
+
+      <nav class="sidebar-nav">
+
+        <ul>
+
+          <li
+            class="active"
+            matTooltip="Reports & Export"
+          >
+            <mat-icon>bar_chart</mat-icon>
+            <span>Reports & Export</span>
+          </li>
+
+
+          <li
+            (click)="goToVendorManagement()"
+            matTooltip="Vendor Management"
+          >
+            <mat-icon>business</mat-icon>
+            <span>Vendor Management</span>
+          </li>
+
+
+          <li
+            (click)="goToProcurement()"
+            matTooltip="Procurement"
+          >
+            <mat-icon>shopping_cart</mat-icon>
+            <span>Procurement</span>
+          </li>
+
+
+          <li
+            (click)="goToAnalytics()"
+            matTooltip="Analytics"
+          >
+            <mat-icon>analytics</mat-icon>
+            <span>Analytics</span>
+          </li>
+
+
+          <li
+            (click)="goToNotifications()"
+            matTooltip="Notifications"
+          >
+
+            <mat-icon>notifications</mat-icon>
+
+            <span>Notifications</span>
+
+            <span
+              class="sidebar-badge"
+              *ngIf="unreadNotifications > 0"
+            >
+              {{ unreadNotifications }}
+            </span>
+
+          </li>
+
+        </ul>
+
+      </nav>
 
     </div>
 
-  </div>
 
-  <!-- Report Cards -->
+    <!-- Sidebar Footer -->
 
-  <div class="reports-grid">
+    <div class="sidebar-footer">
 
-    <mat-card
-      class="report-card"
-      *ngFor="let report of reports">
+      <button
+        mat-stroked-button
+        (click)="goToProfile()"
+      >
+        <mat-icon>person</mat-icon>
+        Profile
+      </button>
 
-      <mat-icon>
 
-        description
+      <button
+        mat-button
+        (click)="logout()"
+      >
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
 
-      </mat-icon>
+    </div>
 
-      <h2>
+  </aside>
 
-        {{ report.name }}
 
-      </h2>
 
-      <p>
+  <!-- =========================================================
+       MAIN CONTENT
+       ========================================================= -->
 
-        {{ report.description }}
+  <main class="main-content">
 
-      </p>
 
-      <div class="buttons">
+    <!-- =======================================================
+         TOP BAR
+         ======================================================= -->
+
+    <header class="topbar">
+
+
+      <div class="page-heading">
+
+        <h1>Reports & Export</h1>
+
+        <p>
+          Generate professional procurement, vendor, contract,
+          compliance and performance reports.
+        </p>
+
+      </div>
+
+
+      <div class="top-actions">
+
+
+        <!-- Search -->
+
+        <div
+          class="top-search"
+          *ngIf="showSearch"
+        >
+
+          <mat-form-field
+            appearance="outline"
+            class="top-search-field"
+          >
+
+            <mat-label>Search reports</mat-label>
+
+            <input
+              matInput
+              [(ngModel)]="searchText"
+              placeholder="Search..."
+            />
+
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="toggleSearch()"
+            >
+
+              <mat-icon>close</mat-icon>
+
+            </button>
+
+          </mat-form-field>
+
+        </div>
+
 
         <button
-          mat-flat-button
-          color="primary"
-          (click)="generateReport(report.name)">
+          mat-icon-button
+          type="button"
+          matTooltip="Search"
+          *ngIf="!showSearch"
+          (click)="toggleSearch()"
+        >
 
-          Generate
+          <mat-icon>search</mat-icon>
 
         </button>
 
-        <button
-          mat-stroked-button
-          (click)="downloadPdf(report.name)">
 
-          PDF
+        <!-- Notification -->
+
+        <div class="notification-wrapper">
+
+          <button
+            mat-icon-button
+            type="button"
+            class="notification-button"
+            matTooltip="Notifications"
+            (click)="toggleNotifications()"
+          >
+
+            <mat-icon>notifications</mat-icon>
+
+            <span
+              class="notification-badge"
+              *ngIf="unreadNotifications > 0"
+            >
+              {{ unreadNotifications }}
+            </span>
+
+          </button>
+
+
+          <!-- Notification Dropdown -->
+
+          <div
+            class="notification-dropdown"
+            *ngIf="showNotifications"
+          >
+
+            <div class="dropdown-header">
+
+              <div>
+
+                <h3>Notifications</h3>
+
+                <span>
+                  {{ unreadNotifications }} unread
+                </span>
+
+              </div>
+
+
+              <button
+                mat-button
+                type="button"
+                (click)="goToNotifications()"
+              >
+                View All
+              </button>
+
+            </div>
+
+
+            <div
+              class="dropdown-list"
+              *ngIf="recentNotifications.length > 0"
+            >
+
+              <div
+                class="dropdown-item"
+                *ngFor="let notification of recentNotifications"
+              >
+
+                <div class="dropdown-icon">
+
+                  <mat-icon>
+                    {{ notification.icon }}
+                  </mat-icon>
+
+                </div>
+
+
+                <div class="dropdown-content">
+
+                  <h4>
+                    {{ notification.title }}
+                  </h4>
+
+                  <p>
+                    {{ notification.description }}
+                  </p>
+
+                  <span>
+                    {{ notification.time }}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="empty-dropdown"
+              *ngIf="recentNotifications.length === 0"
+            >
+
+              <mat-icon>
+                notifications_none
+              </mat-icon>
+
+              <p>No new notifications</p>
+
+            </div>
+
+
+            <div class="dropdown-footer">
+
+              <button
+                mat-button
+                type="button"
+                (click)="goToNotifications()"
+              >
+                Open Notification Center
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Profile -->
+
+        <button
+          mat-icon-button
+          type="button"
+          matTooltip="Profile"
+          (click)="goToProfile()"
+        >
+
+          <mat-icon>account_circle</mat-icon>
 
         </button>
 
-        <button
-          mat-stroked-button
-          (click)="downloadExcel(report.name)">
+      </div>
 
-          Excel
+    </header>
+
+
+
+    <!-- =======================================================
+         REPORT SUMMARY CARDS
+         ======================================================= -->
+
+    <section class="summary-grid">
+
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon vendor">
+
+          <mat-icon>business</mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Available Reports
+          </span>
+
+          <h2>
+            {{ reportTypes.length }}
+          </h2>
+
+          <p>
+            Report categories
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon procurement">
+
+          <mat-icon>shopping_cart</mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Procurement Spend
+          </span>
+
+          <h2>
+            ₹8.5 Cr
+          </h2>
+
+          <p>
+            Current reporting period
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon performance">
+
+          <mat-icon>trending_up</mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Vendor Reliability
+          </span>
+
+          <h2>
+            86%
+          </h2>
+
+          <p>
+            Average reliability
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon compliance">
+
+          <mat-icon>verified_user</mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Compliance
+          </span>
+
+          <h2>
+            94%
+          </h2>
+
+          <p>
+            Overall compliance
+          </p>
+
+        </div>
+
+      </mat-card>
+
+
+      <mat-card class="summary-card">
+
+        <div class="summary-icon contracts">
+
+          <mat-icon>description</mat-icon>
+
+        </div>
+
+        <div>
+
+          <span class="summary-label">
+            Active Contracts
+          </span>
+
+          <h2>
+            128
+          </h2>
+
+          <p>
+            Currently active
+          </p>
+
+        </div>
+
+      </mat-card>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         REPORT SELECTION
+         ======================================================= -->
+
+    <mat-card class="report-selection-card">
+
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>Generate Report</h2>
+
+          <p>
+            Select a report type and apply filters before generating
+            your report.
+          </p>
+
+        </div>
+
+
+        <mat-icon>
+          assessment
+        </mat-icon>
+
+      </div>
+
+
+      <div class="report-type-grid">
+
+
+        <button
+          type="button"
+          class="report-type-card"
+          *ngFor="let report of reportTypes"
+          [class.selected]="selectedReportType === report.value"
+          (click)="selectReportType(report.value)"
+        >
+
+          <div class="report-type-icon">
+
+            <mat-icon>
+              {{ report.icon }}
+            </mat-icon>
+
+          </div>
+
+
+          <div class="report-type-content">
+
+            <h3>
+              {{ report.title }}
+            </h3>
+
+            <p>
+              {{ report.description }}
+            </p>
+
+          </div>
+
+
+          <mat-icon
+            class="selected-icon"
+            *ngIf="selectedReportType === report.value"
+          >
+            check_circle
+          </mat-icon>
 
         </button>
 
@@ -75,30 +557,1932 @@
 
     </mat-card>
 
-  </div>
 
-  <!-- Placeholder -->
 
-  <mat-card class="placeholder-card">
+    <!-- =======================================================
+         FILTERS
+         ======================================================= -->
 
-    <mat-icon>
+    <mat-card class="filter-card">
 
-      analytics
 
-    </mat-icon>
+      <div class="section-header">
 
-    <h2>
+        <div>
 
-      Report Preview
+          <h2>Report Filters</h2>
 
-    </h2>
+          <p>
+            Customize the report using the available filters.
+          </p>
 
-    <p>
+        </div>
 
-      Generated reports will be displayed here.
 
-    </p>
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="clearFilters()"
+        >
 
-  </mat-card>
+          <mat-icon>
+            filter_alt_off
+          </mat-icon>
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+
+      <div class="filter-grid">
+
+
+        <!-- Start Date -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Start Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="startPicker"
+            [(ngModel)]="startDate"
+          />
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="startPicker"
+          >
+          </mat-datepicker-toggle>
+
+          <mat-datepicker
+            #startPicker
+          >
+          </mat-datepicker>
+
+        </mat-form-field>
+
+
+        <!-- End Date -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>End Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="endPicker"
+            [(ngModel)]="endDate"
+          />
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="endPicker"
+          >
+          </mat-datepicker-toggle>
+
+          <mat-datepicker
+            #endPicker
+          >
+          </mat-datepicker>
+
+        </mat-form-field>
+
+
+        <!-- Vendor Category -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Vendor Category</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedVendorCategory"
+          >
+
+            <mat-option value="All">
+              All Categories
+            </mat-option>
+
+            <mat-option
+              *ngFor="let category of vendorCategories"
+              [value]="category"
+            >
+              {{ category }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Department -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Department</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedDepartment"
+          >
+
+            <mat-option value="All">
+              All Departments
+            </mat-option>
+
+            <mat-option
+              *ngFor="let department of departments"
+              [value]="department"
+            >
+              {{ department }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Vendor -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Vendor</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedVendor"
+          >
+
+            <mat-option value="All">
+              All Vendors
+            </mat-option>
+
+            <mat-option
+              *ngFor="let vendor of vendors"
+              [value]="vendor"
+            >
+              {{ vendor }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Procurement Status -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Procurement Status</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedProcurementStatus"
+          >
+
+            <mat-option value="All">
+              All Statuses
+            </mat-option>
+
+            <mat-option
+              *ngFor="let status of procurementStatuses"
+              [value]="status"
+            >
+              {{ status }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Purchase Order Status -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Purchase Order Status</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedPurchaseOrderStatus"
+          >
+
+            <mat-option value="All">
+              All Statuses
+            </mat-option>
+
+            <mat-option
+              *ngFor="let status of purchaseOrderStatuses"
+              [value]="status"
+            >
+              {{ status }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Contract Status -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Contract Status</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedContractStatus"
+          >
+
+            <mat-option value="All">
+              All Contract Statuses
+            </mat-option>
+
+            <mat-option
+              *ngFor="let status of contractStatuses"
+              [value]="status"
+            >
+              {{ status }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Contract Expiry -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Contract Expiry</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedContractExpiry"
+          >
+
+            <mat-option value="All">
+              All Contract Expiry
+            </mat-option>
+
+            <mat-option
+              *ngFor="let period of contractExpiryPeriods"
+              [value]="period"
+            >
+              {{ period }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Compliance Status -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Compliance Status</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedComplianceStatus"
+          >
+
+            <mat-option value="All">
+              All Compliance Statuses
+            </mat-option>
+
+            <mat-option
+              *ngFor="let status of complianceStatuses"
+              [value]="status"
+            >
+              {{ status }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <!-- Reliability Score -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Reliability Score</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedReliabilityScore"
+          >
+
+            <mat-option value="All">
+              All Scores
+            </mat-option>
+
+            <mat-option
+              *ngFor="let score of reliabilityScores"
+              [value]="score"
+            >
+              {{ score }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+
+      <!-- Generate -->
+
+      <div class="filter-actions">
+
+        <button
+          mat-raised-button
+          type="button"
+          class="generate-button"
+          (click)="generateReport()"
+        >
+
+          <mat-icon>
+            auto_graph
+          </mat-icon>
+
+          Generate Report
+
+        </button>
+
+      </div>
+
+    </mat-card>
+
+
+
+    <!-- =======================================================
+         REPORT PREVIEW
+         ======================================================= -->
+
+    <section
+      class="report-preview"
+      *ngIf="reportGenerated"
+    >
+
+
+      <mat-card class="preview-card">
+
+
+        <!-- Preview Header -->
+
+        <div class="preview-header">
+
+
+          <div class="preview-title">
+
+            <div class="organization-logo">
+
+              <mat-icon>
+                business
+              </mat-icon>
+
+            </div>
+
+
+            <div>
+
+              <span class="organization-name">
+                Vendor Reliability Intelligence Platform
+              </span>
+
+              <h2>
+                {{ selectedReportTitle }}
+              </h2>
+
+              <p>
+                Generated on {{ generatedDate | date:'dd MMM yyyy, hh:mm a' }}
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="preview-actions">
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="printReport()"
+            >
+
+              <mat-icon>
+                print
+              </mat-icon>
+
+              Print
+
+            </button>
+
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="exportPDF()"
+            >
+
+              <mat-icon>
+                picture_as_pdf
+              </mat-icon>
+
+              Export PDF
+
+            </button>
+
+
+            <button
+              mat-raised-button
+              type="button"
+              (click)="exportExcel()"
+            >
+
+              <mat-icon>
+                table_view
+              </mat-icon>
+
+              Export Excel
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Applied Filters -->
+
+        <div class="applied-filters">
+
+          <span class="filter-label">
+            Applied Filters:
+          </span>
+
+
+          <span class="filter-chip">
+            Date:
+            {{ selectedDateRange }}
+          </span>
+
+
+          <span class="filter-chip">
+            Vendor Category:
+            {{ selectedVendorCategory }}
+          </span>
+
+
+          <span class="filter-chip">
+            Department:
+            {{ selectedDepartment }}
+          </span>
+
+
+          <span class="filter-chip">
+            Vendor:
+            {{ selectedVendor }}
+          </span>
+
+
+          <span class="filter-chip">
+            Procurement Status:
+            {{ selectedProcurementStatus }}
+          </span>
+
+
+          <span class="filter-chip">
+            Purchase Order Status:
+            {{ selectedPurchaseOrderStatus }}
+          </span>
+
+
+          <span class="filter-chip">
+            Contract Status:
+            {{ selectedContractStatus }}
+          </span>
+
+
+          <span class="filter-chip">
+            Contract Expiry:
+            {{ selectedContractExpiry }}
+          </span>
+
+
+          <span class="filter-chip">
+            Compliance Status:
+            {{ selectedComplianceStatus }}
+          </span>
+
+
+          <span class="filter-chip">
+            Reliability Score:
+            {{ selectedReliabilityScore }}
+          </span>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             EXECUTIVE SUMMARY
+             ===================================================== -->
+
+        <div class="report-summary">
+
+
+          <div class="report-summary-item">
+
+            <span>Total Records</span>
+
+            <strong>
+              {{ reportSummary.totalRecords }}
+            </strong>
+
+          </div>
+
+
+          <div class="report-summary-item">
+
+            <span>Total Value</span>
+
+            <strong>
+              {{ reportSummary.totalValue }}
+            </strong>
+
+          </div>
+
+
+          <div class="report-summary-item">
+
+            <span>Completion Rate</span>
+
+            <strong>
+              {{ reportSummary.completionRate }}%
+            </strong>
+
+          </div>
+
+
+          <div class="report-summary-item">
+
+            <span>Average Reliability</span>
+
+            <strong>
+              {{ reportSummary.averageReliability }}%
+            </strong>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             CHARTS
+             ===================================================== -->
+
+        <div class="charts-grid">
+
+
+          <!-- Monthly Trend -->
+
+          <div class="chart-card">
+
+            <div class="chart-header">
+
+              <div>
+
+                <h3>
+                  Monthly Procurement Trend
+                </h3>
+
+                <p>
+                  Procurement volume across the selected period.
+                </p>
+
+              </div>
+
+              <mat-icon>
+                show_chart
+              </mat-icon>
+
+            </div>
+
+
+            <div class="bar-chart">
+
+              <div
+                class="bar-item"
+                *ngFor="let item of monthlyTrend"
+              >
+
+                <div class="bar-value">
+                  {{ item.value }}
+                </div>
+
+                <div
+                  class="bar"
+                  [style.height.%]="item.percentage"
+                >
+                </div>
+
+                <span>
+                  {{ item.month }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- Vendor Reliability -->
+
+          <div class="chart-card">
+
+            <div class="chart-header">
+
+              <div>
+
+                <h3>
+                  Vendor Reliability Distribution
+                </h3>
+
+                <p>
+                  Vendor reliability score overview.
+                </p>
+
+              </div>
+
+              <mat-icon>
+                pie_chart
+              </mat-icon>
+
+            </div>
+
+
+            <div class="reliability-chart">
+
+
+              <div class="donut-chart">
+
+                <div class="donut-center">
+
+                  <strong>
+                    86%
+                  </strong>
+
+                  <span>
+                    Average
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="legend">
+
+
+                <div class="legend-item">
+
+                  <span class="legend-dot excellent"></span>
+
+                  <span>
+                    Excellent
+                  </span>
+
+                  <strong>
+                    35%
+                  </strong>
+
+                </div>
+
+
+                <div class="legend-item">
+
+                  <span class="legend-dot good"></span>
+
+                  <span>
+                    Good
+                  </span>
+
+                  <strong>
+                    41%
+                  </strong>
+
+                </div>
+
+
+                <div class="legend-item">
+
+                  <span class="legend-dot average"></span>
+
+                  <span>
+                    Average
+                  </span>
+
+                  <strong>
+                    17%
+                  </strong>
+
+                </div>
+
+
+                <div class="legend-item">
+
+                  <span class="legend-dot poor"></span>
+
+                  <span>
+                    Needs Improvement
+                  </span>
+
+                  <strong>
+                    7%
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             REPORT TABLE
+             ===================================================== -->
+
+        <div class="table-section">
+
+
+          <div class="table-header">
+
+            <div>
+
+              <h3>
+                {{ selectedReportTitle }}
+              </h3>
+
+              <p>
+                Detailed report data
+              </p>
+
+            </div>
+
+
+            <span>
+              {{ reportRows.length }} records
+            </span>
+
+          </div>
+
+
+          <div class="table-wrapper">
+
+
+            <!-- Vendor Performance -->
+
+            <table
+              mat-table
+              [dataSource]="reportRows"
+              *ngIf="selectedReportType === 'vendor-performance'"
+            >
+
+
+              <ng-container matColumnDef="vendor">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Vendor Name
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.vendor }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="category">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Category
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.category }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="orders">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Completed Orders
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.orders }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="delayedDeliveries">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Delayed Deliveries
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.delayedDeliveries }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="delivery">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  On-Time Delivery
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.delivery }}%
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="quality">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Quality
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.quality }}%
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="communicationResponse">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Communication Response
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.communicationResponse }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="issueResolution">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Issue Resolution
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.issueResolution }}%
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="serviceRating">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Overall Service Rating
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.serviceRating }}%
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="reliability">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Reliability
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  <div class="score-cell">
+
+                    <span>
+                      {{ row.reliability }}%
+                    </span>
+
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="row.reliability"
+                    >
+                    </mat-progress-bar>
+
+                  </div>
+                </td>
+
+              </ng-container>
+
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="vendorColumns"
+              >
+              </tr>
+
+              <tr
+                mat-row
+                *matRowDef="let row; columns: vendorColumns;"
+              >
+              </tr>
+
+            </table>
+
+
+
+            <!-- Procurement -->
+
+            <table
+              mat-table
+              [dataSource]="reportRows"
+              *ngIf="selectedReportType === 'procurement'"
+            >
+
+              <ng-container matColumnDef="department">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Department
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.department }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="requests">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Requests
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.requests }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="approved">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Approved
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.approved }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="orders">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Purchase Orders
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.orders }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="spending">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Expenditure
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.spending }}
+                </td>
+
+              </ng-container>
+
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="procurementColumns"
+              >
+              </tr>
+
+              <tr
+                mat-row
+                *matRowDef="let row; columns: procurementColumns;"
+              >
+              </tr>
+
+            </table>
+
+
+
+            <!-- Purchase Orders -->
+
+            <table
+              mat-table
+              [dataSource]="reportRows"
+              *ngIf="selectedReportType === 'purchase-orders'"
+            >
+
+              <ng-container matColumnDef="poNumber">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  PO Number
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.poNumber }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="vendor">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Vendor
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.vendor }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="category">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Category
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.category }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="orderDate">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Purchase Date
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.orderDate }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="deliveryDate">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Delivery Date
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.deliveryDate }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="value">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Order Value
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.value }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="status">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Status
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+
+                  <span
+                    class="status-badge"
+                    [class.completed]="row.status === 'Completed'"
+                    [class.active]="row.status === 'Active'"
+                    [class.delayed]="row.status === 'Delayed'"
+                  >
+                    {{ row.status }}
+                  </span>
+
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="invoice">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Invoice
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.invoice }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="completionDate">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Completion Date
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.completionDate }}
+                </td>
+
+              </ng-container>
+
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="purchaseOrderColumns"
+              >
+              </tr>
+
+              <tr
+                mat-row
+                *matRowDef="let row; columns: purchaseOrderColumns;"
+              >
+              </tr>
+
+            </table>
+
+
+
+            <!-- Compliance -->
+
+            <table
+              mat-table
+              [dataSource]="reportRows"
+              *ngIf="selectedReportType === 'compliance'"
+            >
+
+              <ng-container matColumnDef="vendor">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Vendor
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.vendor }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="certification">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Certification
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.certification }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="verificationDate">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Verification Date
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.verificationDate }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="expiryDate">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Expiry Date
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.expiryDate }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="status">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Status
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+
+                  <span
+                    class="status-badge"
+                    [class.completed]="row.status === 'Compliant'"
+                    [class.delayed]="row.status === 'Expired'"
+                    [class.active]="row.status === 'Pending'"
+                  >
+                    {{ row.status }}
+                  </span>
+
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="missingDocuments">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Missing Documents
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.missingDocuments }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="pendingActivities">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Pending Compliance Activities
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.pendingActivities }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="compliance">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Compliance
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.compliance }}%
+                </td>
+
+              </ng-container>
+
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="complianceColumns"
+              >
+              </tr>
+
+              <tr
+                mat-row
+                *matRowDef="let row; columns: complianceColumns;"
+              >
+              </tr>
+
+            </table>
+
+
+
+            <!-- Contracts -->
+
+            <table
+              mat-table
+              [dataSource]="reportRows"
+              *ngIf="selectedReportType === 'contracts'"
+            >
+
+              <ng-container matColumnDef="contractNumber">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Contract Number
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.contractNumber }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="vendor">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Vendor
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.vendor }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="value">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Contract Value
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.value }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="startDate">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Start Date
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.startDate }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="endDate">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  End Date
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.endDate }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="renewal">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Renewal
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.renewal }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="contractType">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Contract Type
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.contractType }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="manager">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Contract Manager
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.manager }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="complianceStatus">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Compliance Status
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+
+                  <span
+                    class="status-badge"
+                    [class.completed]="row.complianceStatus === 'Compliant'"
+                    [class.delayed]="row.complianceStatus === 'Non-Compliant'"
+                    [class.active]="row.complianceStatus === 'Pending'"
+                  >
+                    {{ row.complianceStatus }}
+                  </span>
+
+                </td>
+
+              </ng-container>
+
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="contractColumns"
+              >
+              </tr>
+
+              <tr
+                mat-row
+                *matRowDef="let row; columns: contractColumns;"
+              >
+              </tr>
+
+            </table>
+
+
+
+            <!-- Executive Summary -->
+
+            <table
+              mat-table
+              [dataSource]="reportRows"
+              *ngIf="selectedReportType === 'executive-summary'"
+            >
+
+              <ng-container matColumnDef="metric">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Business Metric
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.metric }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="value">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Current Value
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.value }}
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="change">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Change
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+
+                  <span class="change-positive">
+                    {{ row.change }}
+                  </span>
+
+                </td>
+
+              </ng-container>
+
+
+              <ng-container matColumnDef="insight">
+
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                >
+                  Management Insight
+                </th>
+
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.insight }}
+                </td>
+
+              </ng-container>
+
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="executiveColumns"
+              >
+              </tr>
+
+              <tr
+                mat-row
+                *matRowDef="let row; columns: executiveColumns;"
+              >
+              </tr>
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             REPORT FOOTER
+             ===================================================== -->
+
+        <div class="report-footer">
+
+          <span>
+            Vendor Reliability Intelligence Platform
+          </span>
+
+          <span>
+            Generated for authorized business use
+          </span>
+
+          <span>
+            Page 1
+          </span>
+
+        </div>
+
+      </mat-card>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         EMPTY REPORT PREVIEW
+         ======================================================= -->
+
+    <section
+      class="empty-preview"
+      *ngIf="!reportGenerated"
+    >
+
+      <mat-card>
+
+        <div class="empty-preview-icon">
+
+          <mat-icon>
+            assessment
+          </mat-icon>
+
+        </div>
+
+
+        <h2>
+          Report Preview
+        </h2>
+
+
+        <p>
+          Select a report type, apply your filters and click
+          <strong>Generate Report</strong> to view your report.
+          You can then preview the data, review charts and export the
+          report as PDF or Excel.
+        </p>
+
+
+        <div class="empty-preview-features">
+
+          <span>
+            <mat-icon>table_view</mat-icon>
+            Tables
+          </span>
+
+          <span>
+            <mat-icon>bar_chart</mat-icon>
+            Charts
+          </span>
+
+          <span>
+            <mat-icon>picture_as_pdf</mat-icon>
+            PDF Export
+          </span>
+
+          <span>
+            <mat-icon>table_chart</mat-icon>
+            Excel Export
+          </span>
+
+        </div>
+
+      </mat-card>
+
+    </section>
+
+
+  </main>
 
 </div>

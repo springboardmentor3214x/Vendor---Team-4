@@ -18,7 +18,9 @@
 
         <ul>
 
-          <li *ngFor="let item of menuItems">
+          <li
+            *ngFor="let item of menuItems"
+            (click)="openModule(item.title)">
 
             <mat-icon>{{ item.icon }}</mat-icon>
 
